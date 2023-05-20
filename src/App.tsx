@@ -1,8 +1,15 @@
+import { BrowserRouter } from 'react-router-dom';
+import { Router } from './shared/Router';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 function App() {
+  const queryClient = new QueryClient();
   return (
-    <div className="App">
-      <header className="App-header">Hello</header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
