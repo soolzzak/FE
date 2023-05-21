@@ -1,7 +1,12 @@
+import React, { ReactNode } from 'react';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
-export const Layout = ({ children }) => {
+type ChildenType = {
+  children: ReactNode;
+};
+
+export const Layout: React.FC<ChildenType> = ({ children }) => {
   return (
     <div>
       <Header />
