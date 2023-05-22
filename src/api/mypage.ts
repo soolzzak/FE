@@ -7,7 +7,7 @@ interface ApiResponse {
   data?: MypageProfileResponse;
 }
 
-type MypageProfileResponse = {
+export type MypageProfileResponse = {
   image: string;
   nickname: string;
 };

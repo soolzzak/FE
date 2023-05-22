@@ -4,10 +4,10 @@ import axiosInstance from './axios';
 interface ApiResponse {
   status: number;
   msg: string;
-  data?: MainpageRoom[];
+  data?: MainpageRooms[];
 }
 
-interface MainpageRoom {
+interface MainpageRooms {
   roomId: number;
   title: string;
   username: string;
