@@ -25,18 +25,18 @@ export const getMypageProfile = async (): Promise<
 };
 
 export const updateMypageProfile = async (
-  image: FormData
+  file: FormData
 ): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
       `/user/mypage`,
-      image,
+      file,
       {
         headers: { 'Content-Type': 'multipart/form-data' },
       }
     );
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) throw error;
+    throw error as Error;
   }
 };

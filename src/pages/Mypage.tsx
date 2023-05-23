@@ -18,5 +18,11 @@ export const Mypage = () => {
     }
   }, [data]);
 
-  return <div>{myinfo?.nickname}</div>;
+  return (
+    <div>
+      <button></button>
+      <div>{myinfo?.image}</div>
+      <span>{myinfo?.nickname}</span>
+    </div>
+  );
 };
