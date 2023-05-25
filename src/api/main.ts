@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -7,20 +7,21 @@ interface ApiResponse {
   data?: MainpageRooms[];
 }
 
-interface MainpageRooms {
+export type MainpageRooms = {
   roomId: number;
   title: string;
   username: string;
   category: string;
-}
+};
 
 export const getMainpageRooms = async (): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/main`
+      '/main',
     );
+
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) throw error;
+    throw error as Error;
   }
 };
