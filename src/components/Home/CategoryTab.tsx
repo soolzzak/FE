@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export const CategoryTab = () => {
-  const [activeTab, setActiveTab] = useState('myInfo');
+  const [activeTab, setActiveTab] = useState('전체');
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
