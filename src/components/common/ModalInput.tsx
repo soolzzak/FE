@@ -1,13 +1,30 @@
 import { useState } from 'react';
 
-export const ModalInput = ({ title }: { title: string }) => {
+type InputProps = {
+  title: string;
+  placeholderText: string;
+  inputType: string;
+  autofocus?: boolean;
+};
+
+export const ModalInput = ({
+  title,
+  placeholderText,
+  inputType,
+  autofocus = false,
+}: InputProps) => {
   const [modalInputValue, setModalInputValue] = useState('');
+
   return (
-    <div>
-      <p className="text-base font-bold text-[#454545]">{title}</p>
+    <div className="w-full">
+      <p className="text-base font-bold mb-2 text-[#454545]">{title}</p>
       <input
-        type="text"
+        key={title}
+        type={inputType}
+        autoFocus={autofocus}
         value={modalInputValue}
+        className="w-full h-11 pl-4 px-3 text-sm rounded-lg border border-[#929292]"
+        placeholder={placeholderText}
         onChange={(e) => setModalInputValue(e.target.value)}
       />
     </div>

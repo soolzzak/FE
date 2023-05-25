@@ -7,9 +7,4 @@ const instance: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-export interface ApiResponse {
-  status: number;
-  msg: string;
-}
-
 export default instance;
