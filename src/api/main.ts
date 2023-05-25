@@ -17,8 +17,9 @@ export type MainpageRooms = {
 export const getMainpageRooms = async (): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/main`
+      '/main',
     );
+
     return response.data;
   } catch (error) {
     throw error as Error;

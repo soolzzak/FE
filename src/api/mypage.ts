@@ -17,7 +17,7 @@ export const getMypageProfile = async (): Promise<
 > => {
   try {
     const response: AxiosResponse<MypageProfileResponse> =
-      await axiosInstance.get(`/user/mypage`);
+      await axiosInstance.get('/user/mypage');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
@@ -29,7 +29,7 @@ export const updateMypageProfile = async (
 ): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
-      `/user/mypage`,
+      '/user/mypage',
       file,
       {
         headers: { 'Content-Type': 'multipart/form-data' },
