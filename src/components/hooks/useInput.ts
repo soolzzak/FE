@@ -7,7 +7,6 @@ type ReturnTypes = [
   () => void,
   (type: RegExp, msg: string) => void,
   (checkPassword: string | undefined) => void,
-  () => void,
 ]
 
 export const useInput = (): ReturnTypes=> {
@@ -18,7 +17,7 @@ export const useInput = (): ReturnTypes=> {
   };
 
   const defaultCheckHandler = () => {
-    if (inputValue === '') {
+    if (!inputValue) {
       setErrorMsg('필수정보 입니다');
     } else {
       setErrorMsg('');
@@ -26,7 +25,7 @@ export const useInput = (): ReturnTypes=> {
   };
 
   const typeCheckHandler = (type: RegExp, msg: string) => {
-    if (inputValue === '') {
+    if (!inputValue) {
       setErrorMsg('필수정보 입니다');
     } else if (!!inputValue && !type.test(inputValue)) {
       setErrorMsg(msg);
@@ -36,17 +35,13 @@ export const useInput = (): ReturnTypes=> {
   };
 
   const passwordCheckHandler = (checkPassword: string | undefined) => {
-    if (inputValue === '') {
+    if (!inputValue) {
       setErrorMsg('필수정보 입니다');
     } else if (inputValue === checkPassword) {
       setErrorMsg('');
     } else {
       setErrorMsg('비밀번호가 일치하지 않습니다');
     }
-  };
-
-  const resetValue = () => {
-    setInputValue('');
   };
 
   return [
@@ -56,6 +51,5 @@ export const useInput = (): ReturnTypes=> {
     defaultCheckHandler,
     typeCheckHandler,
     passwordCheckHandler,
-    resetValue,
   ];
 };

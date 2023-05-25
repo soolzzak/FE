@@ -7,16 +7,18 @@ interface ApiResponse {
 }
 
 export interface SignupInfo {
-  username: string;
-  password: string;
-  email: string;
-  logintype: string;
-  isAdmin: boolean;
+  username: string | undefined;
+  password: string | undefined;
+  email: string | undefined;
+  birthday: string | undefined;
+  gender: string | undefined;
+  admin: boolean;
+  adminkey: string | undefined;
 }
 
 export interface LoginInfo {
-  email: string | undefined;
-  password: string | undefined;
+  email: string
+  password: string
   isAdmin: boolean;
 }
 
