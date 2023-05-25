@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { MypageProfileResponse, getMypageProfile } from '../api/mypage';
 
@@ -7,16 +7,26 @@ export const Mypage = () => {
     'mypageInfo',
     getMypageProfile
   );
-  const [myinfo, setMyinfo] = React.useState<MypageProfileResponse>();
+  const [myinfo, setMyinfo] = useState<MypageProfileResponse | null>(null);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>{(error as Error).message}</div>;
 
-  React.useEffect(() => {
+  if (true) {
+  } else {
+  }
+  useEffect(() => {
     if (data) {
       setMyinfo(data);
+      console.log(data);
     }
   }, [data]);
 
-  return <div>{myinfo?.nickname}</div>;
+  return (
+    <div>
+      <button></button>
+      <div>{myinfo?.image}</div>
+      <span>{myinfo?.nickname}</span>
+    </div>
+  );
 };
