@@ -1,6 +1,6 @@
 export const HeroSection = () => {
   return (
-    <section className="pt-20 w-full bg-white">
+    <section className="pt-48 w-full bg-white">
       <div className="flexCentralize flex-col text-[#494949]">
         <h1 className="font-bold text-4xl">심심한 혼술 이제 그만,</h1>
         <h1 className="font-bold text-4xl">함께 편하게 술 한잔!</h1>
