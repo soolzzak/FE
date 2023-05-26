@@ -1,49 +1,29 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
-import { MainpageRooms, getMainpageRooms } from '../api/main';
-import { ChatroomCard } from '../components/Home/ChatroomCard';
 import { HeroSection } from '../components/Home/HeroSection';
 import { CategoryTab } from '../components/Home/CategoryTab';
+import { HomeBodySection } from '../components/Home/HomeBodySection';
+import { Modal } from '../components/common/Modal';
+import { useModal } from '../hooks/useModal';
+import { AddRoom } from '../components/Home/AddRoom';
 
 export const Home = () => {
-  // const { data, isLoading, isError, error } = useQuery(
-  //   'chatrooms',
-  //   getMainpageRooms,
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-  const [chatList, setChatList] = useState<MainpageRooms[] | undefined>([
-    { roomId: 1, category: 'something', title: 'title1', username: 'user1' },
-    { roomId: 2, category: 'something', title: 'title1', username: 'user1' },
-    { roomId: 3, category: 'something', title: 'title1', username: 'user1' },
-    { roomId: 4, category: 'something', title: 'title1', username: 'user1' },
-    { roomId: 5, category: 'something', title: 'title1', username: 'user1' },
-  ]);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setChatList(data.data);
-  //     console.log(data.data);
-  //   }
-  // }, [data]);
-
-  // if (isLoading) {
-  //   return <p>Loading...</p>;
-  // }
-  // if (isError) {
-  //   return <p>{(error as Error).message}</p>;
-  // }
+  const [isOpen, onClose, setIsOpen] = useModal();
 
   return (
-    <div className="flexCentralize flex-col bg-[#F2F2F2;]">
-      <HeroSection />
-      <CategoryTab />
-      <div className="grid grid-cols-4 gap-4 mt-24">
-        {chatList?.map((chatRoom) => (
-          <ChatroomCard key={chatRoom.roomId} chatRoom={chatRoom} />
-        ))}
+    <>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <AddRoom isOpen={isOpen} />
+      </Modal>
+      <div className="flex items-center flex-col bg-[#F2F2F2;] h-screen w-full">
+        <HeroSection />
+        <CategoryTab />
+        <HomeBodySection />
+        <button
+          className="h-24 w-full max-w-[1111px] bg-[#9A9A9A;] rounded-3xl font-bold text-white text-2xl"
+          onClick={() => setIsOpen(true)}
+        >
+          혼술짝 방만들기
+        </button>
       </div>
-    </div>
+    </>
   );
 };

@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { Footer } from './Footer';
 import { Header } from './Header';
 
 type ChildenType = {
@@ -8,7 +7,7 @@ type ChildenType = {
 
 export const Layout = ({ children }: ChildenType) => {
   return (
-    <div>
+    <div className="min-h-screen">
       <Header />
       {children}
       {/* <Footer /> */}
