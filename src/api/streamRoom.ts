@@ -7,7 +7,7 @@ interface ApiResponse {
   data?: Room[];
 }
 
-interface Room {
+export type Room = {
   roomId: number;
   userId: number;
   title: string;
@@ -20,7 +20,7 @@ interface Room {
   alcohol: number;
   imgurl: string;
   imageUrl: string;
-}
+};
 
 export const getRoom = async (): Promise<ApiResponse | undefined> => {
   try {

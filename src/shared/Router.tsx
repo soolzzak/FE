@@ -4,7 +4,7 @@ import { Home } from '../pages/Home';
 import { Login } from '../pages/Login';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
-import { CreateStreamRoom } from '../pages/CreateStreamRoom';
+import CreateStreamRoom from '../pages/CreateStreamRoom';
 import { Mypage } from '../pages/Mypage';
 
 export const Router = () => {
