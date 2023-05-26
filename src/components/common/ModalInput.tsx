@@ -14,7 +14,7 @@ export const ModalInput = ({
   autofocus = false,
 }: InputProps) => {
   const [modalInputValue, setModalInputValue] = useState('');
-
+  console.log(title);
   return (
     <div className="w-full">
       <p className="text-base font-bold mb-2 text-[#454545]">{title}</p>

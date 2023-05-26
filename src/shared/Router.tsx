@@ -4,7 +4,6 @@ import { Home } from '../pages/Home';
 import { Login } from '../pages/Login';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
-import { CreateStreamRoom } from '../pages/CreateStreamRoom';
 import { Mypage } from '../pages/Mypage';
 
 export const Router = () => {
@@ -16,7 +15,6 @@ export const Router = () => {
         <Route path="/room" element={<StreamRoom />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/createroom" element={<CreateStreamRoom />} />
       </Routes>
     </Layout>
   );

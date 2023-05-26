@@ -11,7 +11,7 @@ export const Home = () => {
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <AddRoom />
+        <AddRoom isOpen={isOpen} />
       </Modal>
       <div className="flex items-center flex-col bg-[#F2F2F2;] h-screen w-full">
         <HeroSection />

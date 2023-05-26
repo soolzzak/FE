@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-type ReturnType = [string, (option: string) => void];
+type ReturnType<T> = [T, (option: T) => void];
 
-export const useCustomSelector = (selection: string): ReturnType => {
-  const [selectedOption, setSelectedOption] = useState(selection);
+export const useCustomSelector = <T>(selection: T): ReturnType<T> => {
+  const [selectedOption, setSelectedOption] = useState<T>(selection);
 
-  const handleOptionClick = (option: string) => {
+  const handleOptionClick = (option: T) => {
     setSelectedOption(option);
   };
 

@@ -6,12 +6,12 @@ type InputProps = {
   rightText: string;
 };
 
-export const TwoOptionSelector = ({
+export const TwoOptionsSelector = ({
   title,
   leftText,
   rightText,
 }: InputProps) => {
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState('left');
 
   return (
     <div className="w-3/4">
@@ -24,8 +24,8 @@ export const TwoOptionSelector = ({
         {leftText}
       </button>
       <button
-        className={`rounded-r-lg h-11 w-16 -ml-[1px] border border-[#929292] bg-white
-        ${selectedOption === 'right' ? 'bg-[#454545] text-white' : ''}`}
+        className={`rounded-r-lg h-11 w-16 -ml-[1px] border border-[#929292] 
+        ${selectedOption === 'right' ? 'bg-[#454545] text-white' : 'bg-white'}`}
         onClick={() => setSelectedOption('right')}
       >
         {rightText}
