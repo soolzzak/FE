@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
-export const useModal = () => {
+type ReturnType = [boolean, () => void, Dispatch<SetStateAction<boolean>>];
+
+export const useModal = (): ReturnType => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const onClose = () => setIsOpen(false);
 
-  return [isOpen, onClose, setIsOpen] as const;
+  return [isOpen, onClose, setIsOpen];
 };

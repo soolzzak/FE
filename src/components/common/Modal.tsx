@@ -8,16 +8,18 @@ type ChildenType = {
 
 export const Modal = ({ children, isOpen, onClose }: ChildenType) => {
   return (
-    <div
-      className={`fixed inset-0 z-50 flex flex-col justify-center items-center ${
-        isOpen ? '' : 'hidden'
-      }`}
-    >
-      <div
-        className="fixed inset-0 bg-black opacity-75"
-        onClick={() => onClose()}
-      ></div>
-      <div className="fixed">{children}</div>
-    </div>
+    <>
+      {isOpen && (
+        <div
+          className={`fixed inset-0 z-50 flex flex-col justify-center items-center`}
+        >
+          <div
+            className="fixed inset-0 bg-black opacity-75"
+            onClick={() => onClose()}
+          ></div>
+          <div className="fixed">{children}</div>
+        </div>
+      )}
+    </>
   );
 };
