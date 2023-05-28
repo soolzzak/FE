@@ -5,6 +5,7 @@ type InputProps = {
   placeholderText: string;
   inputType: string;
   autofocus?: boolean;
+  disabled?: boolean;
 };
 
 export const ModalInput = ({
@@ -12,6 +13,7 @@ export const ModalInput = ({
   placeholderText,
   inputType,
   autofocus = false,
+  disabled = false,
 }: InputProps) => {
   const [modalInputValue, setModalInputValue] = useState('');
   console.log(title);
@@ -23,6 +25,7 @@ export const ModalInput = ({
         type={inputType}
         autoFocus={autofocus}
         value={modalInputValue}
+        disabled={disabled}
         className="w-full h-11 pl-4 px-3 text-sm rounded-lg border border-[#929292]"
         placeholder={placeholderText}
         onChange={(e) => setModalInputValue(e.target.value)}

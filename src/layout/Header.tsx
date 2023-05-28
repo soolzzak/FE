@@ -12,7 +12,7 @@ export const Header = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <AuthModal />
       </Modal>
-      <div className="relative flexVerticalCenter justify-between h-24 shadow-sm">
+      <div className="relative f-ic justify-between h-24 shadow-sm">
         <HeaderLeftSection />
         <HeaderRightSection setIsOpen={setIsOpen} />
       </div>
