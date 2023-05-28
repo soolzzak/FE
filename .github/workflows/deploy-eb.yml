@@ -21,7 +21,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: soolzzak.com
           environment_name: soolzzak
-          version_label: ${{ github.sha }}
+          version_label: ${{ github.sha }} 
           existing_bucket_name: elasticbeanstalk-ap-northeast-2-499040972656
           region: ap-northeast-2
           deployment_package: deploy.zip
