@@ -1,8 +1,8 @@
+import { useState } from 'react';
+import { useCustomSelector } from '../../hooks/useCustomSelector';
+import { CustomSelector } from '../common/CustomSelector';
 import { ModalInput } from '../common/ModalInput';
 import { TwoOptionsSelector } from '../common/TwoOptionsSelector';
-import { CustomSelector } from '../common/CustomSelector';
-import { useCustomSelector } from '../../hooks/useCustomSelector';
-import { useEffect, useRef, useState } from 'react';
 
 export const AddRoom = ({ isOpen }: { isOpen: boolean }) => {
   const selections = ['누구나', '여자만', '남자만'];
@@ -103,7 +103,7 @@ export const AddRoom = ({ isOpen }: { isOpen: boolean }) => {
               />
             ) : (
               <div className="f-jic rounded-lg ml-3">
-                <div></div>
+                <div>something</div>
               </div>
             )}
           </label>
@@ -113,7 +113,7 @@ export const AddRoom = ({ isOpen }: { isOpen: boolean }) => {
             title="방 제목"
             placeholderText="예시 : 분노의 질주 얘기하면서 같이 소주마셔요"
             inputType="text"
-            autofocus={true}
+            autofocus
           />
           <ModalInput
             title="카테고리"
@@ -134,13 +134,16 @@ export const AddRoom = ({ isOpen }: { isOpen: boolean }) => {
             <ModalInput
               inputType="password"
               title="방 비밀번호"
-              disabled={true}
+              disabled
               placeholderText="비밀번호를 입력해주세요"
             />
           </div>
         </div>
       </div>
-      <button className="rounded-[18px] h-16 mt-12 bg-[#9A9A9A] text-white text-[20px] font-bold">
+      <button
+        type="button"
+        className="rounded-[18px] h-16 mt-12 bg-[#9A9A9A] text-white text-[20px] font-bold"
+      >
         혼술짝 방만들기
       </button>
     </div>

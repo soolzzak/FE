@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { MypageProfileResponse, getMypageProfile } from '../api/mypage';
-import { HistorySection } from '../components/Mypage/HistorySection';
 import { AlcoholSection } from '../components/Mypage/AlcoholSection';
+import { HistorySection } from '../components/Mypage/HistorySection';
 import { MyinfoSection } from '../components/Mypage/MyinfoSection';
+
 export const Mypage = () => {
   const { data, isLoading, isError, error } = useQuery(
     'mypageInfo',

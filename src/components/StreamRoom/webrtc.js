@@ -1,4 +1,4 @@
-const socket = new WebSocket('wss://' + window.location.host + '/signal');
+// const socket = new WebSocket(`wss://${window.location.host}/signal`);
 
 // WebRTC STUN servers
 // WebRTC STUN 서버 정보
