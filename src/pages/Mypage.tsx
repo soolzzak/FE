@@ -15,9 +15,6 @@ export const Mypage = () => {
   // if (isLoading) return <div>Loading...</div>;
   // if (isError) return <div>{(error as Error).message}</div>;
 
-  if (true) {
-  } else {
-  }
   useEffect(() => {
     if (data) {
       setMyinfo(data);
