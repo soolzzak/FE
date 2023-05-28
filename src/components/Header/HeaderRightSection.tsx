@@ -7,7 +7,7 @@ export const HeaderRightSection = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
-    <section className="flexVerticalCenter mr-4">
+    <section className="f-ic mr-4">
       <button className="mr-5 text-lg" onClick={() => setIsOpen(true)}>
         Login
       </button>

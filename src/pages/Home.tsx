@@ -4,6 +4,7 @@ import { HomeBodySection } from '../components/Home/HomeBodySection';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
 import { AddRoom } from '../components/Home/AddRoom';
+import { CommonButton } from '../components/common/CommonButton';
 
 export const Home = () => {
   const [isOpen, onClose, setIsOpen] = useModal();
@@ -13,16 +14,16 @@ export const Home = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <AddRoom isOpen={isOpen} />
       </Modal>
-      <div className="flex items-center flex-col bg-[#F2F2F2;] h-screen w-full">
+      <div className="f-ic-col bg-[#F2F2F2;] min-h-screen w-full">
         <HeroSection />
         <CategoryTab />
         <HomeBodySection />
-        <button
-          className="h-24 w-full max-w-[1111px] bg-[#9A9A9A;] rounded-3xl font-bold text-white text-2xl"
-          onClick={() => setIsOpen(true)}
-        >
-          혼술짝 방만들기
-        </button>
+        <CommonButton
+          buttonText="혼술짝 방만들기"
+          clickHandler={() => setIsOpen(true)}
+          textSize="2xl"
+          dimensions="h-20 w-full"
+        />
       </div>
     </>
   );

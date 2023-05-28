@@ -3,10 +3,28 @@
 @tailwind utilities;
 
 @layer components {
-  .flexCentralize {
+  .f-col {
+    @apply flex flex-col;
+  }
+  .f-jic {
     @apply flex justify-center items-center;
   }
-  .flexVerticalCenter {
+  .f-jic-col {
+    @apply flex justify-center items-center flex-col;
+  }
+  .f-ic {
     @apply flex items-center;
+  }
+  .f-ic-col {
+    @apply flex items-center flex-col;
+  }
+  .f-jc {
+    @apply flex justify-center;
+  }
+  .f-jc-col {
+    @apply flex justify-center flex-col;
+  }
+  .hoverAnim {
+    @apply hover:bg-[#e9e9e9] transition-colors duration-200;
   }
 }

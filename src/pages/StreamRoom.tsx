@@ -40,7 +40,6 @@ export const StreamRoom = () => {
           <p className="text-[20px] font-semibold mr-4">
             카리나님과 따로 또 같이 혼술하는 중!
           </p>
-
           <div className="flex flex-row gap-4 ">
             <Thumbdown />
             <Thumbup />

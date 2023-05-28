@@ -27,7 +27,7 @@ export const HomeBodySection = () => {
   //   return <p>{(error as Error).message}</p>;
   // }
   return (
-    <div className="flexCentralized">
+    <div className="f-jic">
       <div></div>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-24 h-full">
         {chatList?.map((chatRoom) => (

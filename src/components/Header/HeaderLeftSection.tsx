@@ -3,9 +3,9 @@ import { Search } from '../../assets/svgs/Search';
 
 export const HeaderLeftSection = () => {
   return (
-    <section className="flexVerticalCenter max-w-[600px] w-full">
+    <section className="f-ic max-w-[600px] w-full">
       <div className="font-bold text-[#323232] ml-40 text-2xl">logo</div>
-      <div className="flexVerticalCenter w-full ml-8 py-3.5 pl-4 h-14  bg-[#D9D9D9] rounded-2xl">
+      <div className="f-ic w-full ml-8 py-3.5 pl-4 h-14  bg-[#D9D9D9] rounded-2xl">
         <input
           type="text"
           autoFocus
