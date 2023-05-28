@@ -20,11 +20,12 @@ export const CategoryTab = () => {
   return (
     <nav className="w-full">
       <div className="f-jic  bg-white">
-        {tabList.map((tab, index) => (
+        {tabList.map((tab) => (
           <div
+            role="none"
             className={`cursor-pointer px-9 mx-3 py-5 text-2xl font-semibold text-[#454545] 
             ${activeTab === tab ? 'border-b-[3px] border-[#1D1D1D]' : ''}`}
-            key={index}
+            key={tab}
             onClick={() => handleTabChange(tab)}
           >
             {tab}

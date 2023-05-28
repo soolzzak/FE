@@ -1,13 +1,10 @@
+import React, { useState } from 'react';
 import { Report } from '../assets/svgs/Report';
-import { useState, useEffect } from 'react';
 
 // import { ReactComponent as Water } from '../assets/svgs/Water';
 
 import { Thumbdown } from '../assets/svgs/Thumbdown';
 import { Thumbup } from '../assets/svgs/Thumbup';
-import { getRoom } from '../api/streamRoom';
-import { useQuery } from 'react-query';
-import { Room } from '../api/streamRoom';
 
 export const StreamRoom = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -36,10 +33,11 @@ export const StreamRoom = () => {
     <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
       <div className="basis-1/12  flex justify-between p-4">
         <div className="flex flex-row items-center">
-          <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4"></div>
+          <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4" />
           <p className="text-[20px] font-semibold mr-4">
             카리나님과 따로 또 같이 혼술하는 중!
           </p>
+
           <div className="flex flex-row gap-4 ">
             <Thumbdown />
             <Thumbup />
