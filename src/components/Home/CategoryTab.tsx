@@ -12,19 +12,20 @@ export const CategoryTab = () => {
     '영화/드라마',
     '맛집/여행',
     '고민상담',
-    '스포츠게임',
+    '스포츠/게임',
     '오늘하루',
     '자유방',
   ];
 
   return (
     <nav className="w-full">
-      <div className="flexCentralize  bg-white">
-        {tabList.map((tab, index) => (
+      <div className="f-jic  bg-white">
+        {tabList.map((tab) => (
           <div
+            role="none"
             className={`cursor-pointer px-9 mx-3 py-5 text-2xl font-semibold text-[#454545] 
             ${activeTab === tab ? 'border-b-[3px] border-[#1D1D1D]' : ''}`}
-            key={index}
+            key={tab}
             onClick={() => handleTabChange(tab)}
           >
             {tab}
