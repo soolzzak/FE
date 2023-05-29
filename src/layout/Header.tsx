@@ -3,7 +3,7 @@ import { Notifications } from '../assets/svgs/Notifications';
 
 export const Header = () => {
   return (
-    <div className="absolute w-full">
+    <div className="fixed w-full">
       <div className="relative flexVerticalCenter justify-between h-24 shadow-sm">
         {/* Header left side */}
         <div className="flexVerticalCenter max-w-[600px] w-full">

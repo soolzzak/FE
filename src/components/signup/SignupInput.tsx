@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useInput } from '../hooks/useInput';
+import { useInput } from '../../hooks/useInput';
 import { useMutation } from 'react-query';
 import { SignupApi } from '../../api/auth';
 import { SignupInfo } from '../../api/auth';
@@ -46,7 +46,7 @@ export const SignupInput = () => {
   ] = useInput();
 
   //5. 생일
-  const monthList = ['월', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   type BirthdayTypes = {
     year: number | undefined;
@@ -58,14 +58,40 @@ export const SignupInput = () => {
     month: undefined,
     day: undefined,
   });
-  const birthdayCombined =
-    birthday.year + '-' + birthday.month + '-' + birthday.day;
+  // const birthdayCombined =
+  //   birthday.year + '-' + birthday.month + '-' + birthday.day;
+  const today = new Date();
+  const calcBirthday = new Date(
+    Number(birthday.year),
+    Number(birthday.month),
+    Number(birthday.day)
+  );
   const [birthdayErrMsg, setBirthdayErrMsg] = useState<string | undefined>();
+  let age = today.getFullYear() - calcBirthday.getFullYear();
+  const getM = today.getMonth() - calcBirthday.getMonth();
+
   const birthdayHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBirthday({
       ...birthday,
       [event.target.name]: event.target.value,
     });
+  };
+  const birthdayCheckHandler = () => {
+    if (!(birthday.year && birthday.month && birthday.day)) {
+      setBirthdayErrMsg('필수정보 입니다');
+    } else if (
+      getM < 0 ||
+      (getM === 0 && today.getDate() < calcBirthday.getDate())
+    ) {
+      age--;
+      if (age < 19) {
+        setBirthdayErrMsg('애들은 가라');
+      } else {
+        setBirthdayErrMsg('');
+      }
+    } else {
+      setBirthdayErrMsg('');
+    }
   };
   const birthdayselectHandler = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -75,16 +101,8 @@ export const SignupInput = () => {
       [event.target.name]: event.target.value,
     });
   };
-  const birthdayCheckHandler = () => {
-    if (!(birthday.year && birthday.month && birthday.day)) {
-      setBirthdayErrMsg('필수정보 입니다');
-    } else {
-      setBirthdayErrMsg('');
-    }
-  };
 
   //6. 성별
-  const genderList = ['성별', '남성', '여성'];
   const [gender, setGender] = useState<string | undefined>();
   const [genderErrMsg, setGenderMsg] = useState<string | undefined>();
   const genderHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -100,7 +118,7 @@ export const SignupInput = () => {
 
   //7. 관리자
   const [admin, setAdmin] = useState(false);
-  const [adminkey, setAdminkey] = useState<string | undefined>();
+  const [adminkey, setAdminkey] = useState<string | null>(null);
   const [adminkeyErrMsg, setAdminkeyErrMsg] = useState<string | undefined>();
   const adminHandler = () => setAdmin(!admin);
   const adminKeyHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -127,6 +145,7 @@ export const SignupInput = () => {
       !pwcheck ||
       !username ||
       !(birthday.year && birthday.month && birthday.day) ||
+      age < 19 ||
       !gender
     ) {
       return;
@@ -135,7 +154,7 @@ export const SignupInput = () => {
       username,
       password,
       email,
-      birthday: birthdayCombined,
+      birthday: calcBirthday,
       gender,
       admin,
       adminkey,
@@ -146,25 +165,25 @@ export const SignupInput = () => {
   return (
     <form onSubmit={submitHandler}>
       <p className="font-bold text-base mb-2">이메일</p>
-      <div className='relative'>
-      <input
-        type="text"
-        value={email}
-        onChange={onEmailChangeHandler}
-        onBlur={() => emailTypeCheckHandler(emailType, emailMsg)}
-        className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] placeholder:align-middle"
-        placeholder="example@naver.com"
-      />
-      <span className="absolute w-[65px] h-[31px] top-[6.5px] right-2 bg-[#E6E6E6] rounded text-[14px] text-[#383434] text-center flex justify-center items-center cursor-pointer">
-        중복확인
-      </span>
+      <div className="relative">
+        <input
+          type="text"
+          value={email || ''}
+          onChange={onEmailChangeHandler}
+          onBlur={() => emailTypeCheckHandler(emailType, emailMsg)}
+          className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] placeholder:align-middle"
+          placeholder="example@naver.com"
+        />
+        <span className="absolute w-[65px] h-[31px] top-[6.5px] right-2 bg-[#E6E6E6] rounded text-[14px] text-[#383434] text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80">
+          중복확인
+        </span>
       </div>
       <div className="text-xs text-red-600 mt-1 mb-4 pl-1">{emailErrorMsg}</div>
 
       <p className="font-bold text-base mb-2">비밀번호</p>
       <input
         type="password"
-        value={password}
+        value={password || ''}
         onChange={onPasswordChangeHandler}
         onBlur={() => passwordTypeCheckHandler(passwordType, passwordMsg)}
         className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px]"
@@ -177,7 +196,7 @@ export const SignupInput = () => {
       <p className="font-bold text-base mb-2">비밀번호 확인</p>
       <input
         type="password"
-        value={pwcheck}
+        value={pwcheck || ''}
         onChange={onPwcheckChangeHandler}
         onBlur={() => pwcheckHandler(password)}
         className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] indent-2"
@@ -187,17 +206,17 @@ export const SignupInput = () => {
       </div>
 
       <p className="font-bold text-base mb-2">닉네임</p>
-      <div className='relative'>
-      <input
-        type="text"
-        value={username}
-        onChange={usernameChangeHandler}
-        onBlur={usernameCheckHandler}
-        className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] indent-2"
-      />
-      <span className="absolute w-[65px] h-[31px] top-[6.5px] right-2 bg-[#E6E6E6] rounded text-[14px] text-[#383434] text-center flex justify-center items-center cursor-pointer">
-        중복확인
-      </span>
+      <div className="relative">
+        <input
+          type="text"
+          value={username || ''}
+          onChange={usernameChangeHandler}
+          onBlur={usernameCheckHandler}
+          className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] indent-2"
+        />
+        <span className="absolute w-[65px] h-[31px] top-[6.5px] right-2 bg-[#E6E6E6] rounded text-[14px] text-[#383434] text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80">
+          중복확인
+        </span>
       </div>
       <div className="text-xs text-red-600 mt-1 mb-4 pl-1">
         {usernameErrorMsg}
@@ -208,8 +227,8 @@ export const SignupInput = () => {
         <input
           type="text"
           name="year"
-          className="box-border w-[112px] h-[45px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px]"
-          value={birthday.year}
+          className="box-border w-[112px] h-[45px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
+          value={birthday.year || ''}
           minLength={4}
           maxLength={4}
           onChange={birthdayHandler}
@@ -221,18 +240,15 @@ export const SignupInput = () => {
           name="month"
           className="box-border w-[112px] h-[45px] rounded-lg border border-[#929292] indent-2 text-[16px]"
           onChange={birthdayselectHandler}
-          value={birthday.month}
+          value={birthday.month || ''}
           onBlur={birthdayCheckHandler}
         >
+          <option value="default" hidden>
+            월
+          </option>
           {monthList.map((item, i) => {
             return (
-              <option
-                key={i}
-                value={item}
-                selected={item === '월'}
-                disabled={item === '월'}
-                hidden={item === '월'}
-              >
+              <option key={i} value={item}>
                 {item}
               </option>
             );
@@ -241,7 +257,10 @@ export const SignupInput = () => {
         <input
           type="text"
           name="day"
-          className="box-border w-[112px] h-[45px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px]"
+          value={birthday.day || ''}
+          min="1"
+          max="31"
+          className="box-border w-[112px] h-[45px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
           onChange={birthdayHandler}
           onBlur={birthdayCheckHandler}
           placeholder="일"
@@ -255,27 +274,20 @@ export const SignupInput = () => {
       <select
         onChange={genderHandler}
         onBlur={genderCheckHandler}
+        value={gender || ''}
         className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] indent-2 text-[16px]"
       >
-        {genderList.map((item, i) => {
-          return (
-            <option
-              key={i}
-              value={item}
-              selected={item === '성별'}
-              disabled={item === '성별'}
-              hidden={item === '성별'}
-            >
-              {item}
-            </option>
-          );
-        })}
+        <option value="gender" hidden>
+          성별
+        </option>
+        <option value="male">남성</option>
+        <option value="female">여성</option>
       </select>
       <div className="text-xs text-red-600 mt-1 mb-4 pl-1">{genderErrMsg}</div>
 
       <div className="flex flex-col">
         <div className="flex">
-          <div className='pt-1'>
+          <div className="pt-1">
             <Checkbox onClick={adminHandler} props={admin} />
           </div>
           <span className="font-bold text-base mb-2">관리자</span>
@@ -286,7 +298,9 @@ export const SignupInput = () => {
             type="password"
             onChange={adminKeyHandler}
             onBlur={adminKeyCheckHandler}
+            value={adminkey || ''}
             maxLength={4}
+            placeholder="관리자 비밀번호를 입력해주세요"
             className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] mt-2"
           />
         ) : null}
@@ -297,7 +311,7 @@ export const SignupInput = () => {
         </div>
       ) : null}
 
-      <button className="w-[356px] h-[45px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-[#BCBCBC] mt-5">
+      <button className="w-[356px] h-[45px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-[#BCBCBC] mt-5 hover:bg-opacity-80">
         회원가입하기
       </button>
     </form>

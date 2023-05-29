@@ -10,22 +10,22 @@ export interface SignupInfo {
   username: string | undefined;
   password: string | undefined;
   email: string | undefined;
-  birthday: string | undefined;
+  birthday: Date | undefined;
   gender: string | undefined;
   admin: boolean;
-  adminkey: string | undefined;
+  adminkey: string | null;
 }
 
 export interface LoginInfo {
   email: string
   password: string
-  isAdmin: boolean;
 }
 
 export const SignupApi = async (signupInfo: SignupInfo)=> {
   try {
     await axiosInstance.post('/user/signup', signupInfo);
   } catch (error) {
+    console.log(error);
     if (axios.isAxiosError(error)) throw error;
   }
 };
@@ -33,7 +33,7 @@ export const SignupApi = async (signupInfo: SignupInfo)=> {
 export const LoginApi = async (loginInfo: LoginInfo) => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post('/user/login', loginInfo);
-    const refreshToken = response.headers['refresh-token'];
+    const accessToken = response.headers['access-token'];
     // Cookies.set("refreshToken", refreshToken)
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
