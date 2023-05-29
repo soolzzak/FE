@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { useInput } from '../../hooks/useInput';
 import { useMutation } from 'react-query';
-import { SignupApi } from '../../api/auth';
-import { SignupInfo } from '../../api/auth';
+import { SignupApi, SignupInfo } from '../../api/auth';
 import { Checkbox } from '../../assets/svgs/Checkbox';
+import { useInput } from '../../hooks/useInput';
 
 export const SignupInput = () => {
-  //1. email
   const [
     email,
     emailErrorMsg,
@@ -18,7 +16,6 @@ export const SignupInput = () => {
   const emailType = /^[a-zA-Z0-9+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
   const emailMsg = 'example@example.com 형식으로 작성하세요';
 
-  //2. 비밀번호
   const [
     password,
     passwordErrorMsg,
@@ -31,11 +28,9 @@ export const SignupInput = () => {
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,16}$/;
   const passwordMsg = '8~16자 영문, 숫자, 특수문자를 사용하세요';
 
-  //3. 비밀번호 확인
   const [pwcheck, pwcheckErrorMsg, onPwcheckChangeHandler, , , pwcheckHandler] =
     useInput();
 
-  //4. 닉네임
   const [
     username,
     usernameErrorMsg,
@@ -45,7 +40,6 @@ export const SignupInput = () => {
     ,
   ] = useInput();
 
-  //5. 생일
   const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   type BirthdayTypes = {
@@ -83,7 +77,7 @@ export const SignupInput = () => {
       getM < 0 ||
       (getM === 0 && today.getDate() < calcBirthday.getDate())
     ) {
-      age--;
+      age -= 1;
       if (age < 19) {
         setBirthdayErrMsg('애들은 가라');
       } else {
@@ -102,7 +96,6 @@ export const SignupInput = () => {
     });
   };
 
-  //6. 성별
   const [gender, setGender] = useState<string | undefined>();
   const [genderErrMsg, setGenderMsg] = useState<string | undefined>();
   const genderHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -116,7 +109,6 @@ export const SignupInput = () => {
     }
   };
 
-  //7. 관리자
   const [admin, setAdmin] = useState(false);
   const [adminkey, setAdminkey] = useState<string | null>(null);
   const [adminkeyErrMsg, setAdminkeyErrMsg] = useState<string | undefined>();
@@ -131,13 +123,12 @@ export const SignupInput = () => {
     }
   };
 
-  //6. 전송
   const signupMutation = useMutation(SignupApi);
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (admin && !adminkey) {
       return;
-    } else if (
+    } if (
       !email ||
       !emailType.test(email) ||
       !password ||
@@ -246,13 +237,11 @@ export const SignupInput = () => {
           <option value="default" hidden>
             월
           </option>
-          {monthList.map((item, i) => {
-            return (
-              <option key={i} value={item}>
+          {monthList.map((item) => (
+              <option key={item} value={item}>
                 {item}
               </option>
-            );
-          })}
+            ))}
         </select>
         <input
           type="text"
@@ -311,7 +300,7 @@ export const SignupInput = () => {
         </div>
       ) : null}
 
-      <button className="w-[356px] h-[45px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-[#BCBCBC] mt-5 hover:bg-opacity-80">
+      <button type='button' className="w-[356px] h-[45px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-[#BCBCBC] mt-5 hover:bg-opacity-80">
         회원가입하기
       </button>
     </form>
