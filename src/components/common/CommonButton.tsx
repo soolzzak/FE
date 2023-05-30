@@ -1,8 +1,8 @@
 type ButtonProps = {
   buttonText: string;
   clickHandler: () => void;
-  textSize: string;
-  dimensions: string;
+  textSize?: string;
+  dimensions?: string;
 };
 export const CommonButton = ({
   buttonText,
@@ -15,8 +15,8 @@ export const CommonButton = ({
     onClick={clickHandler}
     className={`cursor-pointer 
       text-${textSize} ${dimensions} text-white font-bold 
-      bg-[#a9a9a9] py-2.5 px-3.5 rounded-md shadow  
-      hover:bg-[#c2c2c2] transition duration-300`}
+      bg-primary-300 py-2.5 px-3.5 lg:px-10 rounded-lg shadow  
+      hover:bg-primary-200 transition duration-300 `}
   >
     {buttonText}
   </button>

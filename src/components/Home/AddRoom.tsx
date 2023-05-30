@@ -4,7 +4,7 @@ import { CustomSelector } from '../common/CustomSelector';
 import { ModalInput } from '../common/ModalInput';
 import { TwoOptionsSelector } from '../common/TwoOptionsSelector';
 
-export const AddRoom = ({ isOpen }: { isOpen: boolean }) => {
+export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const selections = ['누구나', '여자만', '남자만'];
   const [selectedOption, handleOptionClick] = useCustomSelector<string>(
     selections[0]
@@ -102,9 +102,7 @@ export const AddRoom = ({ isOpen }: { isOpen: boolean }) => {
                 alt=""
               />
             ) : (
-              <div className="f-jic rounded-lg ml-3">
-                <div>something</div>
-              </div>
+              ''
             )}
           </label>
         </div>
@@ -143,6 +141,7 @@ export const AddRoom = ({ isOpen }: { isOpen: boolean }) => {
       <button
         type="button"
         className="rounded-[18px] h-16 mt-12 bg-[#9A9A9A] text-white text-[20px] font-bold"
+        onClick={() => onClose()}
       >
         혼술짝 방만들기
       </button>
