@@ -11,7 +11,7 @@ export const Login = () => {
         <LoginModal />
       </Modal>
 
-      <button className="mt-32"
+      <button type="button" className="mt-32"
       onClick={() => setIsOpen(true)}>로그인 임시버튼</button>
     </div>
   )

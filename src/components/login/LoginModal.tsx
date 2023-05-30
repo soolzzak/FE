@@ -1,8 +1,8 @@
-import { useMutation } from 'react-query';
-import { LoginApi, LoginInfo } from '../../api/auth';
 import { useState } from 'react';
-import { Vector } from '../../assets/svgs/Vector';
+import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { LoginApi, LoginInfo } from '../../api/auth';
+import { Vector } from '../../assets/svgs/Vector';
 
 export const LoginModal = () => {
   const navigate = useNavigate();
@@ -62,11 +62,11 @@ export const LoginModal = () => {
             placeholder="비밀번호를 입력해주세요"
           />
         </div>
-        <button className="w-[356px] h-[45px] bg-[#BCBCBC] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80">
+        <button type='button' className="w-[356px] h-[45px] bg-[#BCBCBC] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80">
           이메일로 로그인
         </button>
       </form>
-      <button className="w-[356px] h-[45px] bg-[#9A9A9A] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80"> 
+      <button type='button' className="w-[356px] h-[45px] bg-[#9A9A9A] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80"> 
         카카오톡으로 로그인
       </button>
 
@@ -79,7 +79,7 @@ export const LoginModal = () => {
           아이디 찾기
         </span>
         <Vector />
-        <span
+        <span role='none'
           className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]"
           onClick={() => navigate('/signup')}
         >
