@@ -1,4 +1,4 @@
-export const Checkbox = (props) => (
+export const Checkbox = ({admin}) => (
   <svg
     width="30"
     height="30"
@@ -14,7 +14,7 @@ export const Checkbox = (props) => (
         width="20"
         height="20"
         rx="5"
-        fill={props ? 'black' : '#D9D9D9'}
+        fill={admin ? 'black' : '#D9D9D9'}
       />
       <path
         d="M10 11.4783L14.8148 16L20 8"

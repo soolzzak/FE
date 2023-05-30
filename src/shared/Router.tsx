@@ -5,6 +5,7 @@ import { Login } from '../pages/Login';
 import { Mypage } from '../pages/Mypage';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
+import { PracModal } from '../report/Prac';
 
 export const Router = () => (
   <Layout>
@@ -14,6 +15,7 @@ export const Router = () => (
       <Route path="/room" element={<StreamRoom />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/prac" element={<PracModal />} />
     </Routes>
   </Layout>
 );

@@ -10,9 +10,8 @@ export const Login = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <LoginModal />
       </Modal>
-
-      <button type="button" className="mt-32"
-      onClick={() => setIsOpen(true)}>로그인 임시버튼</button>
     </div>
   )
 };
+
+// 삭제 필요

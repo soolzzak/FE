@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { SignupApi, SignupInfo } from '../../api/auth';
-import { Checkbox } from '../../assets/svgs/Checkbox';
+import  {Checkbox}  from '../../assets/svgs/Checkbox';
 import { useInput } from '../../hooks/useInput';
 
 export const SignupInput = () => {
@@ -52,8 +52,6 @@ export const SignupInput = () => {
     month: undefined,
     day: undefined,
   });
-  // const birthdayCombined =
-  //   birthday.year + '-' + birthday.month + '-' + birthday.day;
   const today = new Date();
   const calcBirthday = new Date(
     Number(birthday.year),
@@ -128,7 +126,8 @@ export const SignupInput = () => {
     event.preventDefault();
     if (admin && !adminkey) {
       return;
-    } if (
+    } 
+    if (
       !email ||
       !emailType.test(email) ||
       !password ||
@@ -277,7 +276,8 @@ export const SignupInput = () => {
       <div className="flex flex-col">
         <div className="flex">
           <div className="pt-1">
-            <Checkbox onClick={adminHandler} props={admin} />
+            
+            <Checkbox admin={admin} />
           </div>
           <span className="font-bold text-base mb-2">관리자</span>
         </div>
@@ -300,7 +300,7 @@ export const SignupInput = () => {
         </div>
       ) : null}
 
-      <button type='button' className="w-[356px] h-[45px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-[#BCBCBC] mt-5 hover:bg-opacity-80">
+      <button type='submit' className="w-[356px] h-[45px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-[#BCBCBC] mt-5 hover:bg-opacity-80">
         회원가입하기
       </button>
     </form>
