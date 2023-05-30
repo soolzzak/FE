@@ -30,8 +30,8 @@ export const StreamRoom = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
-      <div className="basis-1/12  flex justify-between p-4">
+    <div className="flex flex-col h-screen  rounded-3xl bg-[#cdcdcd]">
+      <div className="basis-1/12  flex justify-between p-5 m-5">
         <div className="flex flex-row items-center">
           <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4" />
           <p className="text-[20px] font-semibold mr-4">
