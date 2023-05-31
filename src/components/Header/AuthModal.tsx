@@ -1,6 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 
-export const AuthModal = () => {
+export const AuthModal = ({
+  setLoginOpen, setIsOpen
+}: {
+  setLoginOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const navigate = useNavigate();
   return (
     <div className="f-ic-col px-14 w-[470px] h-[494px] bg-white rounded-2xl ">
@@ -12,7 +17,13 @@ export const AuthModal = () => {
       <button
         type="button"
         className="mb-2 mt-10 h-11 w-full bg-[#BCBCBC] rounded-lg text-white text-lg font-bold"
-        onClick={() => navigate('/login')}
+        onClick={
+          () => {
+            setLoginOpen(true)
+            setIsOpen(false)
+          }
+        }
+        
       >
         이메일로 로그인
       </button>
@@ -22,7 +33,7 @@ export const AuthModal = () => {
       >
         카카오톡으로 로그인
       </button>
-      <div className="cursor-pointer text-base mt-4">회원가입하기</div>
+      <div role='none' className="cursor-pointer text-base mt-4" onClick={() => navigate('/signup')}>회원가입하기</div>
     </div>
   );
 };

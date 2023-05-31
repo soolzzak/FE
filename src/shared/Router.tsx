@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from '../layout/Layout';
 import { Home } from '../pages/Home';
-import { Login } from '../pages/Login';
 import { Mypage } from '../pages/Mypage';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
@@ -12,7 +11,6 @@ export const Router = () => (
       <Route path="/" element={<Home />} />
       <Route path="/mypage" element={<Mypage />} />
       <Route path="/room" element={<StreamRoom />} />
-      <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
     </Routes>
   </Layout>
