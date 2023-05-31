@@ -1,4 +1,6 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
+import { titleAtom } from '../../store/addRoomStore';
 
 type InputProps = {
   title: string;
@@ -15,7 +17,7 @@ export const ModalInput = ({
   autofocus = false,
   disabled = false,
 }: InputProps) => {
-  const [modalInputValue, setModalInputValue] = useState('');
+  const [modalInputValue, setModalInputValue] = useAtom(titleAtom);
 
   return (
     <div className="w-full">

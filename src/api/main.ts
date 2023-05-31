@@ -9,7 +9,7 @@ interface ApiResponse {
 
 export type MainpageRooms = {
   roomId: number;
-  userId: number;
+  hostId: number;
   title: string;
   username: string;
   category: string;
@@ -18,8 +18,8 @@ export type MainpageRooms = {
   roomPassword: string | null;
   createdAt: string;
   alcohol: number;
-  mypageImageUrl: null;
-  roomImageUrl: string;
+  mypageImageUrl: string | null;
+  roomImageUrl: string | null;
 };
 
 export const getMainpageRooms = async (): Promise<ApiResponse | undefined> => {
