@@ -8,11 +8,12 @@ import { AuthModal } from './AuthModal';
 export const HeaderRightSection = () => {
   const [isOpenAuth, onCloseAuth, setIsOpenAuth] = useModal();
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
+  const [isOpenLogin, onCloseLogin, setIdOpenLogin] = useModal();
 
   return (
     <section className="f-jic mr-4 min-w-[469px]">
       <Modal isOpen={isOpenAuth} onClose={onCloseAuth}>
-        <AuthModal />
+        <AuthModal setIdOpenLogin={setIdOpenLogin}/>
       </Modal>
       <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate}>
         <AddRoom onClose={onCloseRoomCreate} />
