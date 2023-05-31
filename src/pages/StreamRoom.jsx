@@ -155,6 +155,9 @@ export const StreamRoom = () => {
       }
     };
     startLocalStream();
+
+    // dddd
+
     // Establish a connection with the signaling server
     const connectToSignalingServer = () => {
       socket.onopen = () => {
