@@ -19,7 +19,7 @@ export type MainpageRooms = {
   createdAt: string;
   alcohol: number;
   mypageImageUrl: string | null;
-  roomImageUrl: string | null;
+  roomImageUrl: string | undefined;
 };
 
 export const getMainpageRooms = async (): Promise<ApiResponse | undefined> => {
