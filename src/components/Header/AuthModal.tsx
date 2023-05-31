@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
 export const AuthModal = ({
-  setLoginOpen, setIsOpen
+  setIdOpenLogin
 }: {
-  setLoginOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIdOpenLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const navigate = useNavigate();
   return (
@@ -19,8 +18,7 @@ export const AuthModal = ({
         className="mb-2 mt-10 h-11 w-full bg-[#BCBCBC] rounded-lg text-white text-lg font-bold"
         onClick={
           () => {
-            setLoginOpen(true)
-            setIsOpen(false)
+            setIdOpenLogin(true)
           }
         }
         
