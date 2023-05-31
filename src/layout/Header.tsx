@@ -10,12 +10,12 @@ export const Header = () => {
   const [loginOpen, loginClose, setLoginOpen] = useModal();
 
   return (
-    <div className="w-full absolute">
-      <Modal isOpen={isOpen} onClose={onClose}>
+    <div className="w-full absolute fixed">
+      <Modal isOpen={isOpen} onClose={onClose} >
         <AuthModal setLoginOpen={setLoginOpen} setIsOpen={setIsOpen} />
       </Modal>
 
-      <Modal isOpen={loginOpen} onClose={loginClose}>
+      <Modal isOpen={loginOpen} onClose={loginClose} >
         <LoginModal />
       </Modal>
       <div className="relative f-ic justify-between h-24 shadow-sm">

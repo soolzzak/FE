@@ -1,4 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
+import Cookies from 'js-cookie';
+import jwtDecode from "jwt-decode";
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -17,13 +19,13 @@ export interface SignupInfo {
 }
 
 export interface LoginInfo {
-  email: string;
-  password: string;
+  email: string | undefined;
+  password: string | undefined;
 }
 
 export const SignupApi = async (signupInfo: SignupInfo) => {
   try {
-    await axiosInstance.post('/user/signup', signupInfo);
+    await axiosInstance.post('/signup', signupInfo);
   } catch (error) {
     console.log(error);
     if (axios.isAxiosError(error)) throw error;
@@ -33,12 +35,20 @@ export const SignupApi = async (signupInfo: SignupInfo) => {
 export const LoginApi = async (loginInfo: LoginInfo) => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
-      '/user/login',
+      '/login',
       loginInfo
-    );
-    const accessToken = response.headers['access-token'];
-    // Cookies.set("refreshToken", refreshToken)
+    )
+    const accessKey = response.headers.access_key;
+    const refreshKey = response.headers.refresh_key;
+    if (accessKey && refreshKey) {
+      Cookies.set("accessKey", accessKey);
+      Cookies.set("refreshKey", refreshKey);
+    }
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
   }
 };
+
+export const getAccessKey = () => Cookies.get("accessKey");
+export const getRefreshKey = () => Cookies.get("refreshKey");

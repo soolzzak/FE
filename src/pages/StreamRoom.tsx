@@ -8,6 +8,8 @@ import { Thumbup } from '../assets/svgs/Thumbup';
 import { ReportModal } from '../report/ReportModal';
 import { useModal } from '../hooks/useModal';
 import { Modal } from '../components/common/Modal';
+import { JoinPartnerModal } from '../components/StreamRoom/JoinPartnerModal';
+import { JoinHostModal } from '../components/StreamRoom/JoinHostModal';
 
 export const StreamRoom = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -33,6 +35,12 @@ export const StreamRoom = () => {
   };
 
   const [isOpen, onClose, setIsOpen] = useModal();
+  const [joinHostOpen, onJoinHostClose, setJoinHoseOpen] = useModal();
+  const [welcomeOpen, welcomeClose, setWelcomeOpen] = useModal();
+
+  const closeWelcome = () => {
+    welcomeClose();
+  }
 
   return (
     <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
@@ -58,9 +66,20 @@ export const StreamRoom = () => {
         <div className="col-span-2 row-span-1 bg-[#eae8e8]" >텍스트보내기</div>
       </div>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} >
         <ReportModal />
       </Modal>
+
+      {/* <Modal isOpen={joinHostOpen} onClose={onJoinHostClose}>
+        <JoinHostModal onClose={onJoinHostClose}/>
+      </Modal> */}
+
+      <Modal isOpen={welcomeOpen} onClose={welcomeClose} >
+        <JoinPartnerModal onClose={closeWelcome}/>
+      </Modal>
+
+
+      <button type="button" onClick={() => setWelcomeOpen(true)}>임시버튼~_~</button>
     </div>
   );
 };
