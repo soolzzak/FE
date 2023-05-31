@@ -19,5 +19,6 @@ module.exports = {
     'consistent-return': 'off',
     'jsx-a11y/no-autofocus': 'off',
     'react/require-default-props': 'off',
+    'react/prop-types': 'off',
   },
 };
