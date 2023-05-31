@@ -62,7 +62,7 @@ export const LoginModal = () => {
             placeholder="비밀번호를 입력해주세요"
           />
         </div>
-        <button type='button' className="w-[356px] h-[45px] bg-[#BCBCBC] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80">
+        <button type='submit' className="w-[356px] h-[45px] bg-[#BCBCBC] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80">
           이메일로 로그인
         </button>
       </form>

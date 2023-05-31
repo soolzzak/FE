@@ -5,6 +5,11 @@ import { Report } from '../assets/svgs/Report';
 
 import { Thumbdown } from '../assets/svgs/Thumbdown';
 import { Thumbup } from '../assets/svgs/Thumbup';
+import { ReportModal } from '../report/ReportModal';
+import { useModal } from '../hooks/useModal';
+import { Modal } from '../components/common/Modal';
+import { JoinPartnerModal } from '../components/StreamRoom/JoinPartnerModal';
+import { JoinHostModal } from '../components/StreamRoom/JoinHostModal';
 
 export const StreamRoom = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -29,6 +34,14 @@ export const StreamRoom = () => {
     setIsFilled(true);
   };
 
+  const [isOpen, onClose, setIsOpen] = useModal();
+  const [joinHostOpen, onJoinHostClose, setJoinHoseOpen] = useModal();
+  const [welcomeOpen, welcomeClose, setWelcomeOpen] = useModal();
+
+  const closeWelcome = () => {
+    welcomeClose();
+  }
+
   return (
     <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
       <div className="basis-1/12  flex justify-between p-4">
@@ -41,7 +54,7 @@ export const StreamRoom = () => {
           <div className="flex flex-row gap-4 ">
             <Thumbdown />
             <Thumbup />
-            <Report />
+            <Report setIsOpen={setIsOpen}/>
           </div>
         </div>
         <p className="font-semibold text-[32px]">얘기하면서 같이 소주마셔요!</p>
@@ -50,8 +63,23 @@ export const StreamRoom = () => {
         <div className="col-span-3 row-span-6 bg-[#eae8e8]">상대방</div>
         <div className="col-span-2 row-span-3 bg-[#eae8e8]">나</div>
         <div className="col-span-2 row-span-2 bg-[#eae8e8]">채팅</div>
-        <div className="col-span-2 row-span-1 bg-[#eae8e8]">텍스트보내기</div>
+        <div className="col-span-2 row-span-1 bg-[#eae8e8]" >텍스트보내기</div>
       </div>
+
+      <Modal isOpen={isOpen} onClose={onClose} >
+        <ReportModal />
+      </Modal>
+
+      {/* <Modal isOpen={joinHostOpen} onClose={onJoinHostClose}>
+        <JoinHostModal onClose={onJoinHostClose}/>
+      </Modal> */}
+
+      <Modal isOpen={welcomeOpen} onClose={welcomeClose} >
+        <JoinPartnerModal onClose={closeWelcome}/>
+      </Modal>
+
+
+      <button type="button" onClick={() => setWelcomeOpen(true)}>임시버튼~_~</button>
     </div>
   );
 };
