@@ -22,13 +22,14 @@ export type Room = {
   imageUrl: string;
 };
 
-export const getRoom = async (): Promise<ApiResponse | undefined> => {
+export const getRoom = async (params:string): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/room/:id`
+      `/room/${params}`
     );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
   }
 };
+
