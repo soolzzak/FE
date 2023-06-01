@@ -25,7 +25,7 @@ export const Mypage = () => {
   }, [data]);
 
   return (
-    <div className="flex flex-col mx-80 mt-5 gap-10 ">
+    <div className="flex flex-col mx-80  gap-10 ">
       <div className="mt-32">
         <div className="text-2xl font-bold my-11">마이페이지</div>
         <div className="flex w-full h-full gap-10 ">

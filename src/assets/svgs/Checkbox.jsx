@@ -1,11 +1,14 @@
-export const Checkbox = ({admin}) => (
-  <svg
+export const Checkbox = ({admin, setAdmin}) => {
+  const adminHandler = () => setAdmin(!admin)
+  return (
+<svg
     width="30"
     height="30"
     viewBox="0 0 30 30"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     style={{ cursor: 'pointer' }}
+    onClick={adminHandler}
   >
     <g filter="url(#filter0_d_1_429)">
       <rect
@@ -61,4 +64,5 @@ export const Checkbox = ({admin}) => (
       </filter>
     </defs>
   </svg>
-);
+  )
+}

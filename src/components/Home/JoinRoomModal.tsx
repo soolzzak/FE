@@ -1,19 +1,55 @@
+import { useEffect, useRef } from 'react';
+import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+
 export const JoinRoomModal = ({
-    setJoinOpen, setWatingOpen
-  }: {
-    setJoinOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    setWatingOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  }) => {
-  const a = 'b';
+  setIsOpenJoinRoom,
+  setIsOpenWaitingRoom,
+  onCloseJoinRoom
+}: {
+  setIsOpenJoinRoom: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOpenWaitingRoom: React.Dispatch<React.SetStateAction<boolean>>;
+  onCloseJoinRoom: () => void;
+}) => {
+  const myVideoRef = useRef<HTMLVideoElement>(null);
+  let mediaStream: MediaStream | null = null;
+
+  useEffect(() => {
+    const getMediaStream = async () => {
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        if (myVideoRef.current) {
+          myVideoRef.current.srcObject = mediaStream;
+        }
+      } catch (error) {
+        console.log('카메라 왜안되', error);
+      }
+    };
+
+    getMediaStream();
+
+    return () => {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
   return (
-    <div className="flex w-[1050px] h-[544.31px] bg-[#FFFFFF] rounded-[36px]">
+    <div className="relative flex w-[1050px] h-[544.31px] bg-[#FFFFFF] rounded-[36px]">
       <div className="w-3/5 flex flex-col items-center justify-center">
         <div className="text-2xl h-1/6 font-bold">
           {`분노의질주'`} 얘기하면서 같이 소주마셔요!
         </div>
 
         <div className="w-[520.78px] h-4/6 bg-[#D9D9D9] rounded-[20px]">
-          내얼굴
+          <video
+            className="w-full h-full object-cover rounded-[20px]"
+            ref={myVideoRef}
+            autoPlay
+            muted
+          />
         </div>
       </div>
 
@@ -34,13 +70,16 @@ export const JoinRoomModal = ({
             type="button"
             className="w-72 h-16 bg-[#9A9A9A] rounded-2xl text-[#FFFFFF] text-[22px] font-bold hover:bg-opacity-80"
             onClick={() => {
-                setJoinOpen(false)
-                setWatingOpen(true)
+              setIsOpenJoinRoom(false);
+              setIsOpenWaitingRoom(true);
             }}
           >
             혼술짝 방 입장하기
           </button>
         </div>
+      </div>
+      <div role='none' className='absolute -right-3 -top-3 hover:cursor-pointer' onClick={onCloseJoinRoom}>
+        <DeleteBtn />
       </div>
     </div>
   );

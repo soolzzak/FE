@@ -1,10 +1,11 @@
-export const Modify = () => (
+export const Modify = ({ onClick }) => (
   <svg
     width="50"
     height="50"
     viewBox="0 0 50 50"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    onClick={onClick}
   >
     <circle cx="25" cy="25" r="25" fill="#F5F5F5" />
     <mask
