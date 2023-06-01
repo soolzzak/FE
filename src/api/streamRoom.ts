@@ -28,7 +28,7 @@ export const getRoom = async (
 ): Promise<ApiResponse | undefined> => {
   try {
     const token = Cookies.get('accessKey');
-    const headers = { ACCESS_KEY: `Bearer ${token}` };
+    const headers = { ACCESS_KEY: `${token}` };
 
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
       `/room/${params}`,
