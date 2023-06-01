@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -22,14 +23,19 @@ export type Room = {
   imageUrl: string;
 };
 
-export const getRoom = async (params:string): Promise<ApiResponse | undefined> => {
+export const getRoom = async (
+  params: string
+): Promise<ApiResponse | undefined> => {
   try {
+    const token = Cookies.get('accessKey');
+    const headers = { ACCESS_KEY: `Bearer ${token}` };
+
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/room/${params}`
+      `/room/${params}`,
+      { headers }
     );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
   }
 };
-
