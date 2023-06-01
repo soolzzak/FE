@@ -218,7 +218,7 @@ export const StreamRoom = () => {
         }
       };
     };
-
+    // redeploy
     connectToSignalingServer();
 
     return () => {
