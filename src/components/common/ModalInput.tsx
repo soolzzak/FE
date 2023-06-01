@@ -8,6 +8,7 @@ type InputProps = {
   inputType: string;
   autofocus?: boolean;
   disabled?: boolean;
+  handleInputChange: (option: string) => void;
 };
 
 export const ModalInput = ({
@@ -16,22 +17,18 @@ export const ModalInput = ({
   inputType,
   autofocus = false,
   disabled = false,
-}: InputProps) => {
-  const [modalInputValue, setModalInputValue] = useAtom(titleAtom);
-
-  return (
-    <div className="w-full">
-      <p className="text-base font-bold mb-2 text-[#454545]">{title}</p>
-      <input
-        key={title}
-        type={inputType}
-        autoFocus={autofocus}
-        value={modalInputValue}
-        disabled={disabled}
-        className="w-full h-11 pl-4 px-3 text-sm rounded-lg border border-[#929292]"
-        placeholder={placeholderText}
-        onChange={(e) => setModalInputValue(e.target.value)}
-      />
-    </div>
-  );
-};
+  handleInputChange,
+}: InputProps) => (
+  <div className="w-full">
+    <p className="text-base font-bold mb-2 text-[#454545]">{title}</p>
+    <input
+      key={title}
+      type={inputType}
+      autoFocus={autofocus}
+      disabled={disabled}
+      className="w-full h-11 pl-4 px-3 text-sm rounded-lg border border-[#929292]"
+      placeholder={placeholderText}
+      onChange={(e) => handleInputChange(e.target.value)}
+    />
+  </div>
+);
