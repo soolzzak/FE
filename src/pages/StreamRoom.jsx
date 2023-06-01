@@ -23,7 +23,7 @@ const MediaConstraints = {
     sampleRate: 44100,
   },
 };
-
+let mediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -58,6 +58,7 @@ export const StreamRoom = () => {
       };
 
       console.log('sending sdp', peerConnection.localDescription);
+      console.log('added answer to peerConnection', peerConnection);
       console.log('sending answer to received offer', response);
       socket.send(JSON.stringify(response));
     } catch (error) {
@@ -134,6 +135,11 @@ export const StreamRoom = () => {
       setRemoteStream(stream);
       remoteVideoRef.current.srcObject = stream;
     };
+
+    console.log('adding media stream', mediaStream);
+    mediaStream.getTracks().forEach((track) => {
+      peerConnection.addTrack(track, mediaStream);
+    });
     console.log('created peer connection: ', peerConnection);
   };
 
@@ -144,20 +150,22 @@ export const StreamRoom = () => {
     const startLocalStream = async () => {
       try {
         // eslint-disable-next-line no-undef
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
+        mediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: true,
         });
         localVideoRef.current.srcObject = mediaStream;
-        setLocalStream(mediaStream);
+        console.log('adding media stream', mediaStream);
+        setLocalStream((prev) => mediaStream);
+        mediaStream.getTracks().forEach((track) => {
+          peerConnection.addTrack(track, mediaStream);
+        });
+        console.log('media stream', mediaStream);
       } catch (error) {
         console.log('Error accessing media devices:', error);
       }
     };
     startLocalStream();
-
-    // dddd
-
     // Establish a connection with the signaling server
     const connectToSignalingServer = () => {
       socket.onopen = () => {
@@ -243,16 +251,11 @@ export const StreamRoom = () => {
         </div>
         <p className="font-semibold text-[32px]">얘기하면서 같이 소주마셔요!</p>
       </div>
-      <div className="basis-11/12  grid grid-cols-5 grid-rows-6 gap-5">
-        <video
-          ref={localVideoRef}
-          autoPlay
-          muted
-          className="col-span-3 row-span-6 rounded-xl"
-        />
-        <div className="col-span-2 row-span-3 bg-[#eae8e8]">나</div>
-        <div className="col-span-2 row-span-2 bg-[#eae8e8]">채팅</div>
-        <div className="col-span-2 row-span-1 bg-[#eae8e8]">텍스트보내기</div>
+      <div className="grid grid-cols-2">
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <video ref={localVideoRef} autoPlay className=" rounded-xl" />
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <video ref={remoteVideoRef} autoPlay className="rounded-xl" />
       </div>
     </div>
   );
