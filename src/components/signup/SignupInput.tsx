@@ -110,7 +110,6 @@ export const SignupInput = () => {
   const [admin, setAdmin] = useState(false);
   const [adminkey, setAdminkey] = useState<string | null>(null);
   const [adminkeyErrMsg, setAdminkeyErrMsg] = useState<string | undefined>();
-  const adminHandler = () => setAdmin(!admin);
   const adminKeyHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setAdminkey(event.target.value);
   const adminKeyCheckHandler = () => {
@@ -151,6 +150,8 @@ export const SignupInput = () => {
     };
     await signupMutation.mutate(userInfo);
   };
+
+  console.log(admin)
 
   return (
     <form onSubmit={submitHandler}>
@@ -277,7 +278,7 @@ export const SignupInput = () => {
         <div className="flex">
           <div className="pt-1">
             
-            <Checkbox admin={admin} />
+            <Checkbox admin={admin} setAdmin={setAdmin} />
           </div>
           <span className="font-bold text-base mb-2">관리자</span>
         </div>

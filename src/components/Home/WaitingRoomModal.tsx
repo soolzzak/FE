@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 
-export const WaitingModal = ({ waitingClose }: { waitingClose: () => void }) => {
+export const WaitingRoomModal = ({ onCloaseWaitingRoom }: { onCloaseWaitingRoom: () => void }) => {
   const [timeLeft, setTimeLeft] = useState(3);
   const navigation = useNavigate();
 
@@ -12,22 +13,22 @@ export const WaitingModal = ({ waitingClose }: { waitingClose: () => void }) => 
 
     if (timeLeft === 0) {
       clearInterval(timer);
-      waitingClose();
+      onCloaseWaitingRoom();
       navigation('/room')
     }
 
     return () => {
       clearInterval(timer);
     };
-  }, [timeLeft, waitingClose]);
+  }, [timeLeft, onCloaseWaitingRoom]);
 
   return (
-    <div className="w-[600px] h-[327.35px] bg-[#FFFFFF] rounded-[30px] border text-center flex flex-col justify-center items-center">
+    <div className="relative w-[620px] h-[350px] bg-[#FFFFFF] rounded-[30px] border text-center flex flex-col justify-center items-center">
       <div className="font-bold text-2xl text-[#454545] mb-2">
         {timeLeft}초 뒤에 곽준희님의 방으로 입장합니다!
       </div>
 
-      <div className="font-bold text-[40px] text-[#454545] mb-2">
+      <div className="flex justify-center items-center w-20 h-20 font-bold text-[40px] text-[#454545] mb-2 border border-[#AEAEAE] rounded-full">
         {timeLeft}
       </div>
 
@@ -42,6 +43,9 @@ export const WaitingModal = ({ waitingClose }: { waitingClose: () => void }) => 
         <p className="font-medium text-lg text-[#454545]">
           예의없는 행동시 신고 대상이 됩니다.
         </p>
+      </div>
+      <div role='none' className='absolute -right-3 -top-3 hover:cursor-pointer' onClick={onCloaseWaitingRoom}>
+        <DeleteBtn />
       </div>
     </div>
   );

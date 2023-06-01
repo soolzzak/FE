@@ -3,6 +3,8 @@ import { useCustomSelector } from '../../hooks/useCustomSelector';
 import { CustomSelector } from '../common/CustomSelector';
 import { ModalInput } from '../common/ModalInput';
 import { TwoOptionsSelector } from '../common/TwoOptionsSelector';
+import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { useModal } from '../../hooks/useModal';
 
 export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const selections = ['누구나', '여자만', '남자만'];
@@ -70,8 +72,10 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   //   };
   // }, [isOpen]);
 
+  const [isOpenExit, onCloseExit, setIsOpenExit] = useModal();
+
   return (
-    <div className="f-col bg-white py-8 px-12 rounded-[20px]">
+    <div className="relative f-col bg-white py-8 px-12 rounded-[20px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="w-[356px] h-[236px] mt-5 rounded-2xl bg-slate-400">
           {/* {isOpen && (
@@ -145,6 +149,26 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
       >
         혼술짝 방만들기
       </button>
+      <div
+        role="none"
+        className="absolute -right-3 -top-3 hover:cursor-pointer"
+        onClick={onClose}
+      >
+        <DeleteBtn />
+      </div>
+
+      <div>
+        {isOpenExit && (
+          <div className="fixed inset-0 z-50 f-jic-col">
+            <div
+              role="none"
+              className="fixed inset-0"
+              onClick={() => onCloseExit()}
+            />
+            <div className="fixed">sss</div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

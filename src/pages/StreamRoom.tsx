@@ -10,7 +10,11 @@ import { ReportModal } from '../report/ReportModal';
 import { useModal } from '../hooks/useModal';
 import { Modal } from '../components/common/Modal';
 import { JoinPartnerModal } from '../components/StreamRoom/JoinPartnerModal';
-import { JoinHostModal } from '../components/StreamRoom/JoinHostModal';
+import { Mic } from '../assets/svgs/Mic';
+import { Setting } from '../assets/svgs/Setting';
+import { Dooropen } from '../assets/svgs/Dooropen';
+import { Camera } from '../assets/svgs/Camera';
+import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
 
 export const StreamRoom = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -35,13 +39,10 @@ export const StreamRoom = () => {
     setIsFilled(true);
   };
 
-  const [isOpen, onClose, setIsOpen] = useModal();
-  const [joinHostOpen, onJoinHostClose, setJoinHoseOpen] = useModal();
-  const [welcomeOpen, welcomeClose, setWelcomeOpen] = useModal();
-
-  const closeWelcome = () => {
-    welcomeClose();
-  };
+  const [isOpenReport, onCloseReport, setIsOpenReport] = useModal();
+  const [isOpenJoinPartner, onCloseJoinPartner, setIsOpenJoinPartner] =
+    useModal();
+  const [isOpenLeaveRoom, onCloseLeaveRoom, setIsOpenLeaveRoom] = useModal();
 
   return (
     <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
@@ -55,32 +56,52 @@ export const StreamRoom = () => {
           <div className="flex flex-row gap-4 ">
             <Thumbdown />
             <Thumbup />
-            <Report setIsOpen={setIsOpen} />
+            <Report setIsOpenReport={setIsOpenReport} />
           </div>
         </div>
         <p className="font-semibold text-[32px]">얘기하면서 같이 소주마셔요!</p>
       </div>
       <div className="basis-11/12 grid grid-cols-5 grid-rows-6 gap-5">
-        <div className="col-span-3 row-span-6 bg-[#eae8e8]">상대방</div>
+        <div className="relative col-span-3 row-span-6 bg-[#eae8e8]">
+          <div className="absolute top-0">상대방</div>
+          <div className="absolute bottom-10 flex flex-row gap-4 left-1/2 -translate-x-1/2">
+            <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
+              <Mic />
+            </div>
+            <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
+              <Camera />
+            </div>
+
+            <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
+              <Setting />
+            </div>
+
+            <div role='none' className="rounded-full bg-[#F90707] w-20 h-20 flex justify-center items-center hover:cursor-pointer"
+            onClick={() => setIsOpenLeaveRoom(true)}
+            >
+              <Dooropen />
+            </div>
+          </div>
+        </div>
         <div className="col-span-2 row-span-3 bg-[#eae8e8]">나</div>
         <div className="col-span-2 row-span-2 bg-[#eae8e8]">채팅</div>
         <div className="col-span-2 row-span-1 bg-[#eae8e8]">텍스트보내기</div>
       </div>
 
-      {/* <Modal isOpen={isOpen} onClose={onClose} >
-    <ReportModal />
-    </Modal> */}
+      <Modal isOpen={isOpenReport} onClose={onCloseReport}>
+        <ReportModal onCloseReport={onCloseReport} />
+      </Modal>
 
-      {/* <Modal isOpen={joinHostOpen} onClose={onJoinHostClose}>
-    <JoinHostModal onClose={onJoinHostClose}/>
-    </Modal> */}
+      <Modal isOpen={isOpenJoinPartner} onClose={onCloseJoinPartner}>
+        <JoinPartnerModal onClose={onCloseJoinPartner} />
+      </Modal>
 
-      {/* <Modal isOpen={welcomeOpen} onClose={welcomeClose} >
-    <JoinPartnerModal onClose={closeWelcome}/>
-    </Modal> */}
+      <Modal isOpen={isOpenLeaveRoom} onClose={onCloseLeaveRoom}>
+        <LeaveRoomModal onCloseLeaveRoom={onCloseLeaveRoom}/>
+      </Modal>
 
-      <button type="button" onClick={() => setWelcomeOpen(true)}>
-        임시버튼~_~
+      <button type="button" onClick={() => setIsOpenJoinPartner(true)}>
+        상대방 입장 임시버튼
       </button>
     </div>
   );
