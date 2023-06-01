@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import Cookies from 'js-cookie';
 import jwtDecode from "jwt-decode";
+import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -23,9 +23,18 @@ export interface LoginInfo {
   password: string | undefined;
 }
 
+// token 함수
+// export const getAccessKey = () => {
+//   return Cookies.get("access_key")
+// }
+// export const getRefreshKey = () => {
+//   return Cookies.get("refresh_key")
+// }
+
 export const SignupApi = async (signupInfo: SignupInfo) => {
   try {
-    await axiosInstance.post('/signup', signupInfo);
+    const response = await axiosInstance.post('/signup', signupInfo);
+    return response;
   } catch (error) {
     console.log(error);
     if (axios.isAxiosError(error)) throw error;
@@ -37,18 +46,30 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
       '/login',
       loginInfo
-    )
-    const accessKey = response.headers.access_key;
+    );
+    console.log(response.headers);
+    console.log(response.data.msg);
+    const accessKey = response.headers.access_key
     const refreshKey = response.headers.refresh_key;
-    if (accessKey && refreshKey) {
-      Cookies.set("accessKey", accessKey);
-      Cookies.set("refreshKey", refreshKey);
-    }
+    Cookies.set("accessKey", accessKey);
+    Cookies.set("refreshKey", refreshKey);
+
+    console.log(jwtDecode(accessKey));
+    
     return response;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
   }
 };
 
-export const getAccessKey = () => Cookies.get("accessKey");
-export const getRefreshKey = () => Cookies.get("refreshKey");
+// 유저 확인(token)
+// export const confirmUser = () => {
+//   const access_key = getAccessKey();
+//   const refresh_key = getRefreshKey();
+//   if (access_key && refresh_key) {
+//     const userInfo = jwtDecode(access_key);
+//     return userInfo;
+//   } else {
+//     return null;
+//   }
+// }

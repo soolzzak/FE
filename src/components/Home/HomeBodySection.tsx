@@ -1,30 +1,31 @@
-import { useState } from 'react';
-import { MainpageRooms } from '../../api/main';
+import { useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { MainpageRooms, getMainpageRooms } from '../../api/main';
 import { ChatroomCard } from './ChatroomCard';
 
 export const HomeBodySection = () => {
-  // const { data, isLoading, isError, error } = useQuery(
-  //   'chatrooms',
-  //   getMainpageRooms,
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
+  const { data, isLoading, isError, error } = useQuery(
+    'chatrooms',
+    getMainpageRooms,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
   const [chatList, setChatList] = useState<MainpageRooms[] | undefined>([]);
 
-  // useEffect(() => {
-  //   if (data) {
-  //     setChatList(data.data);
-  //     console.log(data.data);
-  //   }
-  // }, [data]);
+  useEffect(() => {
+    if (data) {
+      setChatList(data.data);
+      console.log(data.data);
+    }
+  }, [data]);
 
-  // if (isLoading) {
-  //   return <p>Loading...</p>;
-  // }
-  // if (isError) {
-  //   return <p>{(error as Error).message}</p>;
-  // }
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  if (isError) {
+    return <p>{(error as Error).message}</p>;
+  }
   return (
     <section className="flex-grow w-full">
       <div className="f-ic-col min-w-[660px]">
@@ -39,26 +40,6 @@ export const HomeBodySection = () => {
             </button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 h-full">
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-            <div className="w-60 h-72 bg-slate-500">color</div>
-
             {chatList?.map((chatRoom) => (
               <ChatroomCard key={chatRoom.roomId} chatRoom={chatRoom} />
             ))}

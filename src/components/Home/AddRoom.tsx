@@ -1,14 +1,29 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { useCustomSelector } from '../../hooks/useCustomSelector';
+import {
+  handlPrivateSelectChangeAtom,
+  handleCategoryChangeAtom,
+  handleGenderChangeAtom,
+  handleRoomPasswprdChangeAtom,
+  handleTitleChangeAtom,
+} from '../../store/addRoomStore';
 import { CustomSelector } from '../common/CustomSelector';
 import { ModalInput } from '../common/ModalInput';
 import { TwoOptionsSelector } from '../common/TwoOptionsSelector';
+import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { useModal } from '../../hooks/useModal';
 
 export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const selections = ['누구나', '여자만', '남자만'];
   const [selectedOption, handleOptionClick] = useCustomSelector<string>(
     selections[0]
   );
+  const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
+  const [, handleCategoryChange] = useAtom(handleCategoryChangeAtom);
+  const [, handleGenderChange] = useAtom(handleGenderChangeAtom);
+  const [, handlePrivateorPublic] = useAtom(handlPrivateSelectChangeAtom); //
+  const [, handleRoomPasswordChange] = useAtom(handleRoomPasswprdChangeAtom);
 
   const [, setImage] = useState<File | undefined>();
   const [view, setView] = useState<string | undefined>();
@@ -40,48 +55,14 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
     };
   };
 
-  // const myVideoRef = useRef<HTMLVideoElement>(null);
+  console.log('render');
 
-  // let mediaStream: MediaStream | null = null;
-  // const getMediaStream = async () => {
-  //   try {
-  //     mediaStream = await navigator.mediaDevices.getUserMedia({
-  //       video: true,
-  //       audio: true,
-  //     });
-
-  //     if (myVideoRef.current) {
-  //       myVideoRef.current.srcObject = mediaStream;
-  //     }
-  //   } catch (error) {
-  //     console.log('Error accessing media devices:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     getMediaStream();
-  //   }
-
-  //   return () => {
-  //     if (mediaStream) {
-  //       mediaStream.getTracks().forEach((track) => track.stop());
-  //     }
-  //   };
-  // }, [isOpen]);
+  const [isOpenExit, onCloseExit, setIsOpenExit] = useModal();
 
   return (
-    <div className="f-col bg-white py-8 px-12 rounded-[20px]">
+    <div className="relative f-col bg-white py-8 px-12 rounded-[20px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="w-[356px] h-[236px] mt-5 rounded-2xl bg-slate-400">
-          {/* {isOpen && (
-            <video
-              className="rounded-2xl w-[356px] h-[236px] object-cover"
-              ref={myVideoRef}
-              autoPlay
-              muted
-            />
-          )} */}
           <label
             htmlFor="imageInput"
             className="cursor-pointer f-jic rounded-lg object-cover shadow w-full h-full bg-slate-400 hoverAnim"
@@ -112,11 +93,13 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
             placeholderText="예시 : 분노의 질주 얘기하면서 같이 소주마셔요"
             inputType="text"
             autofocus
+            handleInputChange={handleTitleChange}
           />
           <ModalInput
             title="카테고리"
             inputType="text"
             placeholderText="카테고리를 설정해주세요"
+            handleInputChange={handleCategoryChange}
           />
           <CustomSelector
             selections={selections}
@@ -134,6 +117,7 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
               title="방 비밀번호"
               disabled
               placeholderText="비밀번호를 입력해주세요"
+              handleInputChange={handleTitleChange}
             />
           </div>
         </div>
@@ -145,6 +129,26 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
       >
         혼술짝 방만들기
       </button>
+      <div
+        role="none"
+        className="absolute -right-3 -top-3 hover:cursor-pointer"
+        onClick={onClose}
+      >
+        <DeleteBtn />
+      </div>
+
+      <div>
+        {isOpenExit && (
+          <div className="fixed inset-0 z-50 f-jic-col">
+            <div
+              role="none"
+              className="fixed inset-0"
+              onClick={() => onCloseExit()}
+            />
+            <div className="fixed">sss</div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
