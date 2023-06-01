@@ -14,7 +14,7 @@ export const Home = () => {
     <div className="f-ic-col bg-primary-100 min-h-screen w-full">
     <HeroSection />
     <CategoryTab />
-    <HomeBodySection setIsOpenJoinRoom={setIsOpenJoinRoom}/>
+    <HomeBodySection/>
     <Modal isOpen={isOpenJoinroom} onClose={onCloseJoinRoom}>
       <JoinRoomModal onCloseJoinRoom={onCloseJoinRoom} setIsOpenJoinRoom={setIsOpenJoinRoom} setIsOpenWaitingRoom={setIsOpenWaitingRoom}/>
     </Modal>
