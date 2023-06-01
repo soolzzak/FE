@@ -15,7 +15,7 @@ export const HeaderRightSection = () => {
       <Modal isOpen={isOpenAuth} onClose={onCloseAuth}>
         <AuthModal setIdOpenLogin={setIdOpenLogin}/>
       </Modal>
-      <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate}>
+      <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} bgClassChange='bg-red'>
         <AddRoom onClose={onCloseRoomCreate} />
       </Modal>
       {/* <button

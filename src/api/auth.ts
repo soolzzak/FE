@@ -33,7 +33,8 @@ export interface LoginInfo {
 
 export const SignupApi = async (signupInfo: SignupInfo) => {
   try {
-    await axiosInstance.post('/signup', signupInfo);
+    const response = await axiosInstance.post('/signup', signupInfo);
+    return response;
   } catch (error) {
     console.log(error);
     if (axios.isAxiosError(error)) throw error;
