@@ -18,16 +18,15 @@ export const LoginModal = () => {
 
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!email || !password) {
-      return;
-    }
+    // if (!email || !password) {
+    //   return;
+    // }
     const loginInfo: LoginInfo = {
       email,
       password,
     };
     await loginMutation.mutate(loginInfo);
-    setEmail('');
-    setPassword('');
+  
   };
 
   // const KakaoLoginBtn = () => {
