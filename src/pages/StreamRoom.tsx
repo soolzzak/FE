@@ -11,6 +11,7 @@ import { useModal } from '../hooks/useModal';
 import { Modal } from '../components/common/Modal';
 import { JoinPartnerModal } from '../components/StreamRoom/JoinPartnerModal';
 import { JoinHostModal } from '../components/StreamRoom/JoinHostModal';
+import { CategoryDropDown } from '../components/StreamRoom/CategoryDropDown';
 
 export const StreamRoom = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -44,10 +45,11 @@ export const StreamRoom = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
-      <div className="basis-1/12 flex justify-between p-4">
+    <div className="flex flex-col h-screen rounded-3xl bg-[#cdcdcd]">
+      <div className="basis-1/12 flex justify-between mt-20 p-5 m-5">
         <div className="flex flex-row items-center">
-          <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4" />
+          {/* <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4"  /> */}
+          <CategoryDropDown />
           <p className="text-[20px] font-semibold mr-4">
             카리나님과 따로 또 같이 혼술하는 중!
           </p>
@@ -67,17 +69,17 @@ export const StreamRoom = () => {
         <div className="col-span-2 row-span-1 bg-[#eae8e8]">텍스트보내기</div>
       </div>
 
-      {/* <Modal isOpen={isOpen} onClose={onClose} >
-    <ReportModal />
-    </Modal> */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ReportModal />
+      </Modal>
 
       {/* <Modal isOpen={joinHostOpen} onClose={onJoinHostClose}>
     <JoinHostModal onClose={onJoinHostClose}/>
     </Modal> */}
 
-      {/* <Modal isOpen={welcomeOpen} onClose={welcomeClose} >
-    <JoinPartnerModal onClose={closeWelcome}/>
-    </Modal> */}
+      <Modal isOpen={welcomeOpen} onClose={welcomeClose}>
+        <JoinPartnerModal onClose={closeWelcome} />
+      </Modal>
 
       <button type="button" onClick={() => setWelcomeOpen(true)}>
         임시버튼~_~
