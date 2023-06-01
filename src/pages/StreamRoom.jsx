@@ -136,6 +136,12 @@ export const StreamRoom = () => {
       remoteVideoRef.current.srcObject = stream;
     };
 
+    if (mediaStream) {
+      console.log('adding media stream', mediaStream);
+      mediaStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, mediaStream);
+      });
+    }
     console.log('created peer connection: ', peerConnection);
   };
 
