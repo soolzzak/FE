@@ -9,21 +9,21 @@ export const CategoryTab = () => {
 
   const tabList = [
     '전체',
-    '영화/드라마',
-    '맛집/여행',
-    '고민상담',
-    '스포츠/게임',
-    '오늘하루',
-    '자유방',
+    '🎞 영화/드라마 ',
+    '✈ 맛집/여행',
+    '🔮 고민상담',
+    '⚽ 스포츠/게임',
+    '🎈 오늘하루',
+    '🙌  자유방',
   ];
 
   return (
     <nav className="w-full ">
-      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 gap-0 px-10 min-w-[760px] lg:px-40">
+      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 gap-0 min-w-[660px] lg:px-52">
         {tabList.map((tab) => (
           <div
             role="none"
-            className={`f-jic cursor-pointer mx-7 py-4 text-lg font-semibold text-[#454545] 
+            className={`f-jic cursor-pointer px-5 py-4 text-lg font-semibold text-[#454545] 
             ${
               activeTab === tab
                 ? 'border-b-[3px] border-primary-300 text-primary-200'

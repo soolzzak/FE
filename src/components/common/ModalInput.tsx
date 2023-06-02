@@ -1,7 +1,3 @@
-import { useAtom } from 'jotai';
-import { useState } from 'react';
-import { titleAtom } from '../../store/addRoomStore';
-
 type InputProps = {
   title: string;
   placeholderText: string;
@@ -26,7 +22,8 @@ export const ModalInput = ({
       type={inputType}
       autoFocus={autofocus}
       disabled={disabled}
-      className="w-full h-11 pl-4 px-3 text-sm rounded-lg border border-[#929292]"
+      className={`w-full h-11 pl-4 px-3 text-sm rounded-lg border border-[#929292]
+        ${disabled ? 'bg-primary-50 text-' : ''}`}
       placeholder={placeholderText}
       onChange={(e) => handleInputChange(e.target.value)}
     />

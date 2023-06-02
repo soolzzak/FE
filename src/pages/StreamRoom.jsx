@@ -10,19 +10,11 @@ import { Thumbup } from '../assets/svgs/Thumbup';
 
 const PeerConnectionConfig = {
   iceServers: [
-    { urls: 'stun:stun.stunprotocol.org:3478' },
     { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun.stunprotocol.org:3478' },
   ],
 };
 
-const MediaConstraints = {
-  video: true,
-  audio: {
-    echoCancellation: true,
-    noiseSuppression: true,
-    sampleRate: 44100,
-  },
-};
 let mediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef(null);
@@ -112,7 +104,7 @@ export const StreamRoom = () => {
     const configuration = {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     };
-    peerConnection = new RTCPeerConnection(configuration);
+    peerConnection = new RTCPeerConnection(PeerConnectionConfig);
 
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
