@@ -16,6 +16,7 @@ import { Dooropen } from '../assets/svgs/Dooropen';
 import { Camera } from '../assets/svgs/Camera';
 import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
 import { CategoryDropDown } from '../components/StreamRoom/CategoryDropDown';
+import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
 
 export const StreamRoom = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -74,9 +75,10 @@ export const StreamRoom = () => {
               <Camera />
             </div>
 
-            <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
+            {/* <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
               <Setting />
-            </div>
+            </div> */}
+            <ConfigDropDown />
 
             <div
               role="none"

@@ -41,12 +41,11 @@ export const CategoryDropDown = () => {
         onKeyDown={handleKeyDown}
         role="button"
         tabIndex={0}
+        aria-label="Profile picture"
         className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4"
-      >
-        d
-      </div>
+      />
 
-      <Modal isOpen={isOpenBlock} onClose={onCloseBlock}>
+      <Modal isOpen={isOpenBlock} onClose={onCloseBlock} hasOverlay>
         <BlockModal onClose={onCloseBlock} />
       </Modal>
       <div className="relative mt-3 font-semibold">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useModal } from '../../hooks/useModal';
 import { Modal } from '../common/Modal';
 import { KickoutModal } from './KickoutModal';
+import { Setting } from '../../assets/svgs/Setting';
 
 export const ConfigDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,25 +32,24 @@ export const ConfigDropDown = () => {
 
   return (
     <div>
+      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
+        <KickoutModal onClose={onCloseKickout} />
+      </Modal>
       <div
         onClick={onToggle}
         onKeyDown={handleKeyDown}
         role="button"
         tabIndex={0}
-        className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4"
+        className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer"
       >
-        d
+        <Setting />
       </div>
-
-      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
-        <KickoutModal onClose={onCloseKickout} />
-      </Modal>
 
       <div className="relative mt-3 font-semibold">
         {isOpen && (
-          <div className="bg-white rounded-lg w-20 h-28 flex flex-col justify-center items-center absolute z-10">
+          <div className="bg-white rounded-lg w-28 h-24 flex flex-col justify-center items-center absolute z-10 bottom-28 ">
             <div
-              className="border-b-2 w-full basis-1/3  flex items-center justify-center relative z-20"
+              className="border-b-2 w-full basis-1/2 flex items-center justify-center relative z-20"
               onClick={handleModifyClick}
               onKeyDown={handleKeyDown}
               role="button"
@@ -58,7 +58,7 @@ export const ConfigDropDown = () => {
               방 수정하기
             </div>
             <div
-              className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20"
+              className="w-full basis-1/2 flex items-center justify-center relative z-20"
               onClick={handleKickOutClick}
               onKeyDown={handleKeyDown}
               role="button"
