@@ -1,6 +1,6 @@
 import { Notifications } from '../../assets/svgs/Notifications';
 import { useModal } from '../../hooks/useModal';
-import { AddRoom } from '../Home/AddRoom';
+import { AddRoom } from './AddRoom';
 import { CommonButton } from '../common/CommonButton';
 import { Modal } from '../common/Modal';
 import { AuthModal } from './AuthModal';
@@ -13,9 +13,9 @@ export const HeaderRightSection = () => {
   return (
     <section className="f-jic mr-4 min-w-[469px]">
       <Modal isOpen={isOpenAuth} onClose={onCloseAuth}>
-        <AuthModal setIdOpenLogin={setIdOpenLogin}/>
+        <AuthModal setIdOpenLogin={setIdOpenLogin} />
       </Modal>
-      <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} bgClassChange='bg-red'>
+      <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
         <AddRoom onClose={onCloseRoomCreate} />
       </Modal>
       {/* <button

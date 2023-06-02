@@ -4,7 +4,7 @@ import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 export const JoinRoomModal = ({
   setIsOpenJoinRoom,
   setIsOpenWaitingRoom,
-  onCloseJoinRoom
+  onCloseJoinRoom,
 }: {
   setIsOpenJoinRoom: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenWaitingRoom: React.Dispatch<React.SetStateAction<boolean>>;
@@ -78,7 +78,11 @@ export const JoinRoomModal = ({
           </button>
         </div>
       </div>
-      <div role='none' className='absolute -right-3 -top-3 hover:cursor-pointer' onClick={onCloseJoinRoom}>
+      <div
+        role="none"
+        className="absolute -right-3 -top-3 hover:cursor-pointer"
+        onClick={onCloseJoinRoom}
+      >
         <DeleteBtn />
       </div>
     </div>

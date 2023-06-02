@@ -9,25 +9,17 @@ export const categoryAtom = atom<string>('');
 export const handleCategoryChangeAtom = atom(
   null,
   (get, set, update: string) => {
-    set(titleAtom, () => update);
+    set(categoryAtom, () => update);
   }
 );
+
 export const genderAtom = atom<string>('');
-export const handleGenderChangeAtom = atom(null, (get, set, update: string) => {
-  set(titleAtom, () => update);
-});
 export const publicOrPrivateAtom = atom<string>('');
-export const handlPrivateSelectChangeAtom = atom(
-  null,
-  (get, set, update: string) => {
-    set(titleAtom, () => update);
-  }
-);
 
 export const roomPasswordAtom = atom<string>('');
 export const handleRoomPasswprdChangeAtom = atom(
   null,
   (get, set, update: string) => {
-    set(titleAtom, () => update);
+    set(roomPasswordAtom, () => update);
   }
 );
