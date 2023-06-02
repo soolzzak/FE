@@ -19,11 +19,11 @@ export const CategoryTab = () => {
 
   return (
     <nav className="w-full ">
-      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 gap-0 min-w-[660px] lg:px-14">
+      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 gap-0 px-10 min-w-[760px] lg:px-40">
         {tabList.map((tab) => (
           <div
             role="none"
-            className={`f-jic cursor-pointer px-5 py-4 text-xl font-semibold text-[#454545] 
+            className={`f-jic cursor-pointer mx-7 py-4 text-lg font-semibold text-[#454545] 
             ${
               activeTab === tab
                 ? 'border-b-[3px] border-primary-300 text-primary-200'
