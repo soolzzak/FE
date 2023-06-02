@@ -13,6 +13,7 @@ import { ModalInput } from '../common/ModalInput';
 import { TwoOptionsSelector } from '../common/TwoOptionsSelector';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { useModal } from '../../hooks/useModal';
+import { CancelButton } from '../common/CancelButton';
 
 export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const selections = ['누구나', '여자만', '남자만'];
@@ -129,13 +130,7 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
       >
         혼술짝 방만들기
       </button>
-      <div
-        role="none"
-        className="absolute -right-3 -top-3 hover:cursor-pointer"
-        onClick={onClose}
-      >
-        <DeleteBtn />
-      </div>
+      <CancelButton onClose={onClose} />
 
       <div>
         {isOpenExit && (

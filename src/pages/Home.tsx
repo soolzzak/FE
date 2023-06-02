@@ -8,21 +8,24 @@ import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
 
 export const Home = () => {
   const [isOpenJoinroom, onCloseJoinRoom, setIsOpenJoinRoom] = useModal();
-  const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] = useModal();
+  const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] =
+    useModal();
 
   return (
-    <div className="f-ic-col bg-primary-100 min-h-screen w-full">
-    <HeroSection />
-    <CategoryTab />
-    <HomeBodySection setIsOpenJoinRoom={setIsOpenJoinRoom}/>
-    <Modal isOpen={isOpenJoinroom} onClose={onCloseJoinRoom}>
-      <JoinRoomModal onCloseJoinRoom={onCloseJoinRoom} setIsOpenJoinRoom={setIsOpenJoinRoom} setIsOpenWaitingRoom={setIsOpenWaitingRoom}/>
-    </Modal>
-    <Modal isOpen={isOpenWaitingRoom} onClose={onCloaseWaitingRoom}>
-      <WaitingRoomModal onCloaseWaitingRoom={onCloaseWaitingRoom}/>
-    </Modal>
-  </div>
-  )
-  
-}
-  
+    <div className="f-ic-col bg-primary-50 min-h-screen w-full">
+      <HeroSection />
+      <CategoryTab />
+      <HomeBodySection />
+      <Modal isOpen={isOpenJoinroom} onClose={onCloseJoinRoom}>
+        <JoinRoomModal
+          onCloseJoinRoom={onCloseJoinRoom}
+          setIsOpenJoinRoom={setIsOpenJoinRoom}
+          setIsOpenWaitingRoom={setIsOpenWaitingRoom}
+        />
+      </Modal>
+      <Modal isOpen={isOpenWaitingRoom} onClose={onCloaseWaitingRoom}>
+        <WaitingRoomModal onCloaseWaitingRoom={onCloaseWaitingRoom} />
+      </Modal>
+    </div>
+  );
+};
