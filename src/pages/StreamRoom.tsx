@@ -17,6 +17,7 @@ import { Camera } from '../assets/svgs/Camera';
 import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
 import { CategoryDropDown } from '../components/StreamRoom/CategoryDropDown';
 import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
+import { KickoutModal } from '../components/StreamRoom/KickoutModal';
 
 export const StreamRoom = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -36,6 +37,8 @@ export const StreamRoom = () => {
   //   }
   // }, [data]);
   const [isFilled, setIsFilled] = useState(false);
+
+  const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
 
   const handleClick = () => {
     setIsFilled(true);
@@ -71,14 +74,12 @@ export const StreamRoom = () => {
             <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
               <Mic />
             </div>
+
             <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
               <Camera />
             </div>
 
-            {/* <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
-              <Setting />
-            </div> */}
-            <ConfigDropDown />
+            <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
 
             <div
               role="none"
@@ -104,6 +105,10 @@ export const StreamRoom = () => {
 
       <Modal isOpen={isOpenLeaveRoom} onClose={onCloseLeaveRoom}>
         <LeaveRoomModal onCloseLeaveRoom={onCloseLeaveRoom} />
+      </Modal>
+
+      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
+        <KickoutModal onClose={onCloseKickout} />
       </Modal>
 
       <button type="button" onClick={() => setIsOpenJoinPartner(true)}>
