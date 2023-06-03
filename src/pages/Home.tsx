@@ -13,7 +13,7 @@ export const Home = () => {
   const [isOpenLogin, onCloseLogin, setIsOpenLogin] = useModal();
 
   return (
-    <div className="f-ic-col bg-primary-50 min-h-screen w-full">
+    <div className="f-ic-col bg-primary-100 min-h-screen w-full">
       <HeroSection />
       <CategoryTab />
       <HomeBodySection />

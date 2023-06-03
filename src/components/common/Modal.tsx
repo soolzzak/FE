@@ -20,7 +20,7 @@ export const Modal = ({
           role="none"
           className={`fixed inset-0 ${
             hasOverlay ? 'bg-black opacity-75' : ''
-          }  `}
+          } `}
           onClick={() => onClose()}
         />
         <div className="fixed">{children}</div>

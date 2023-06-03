@@ -5,7 +5,7 @@ import { CancelButton } from '../common/CancelButton';
 export const JoinRoomModal = ({
   setIsOpenJoinRoom,
   setIsOpenWaitingRoom,
-  onCloseJoinRoom
+  onCloseJoinRoom,
 }: {
   setIsOpenJoinRoom: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenWaitingRoom: React.Dispatch<React.SetStateAction<boolean>>;
@@ -79,7 +79,13 @@ export const JoinRoomModal = ({
           </button>
         </div>
       </div>
-      <CancelButton onClose={onCloseJoinRoom}/>
+      <div
+        role="none"
+        className="absolute -right-3 -top-3 hover:cursor-pointer"
+        onClick={onCloseJoinRoom}
+      >
+        <DeleteBtn />
+      </div>
     </div>
   );
 };

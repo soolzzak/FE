@@ -31,7 +31,7 @@ export const HomeBodySection = () => {
       <div className="f-ic-col min-w-[660px]">
         <div className="px-5">
           <div className="f-ic justify-between my-10 w-full">
-            <p className="font-bold text-xl">방 리스트</p>
+            <p className="font-bold text-xl">🍹 전체 혼술짝 방 리스트</p>
             <button
               type="button"
               className=" rounded-full bg-white px-4 py-2 text-secondary-200 font-semibold"
