@@ -9,7 +9,7 @@ import { Thumbup } from '../assets/svgs/Thumbup';
 import { ReportModal } from '../report/ReportModal';
 import { useModal } from '../hooks/useModal';
 import { Modal } from '../components/common/Modal';
-import { JoinPartnerModal } from '../components/StreamRoom/JoinPartnerModal';
+import { JoinGuestModal } from '../components/StreamRoom/JoinGuestModal';
 import { Mic } from '../assets/svgs/Mic';
 import { Setting } from '../assets/svgs/Setting';
 import { Dooropen } from '../assets/svgs/Dooropen';
@@ -99,7 +99,7 @@ export const StreamRoom = () => {
       </Modal>
 
       <Modal isOpen={isOpenJoinPartner} onClose={onCloseJoinPartner}>
-        <JoinPartnerModal onClose={onCloseJoinPartner} />
+        <JoinGuestModal onClose={onCloseJoinPartner} />
       </Modal>
 
       <Modal isOpen={isOpenLeaveRoom} onClose={onCloseLeaveRoom}>

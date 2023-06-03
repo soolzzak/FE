@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { CancelButton } from '../common/CancelButton';
 
 export const LeaveRoomModal = ({onCloseLeaveRoom}:{onCloseLeaveRoom: () => void}) => {
   const navigation = useNavigate();
@@ -24,13 +25,7 @@ export const LeaveRoomModal = ({onCloseLeaveRoom}:{onCloseLeaveRoom: () => void}
         </button>
       </div>
 
-      <div
-        role="none"
-        className="absolute -right-3 -top-3 hover:cursor-pointer"
-        onClick={onCloseLeaveRoom}
-      >
-        <DeleteBtn  />
-      </div>
+      <CancelButton onClose={onCloseLeaveRoom}/>
     </div>
   );
 };

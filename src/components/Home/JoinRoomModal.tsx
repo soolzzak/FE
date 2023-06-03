@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { CancelButton } from '../common/CancelButton';
 
 export const JoinRoomModal = ({
   setIsOpenJoinRoom,
