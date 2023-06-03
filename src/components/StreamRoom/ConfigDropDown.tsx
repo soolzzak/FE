@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useEffect,
+  useRef,
+  MouseEvent,
+} from 'react';
 import { useModal } from '../../hooks/useModal';
 import { Modal } from '../common/Modal';
 import { KickoutModal } from './KickoutModal';
 import { Setting } from '../../assets/svgs/Setting';
 
-export const ConfigDropDown = () => {
+export const ConfigDropDown = ({
+  setIsOpenKickout,
+}: {
+  setIsOpenKickout: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
+  const sidebarRef = useRef<HTMLElement>(null);
 
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -19,6 +29,20 @@ export const ConfigDropDown = () => {
     }
   };
 
+  // 외부클릭시닫기
+  const onClickOutside = (event: Event) => {
+    if (!sidebarRef.current?.contains(event.target as Node)) {
+      return setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', onClickOutside, true);
+    return () => {
+      document.removeEventListener('click', onClickOutside, true);
+    };
+  }, []);
+
   // 방 수정하기
   const handleModifyClick = () => {
     setIsOpen(false);
@@ -26,19 +50,19 @@ export const ConfigDropDown = () => {
 
   // 강퇴하기
   const handleKickOutClick = () => {
-    setIsOpen(false);
+    console.log('바보');
+    // event.stopPropagation();
+
     setIsOpenKickout(true);
+    setIsOpen(false);
   };
 
   return (
     <div>
-      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
-        <KickoutModal onClose={onCloseKickout} />
-      </Modal>
       <div
+        role="button"
         onClick={onToggle}
         onKeyDown={handleKeyDown}
-        role="button"
         tabIndex={0}
         className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer"
       >
