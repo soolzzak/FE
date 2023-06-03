@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export const JoinPartnerModal = ({ onClose }: { onClose: () => void}) => {
+export const JoinGuestModal = ({ onClose }: { onClose: () => void}) => {
   const [timeLeft, setTimeLeft] = useState(5);
 
   useEffect(() => {

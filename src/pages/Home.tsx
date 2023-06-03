@@ -5,11 +5,12 @@ import { Modal } from '../components/common/Modal';
 import { JoinRoomModal } from '../components/Home/JoinRoomModal';
 import { useModal } from '../hooks/useModal';
 import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
+import { LoginModal } from '../components/login/LoginModal';
 
 export const Home = () => {
   const [isOpenJoinroom, onCloseJoinRoom, setIsOpenJoinRoom] = useModal();
-  const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] =
-    useModal();
+  const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] = useModal();
+  const [isOpenLogin, onCloseLogin, setIsOpenLogin] = useModal();
 
   return (
     <div className="f-ic-col bg-primary-50 min-h-screen w-full">
@@ -17,15 +18,12 @@ export const Home = () => {
       <CategoryTab />
       <HomeBodySection />
       <Modal isOpen={isOpenJoinroom} onClose={onCloseJoinRoom}>
-        <JoinRoomModal
-          onCloseJoinRoom={onCloseJoinRoom}
-          setIsOpenJoinRoom={setIsOpenJoinRoom}
-          setIsOpenWaitingRoom={setIsOpenWaitingRoom}
-        />
+        <JoinRoomModal onCloseJoinRoom={onCloseJoinRoom} setIsOpenJoinRoom={setIsOpenJoinRoom} setIsOpenWaitingRoom={setIsOpenWaitingRoom} />
       </Modal>
       <Modal isOpen={isOpenWaitingRoom} onClose={onCloaseWaitingRoom}>
         <WaitingRoomModal onCloaseWaitingRoom={onCloaseWaitingRoom} />
       </Modal>
+      
     </div>
   );
 };
