@@ -136,7 +136,7 @@ export const StreamRoom = () => {
   };
 
   useEffect(() => {
-    const signalingServerUrl = 'wss://localhost:8443/signal';
+    const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
     socket = new WebSocket(signalingServerUrl);
 
     const startLocalStream = async () => {
