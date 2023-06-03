@@ -10,10 +10,10 @@ export const OptionalFieldChange = () => {
   const [, setPassword] = useAtom(handleRoomPasswprdChangeAtom);
   const [selectedOption] = useAtom(publicOrPrivateAtom);
 
-  const selections = ['공개', '비공개'];
+  const selections = [false, true];
   return (
     <div className="f-ic ">
-      <TwoOptionsSelector title="방 공개설정" leftRightText={selections} />
+      <TwoOptionsSelector title="방 공개설정" leftRightSelect={selections} />
       {selectedOption === selections[1] ? (
         <ModalInput
           inputType="password"

@@ -2,12 +2,12 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { genderAtom } from '../../store/addRoomStore';
 
-type CustomSelectorProps = {
-  selections: Array<string>;
-};
+export const CustomSelector = () => {
+  const selections = ['ANY', 'FEMALE', 'MALE'];
+  const displayedSelections = ['누구나', '여자만', '남자만'];
 
-export const CustomSelector = ({ selections }: CustomSelectorProps) => {
   const [selectedOption, handleOptionClick] = useAtom(genderAtom);
+
   useEffect(() => {
     handleOptionClick(selections[0]);
   }, []);
@@ -15,7 +15,7 @@ export const CustomSelector = ({ selections }: CustomSelectorProps) => {
     <section className="f-col">
       <p className="text-base font-bold mb-2 text-[#454545]">입장 허용</p>
       <div className="f-ic w-full justify-between">
-        {selections.map((option) => (
+        {selections.map((option, index) => (
           <div
             role="none"
             key={option}
@@ -26,7 +26,7 @@ export const CustomSelector = ({ selections }: CustomSelectorProps) => {
             }`}
             onClick={() => handleOptionClick(option)}
           >
-            {option}
+            {displayedSelections[index]}
           </div>
         ))}
       </div>

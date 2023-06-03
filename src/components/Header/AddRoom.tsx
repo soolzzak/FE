@@ -1,22 +1,20 @@
 import { useAtom } from 'jotai';
-import {
-  handleCategoryChangeAtom,
-  handleTitleChangeAtom,
-} from '../../store/addRoomStore';
-import { CustomSelector } from '../common/CustomSelector';
-import { ModalInput } from '../common/ModalInput';
+import { useMutation, useQueryClient } from 'react-query';
+import { createRoom } from '../../api/main';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { useModal } from '../../hooks/useModal';
-import { OptionalFieldChange } from '../common/OptionalFieldChange';
-import { ImageUploadAndView } from '../common/ImageUploadAndView';
+import { handleTitleChangeAtom } from '../../store/addRoomStore';
 import { CommonButton } from '../common/CommonButton';
+import { CustomSelector } from '../common/CustomSelector';
+import { DropdownSelector } from '../common/DropdownSelector';
+import { ImageUploadAndView } from '../common/ImageUploadAndView';
+import { ModalInput } from '../common/ModalInput';
+import { OptionalFieldChange } from '../common/OptionalFieldChange';
+import { AddRoomButton } from './AddRoomButton';
 
 export const AddRoom = ({ onClose }: { onClose: () => void }) => {
-  const selections = ['누구나', '여자만', '남자만'];
-
   const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
-  const [, handleCategoryChange] = useAtom(handleCategoryChangeAtom);
-  const [isOpenExit, onCloseExit, setIsOpenExit] = useModal();
+  const [isOpenExit, onCloseExit] = useModal();
 
   console.log('render');
 
@@ -34,23 +32,12 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
             autofocus
             handleInputChange={handleTitleChange}
           />
-          <ModalInput
-            title="카테고리"
-            inputType="text"
-            placeholderText="카테고리를 설정해주세요"
-            handleInputChange={handleCategoryChange}
-          />
-          <CustomSelector selections={selections} />
+          <DropdownSelector />
+          <CustomSelector />
           <OptionalFieldChange />
         </div>
       </div>
-
-      <CommonButton
-        buttonText="혼술짝 방만들기"
-        clickHandler={() => onClose()}
-        dimensions="mt-7 w-2/3 h-14 self-center"
-      />
-
+      <AddRoomButton />
       <div
         role="none"
         className="absolute right-3 top-3 hover:cursor-pointer"
