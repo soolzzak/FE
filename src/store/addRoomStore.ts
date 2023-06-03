@@ -1,5 +1,10 @@
 import { atom } from 'jotai';
 
+export const imageAtom = atom<File | null>(null);
+export const handleImageChangeAtom = atom(null, (get, set, update: File) => {
+  set(imageAtom, () => update);
+});
+
 export const titleAtom = atom('');
 export const handleTitleChangeAtom = atom(null, (get, set, update: string) => {
   set(titleAtom, () => update);
@@ -14,7 +19,7 @@ export const handleCategoryChangeAtom = atom(
 );
 
 export const genderAtom = atom<string>('');
-export const publicOrPrivateAtom = atom<string>('');
+export const publicOrPrivateAtom = atom<boolean>(false);
 
 export const roomPasswordAtom = atom<string>('');
 export const handleRoomPasswprdChangeAtom = atom(

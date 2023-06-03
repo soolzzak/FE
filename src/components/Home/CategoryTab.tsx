@@ -1,21 +1,21 @@
 import { useState } from 'react';
 
+export const tabList = [
+  '전체',
+  '🎞 영화/드라마 ',
+  '✈ 맛집/여행',
+  '🔮 고민상담',
+  '⚽ 스포츠/게임',
+  '🎈 오늘하루',
+  '🙌  자유방',
+];
+
 export const CategoryTab = () => {
   const [activeTab, setActiveTab] = useState('전체');
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
-
-  const tabList = [
-    '전체',
-    '🎞 영화/드라마 ',
-    '✈ 맛집/여행',
-    '🔮 고민상담',
-    '⚽ 스포츠/게임',
-    '🎈 오늘하루',
-    '🙌  자유방',
-  ];
 
   return (
     <nav className="w-full ">
