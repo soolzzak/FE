@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { CancelButton } from '../common/CancelButton';
 
 export const WaitingRoomModal = ({ onCloaseWaitingRoom }: { onCloaseWaitingRoom: () => void }) => {
   const [timeLeft, setTimeLeft] = useState(3);
@@ -44,9 +45,7 @@ export const WaitingRoomModal = ({ onCloaseWaitingRoom }: { onCloaseWaitingRoom:
           예의없는 행동시 신고 대상이 됩니다.
         </p>
       </div>
-      <div role='none' className='absolute -right-3 -top-3 hover:cursor-pointer' onClick={onCloaseWaitingRoom}>
-        <DeleteBtn />
-      </div>
+      <CancelButton onClose={onCloaseWaitingRoom} />
     </div>
   );
 };

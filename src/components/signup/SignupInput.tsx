@@ -5,40 +5,17 @@ import  {Checkbox}  from '../../assets/svgs/Checkbox';
 import { useInput } from '../../hooks/useInput';
 
 export const SignupInput = () => {
-  const [
-    email,
-    emailErrorMsg,
-    onEmailChangeHandler,
-    ,
-    emailTypeCheckHandler,
-    ,
-  ] = useInput();
+  const [email,emailErrorMsg,onEmailChangeHandler,,emailTypeCheckHandler,,] = useInput();
   const emailType = /^[a-zA-Z0-9+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
   const emailMsg = 'example@example.com 형식으로 작성하세요';
 
-  const [
-    password,
-    passwordErrorMsg,
-    onPasswordChangeHandler,
-    ,
-    passwordTypeCheckHandler,
-    ,
-  ] = useInput();
-  const passwordType =
-    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,16}$/;
+  const [password,passwordErrorMsg,onPasswordChangeHandler,,passwordTypeCheckHandler,,] = useInput();
+  const passwordType = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,16}$/;
   const passwordMsg = '8~16자 영문, 숫자, 특수문자를 사용하세요';
 
-  const [pwcheck, pwcheckErrorMsg, onPwcheckChangeHandler, , , pwcheckHandler] =
-    useInput();
+  const [pwcheck, pwcheckErrorMsg, onPwcheckChangeHandler, , , pwcheckHandler] =useInput();
 
-  const [
-    username,
-    usernameErrorMsg,
-    usernameChangeHandler,
-    usernameCheckHandler,
-    ,
-    ,
-  ] = useInput();
+  const [username,usernameErrorMsg,usernameChangeHandler,usernameCheckHandler,,,] = useInput();
 
   const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -151,7 +128,7 @@ export const SignupInput = () => {
     await signupMutation.mutate(userInfo);
   };
 
-  console.log(admin)
+  console.log(gender)
 
   return (
     <form onSubmit={submitHandler}>
@@ -166,7 +143,7 @@ export const SignupInput = () => {
           placeholder="example@naver.com"
         />
         <span className="absolute w-[65px] h-[31px] top-[6.5px] right-2 bg-[#E6E6E6] rounded text-[14px] text-[#383434] text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80">
-          중복확인
+          인증하기
         </span>
       </div>
       <div className="text-xs text-red-600 mt-1 mb-4 pl-1">{emailErrorMsg}</div>
@@ -269,8 +246,8 @@ export const SignupInput = () => {
         <option value="gender" hidden>
           성별
         </option>
-        <option value="male">남성</option>
-        <option value="female">여성</option>
+        <option value="MALE">남성</option>
+        <option value="FEMALE">여성</option>
       </select>
       <div className="text-xs text-red-600 mt-1 mb-4 pl-1">{genderErrMsg}</div>
 

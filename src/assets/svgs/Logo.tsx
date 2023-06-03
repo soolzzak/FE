@@ -1,8 +1,8 @@
 import React from 'react';
 
-export const Logo = () => (
+export const Logo = ({ logoSize = '70' }: { logoSize?: string }) => (
   <svg
-    height="70"
+    height={logoSize}
     viewBox="0 0 405 338"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

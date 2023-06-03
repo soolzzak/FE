@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { LoginApi, LoginInfo } from '../../api/auth';
+import { LoginApi, LoginInfo, getAccessKey } from '../../api/auth';
 import { Vector } from '../../assets/svgs/Vector';
 
 export const LoginModal = () => {
@@ -29,10 +29,12 @@ export const LoginModal = () => {
   
   };
 
-  // const KakaoLoginBtn = () => {
-  //   const REST_API_KEY = "";
-  //   const REDIRECT_URI = "";
-  //   const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?cliend_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+  const KakaoLoginBtn = () => {
+    const REST_API_KEY = "8a0cad5b3db49758aed8e161a98f5a91";
+    const REDIRECT_URI = "http://localhost:3001/oauth";
+    const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+    window.location.href = KAKAO_AUTH_URI
+  }
   //   const code = new URL(window.location.href).searchParams.get("code");
   //   window.open(KAKAO_AUTH_URI,"_self");
   // }
@@ -65,7 +67,9 @@ export const LoginModal = () => {
           이메일로 로그인
         </button>
       </form>
-      <button type='button' className="w-[356px] h-[45px] bg-[#9A9A9A] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80"> 
+      <button type='button' className="w-[356px] h-[45px] bg-[#9A9A9A] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80"
+      onClick={KakaoLoginBtn}
+      > 
         카카오톡으로 로그인
       </button>
 
