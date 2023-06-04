@@ -18,7 +18,7 @@ export const HeaderRightSection = () => {
   const [user] = useAtom(usernameAtom);
 
   return (
-    <section className="f-jic mr-4 min-w-[469px]">
+    <section className="f-ic justify-end mr-4 min-w-[469px]">
       <Modal isOpen={isOpenAuth} hasOverlay onClose={onCloseAuth}>
         <LoginModal />
       </Modal>
