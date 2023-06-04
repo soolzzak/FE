@@ -1,10 +1,7 @@
 import { useAtom } from 'jotai';
-import { useMutation, useQueryClient } from 'react-query';
-import { createRoom } from '../../api/main';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { useModal } from '../../hooks/useModal';
 import { handleTitleChangeAtom } from '../../store/addRoomStore';
-import { CommonButton } from '../common/CommonButton';
 import { CustomSelector } from '../common/CustomSelector';
 import { DropdownSelector } from '../common/DropdownSelector';
 import { ImageUploadAndView } from '../common/ImageUploadAndView';
