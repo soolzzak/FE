@@ -1,3 +1,3 @@
 # Soolzzak FE
 
-Soolzzak
+Soolzzak-FE
