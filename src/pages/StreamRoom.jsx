@@ -136,33 +136,14 @@ export const StreamRoom = () => {
     const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
     socket = new WebSocket(signalingServerUrl);
 
-    const startLocalStream = async () => {
-      try {
-        // eslint-disable-next-line no-undef
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        localVideoRef.current.srcObject = mediaStream;
-
-        await createPeerConnection(); // Move this line here
-
-        console.log('media stream', mediaStream);
-      } catch (error) {
-        console.log('Error accessing media devices:', error);
-      }
-    };
-
-    startLocalStream();
-    // Establish a connection with the signaling server
-    const connectToSignalingServer = () => {
+    const connectToSignalingServer = async () => {
       socket.onopen = () => {
         const message = JSON.stringify({
           from: userId,
           type: 'join',
           data: roomNum,
         });
-        console.log('WebSocket connection opened');
+        console.log('WebSocket connection opened', message);
         socket.send(message);
       };
 
@@ -206,7 +187,25 @@ export const StreamRoom = () => {
       };
     };
 
-    connectToSignalingServer();
+    const startLocalStream = async () => {
+      try {
+        // eslint-disable-next-line no-undef
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        localVideoRef.current.srcObject = mediaStream;
+        console.log('this media stream', mediaStream);
+        await createPeerConnection(); // Move this line here
+        await connectToSignalingServer();
+        console.log('media stream', mediaStream);
+      } catch (error) {
+        console.log('Error accessing media devices:', error);
+      }
+    };
+
+    startLocalStream();
+    // Establish a connection with the signaling server
 
     return () => {
       if (peerConnection) {
