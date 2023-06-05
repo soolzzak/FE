@@ -43,12 +43,12 @@ export const HeaderRightSection = () => {
           <CommonButton
             buttonText="혼술짝 방만들기"
             clickHandler={() => setIsOpenRoomCreate(true)}
-            dimensions="mr-7"
+            dimensions="mr-7 min-w-[185px]"
           />
           <Notifications />
 
-          <div className="px-7 text-lg font-semibold">{userInfo.sub}</div>
-          <div className="w-12 h-12 rounded-full bg-primary-200 mr-3" />
+          {/* <div className="px-7 text-sm font-semibold">{userInfo.sub}</div> */}
+          <div className="cursor-pointer w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5" />
         </>
       ) : (
         <CommonButton
