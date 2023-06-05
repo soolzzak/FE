@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { MypageProfileResponse, getMypageProfile } from '../api/mypage';
+import { MypageProfileRooms, getMypageProfile } from '../api/mypage';
 import { AlcoholSection } from '../components/Mypage/AlcoholSection';
 import { HistorySection } from '../components/Mypage/HistorySection';
 import { MyinfoSection } from '../components/Mypage/MyinfoSection';
@@ -10,17 +10,20 @@ import { FollowSection } from '../components/Mypage/FollowSection';
 export const Mypage = () => {
   const { data, isLoading, isError, error } = useQuery(
     'mypageInfo',
-    getMypageProfile
+    getMypageProfile,
+    {
+      refetchOnWindowFocus: false,
+    }
   );
-  const [myinfo, setMyinfo] = useState<MypageProfileResponse | null>(null);
+  const [myinfo, setMyinfo] = useState<MypageProfileRooms | undefined>();
 
   // if (isLoading) return <div>Loading...</div>;
   // if (isError) return <div>{(error as Error).message}</div>;
 
   useEffect(() => {
     if (data) {
-      setMyinfo(data);
-      // console.log(data);
+      setMyinfo(data.data);
+      console.log(data);
     }
   }, [data]);
 

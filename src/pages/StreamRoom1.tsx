@@ -4,6 +4,10 @@ import { Report } from '../assets/svgs/Report';
 // import { useEffect } from 'react';
 // import { ReactComponent as Water } from '../assets/svgs/Water';
 
+// import Cookies from 'js-cookie';
+// import jwtDecode from 'jwt-decode';
+// import { getRoom } from '../api/streamRoom';
+
 import { Thumbdown } from '../assets/svgs/Thumbdown';
 import { Thumbup } from '../assets/svgs/Thumbup';
 import { ReportModal } from '../report/ReportModal';
@@ -36,6 +40,7 @@ export const StreamRoom = () => {
   //     console.log(data);
   //   }
   // }, [data]);
+
   const [isFilled, setIsFilled] = useState(false);
 
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
