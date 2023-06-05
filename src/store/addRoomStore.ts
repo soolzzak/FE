@@ -21,7 +21,7 @@ export const handleCategoryChangeAtom = atom(
 export const genderAtom = atom<string>('');
 export const publicOrPrivateAtom = atom<boolean>(false);
 
-export const roomPasswordAtom = atom<string>('');
+export const roomPasswordAtom = atom<string | null>(null);
 export const handleRoomPasswprdChangeAtom = atom(
   null,
   (get, set, update: string) => {
