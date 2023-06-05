@@ -5,11 +5,12 @@ import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from '../layout/Layout';
 import { Home } from '../pages/Home';
-import { Login } from '../pages/Login';
 import { Mypage } from '../pages/Mypage';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
 import { handleTokenChangeAtom } from '../store/mainpageStore';
+import { Login } from '../pages/Login';
+
 
 export const Router = () => {
   const token = Cookies.get('accessKey');

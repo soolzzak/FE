@@ -18,7 +18,6 @@ interface AuthToken {
 export const HeaderRightSection = () => {
   const [isOpenAuth, onCloseAuth, setIsOpenAuth] = useModal();
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
-  const [isOpenLogin, onCloseLogin, setIdOpenLogin] = useModal();
   const [user] = useAtom(usernameAtom);
 
   const [userInfo, setUserInfo] = useState<AuthToken>();

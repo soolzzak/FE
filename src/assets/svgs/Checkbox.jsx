@@ -17,7 +17,7 @@ export const Checkbox = ({admin, setAdmin}) => {
         width="20"
         height="20"
         rx="5"
-        fill={admin ? 'black' : '#D9D9D9'}
+        fill={admin ? '#FF6700' : '#FFF0DF'}
       />
       <path
         d="M10 11.4783L14.8148 16L20 8"
