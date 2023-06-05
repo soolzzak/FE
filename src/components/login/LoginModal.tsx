@@ -26,15 +26,14 @@ export const LoginModal = () => {
       password,
     };
     await loginMutation.mutate(loginInfo);
-  
   };
 
   const KakaoLoginBtn = () => {
-    const REST_API_KEY = "8a0cad5b3db49758aed8e161a98f5a91";
-    const REDIRECT_URI = "http://localhost:3001/oauth";
-    const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
-    window.location.href = KAKAO_AUTH_URI
-  }
+    const REST_API_KEY = '8a0cad5b3db49758aed8e161a98f5a91';
+    const REDIRECT_URI = 'http://localhost:3001/oauth';
+    const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+    window.location.href = KAKAO_AUTH_URI;
+  };
   //   const code = new URL(window.location.href).searchParams.get("code");
   //   window.open(KAKAO_AUTH_URI,"_self");
   // }
@@ -63,13 +62,18 @@ export const LoginModal = () => {
             placeholder="비밀번호를 입력해주세요"
           />
         </div>
-        <button type='submit' className="w-[356px] h-[45px] bg-[#BCBCBC] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80">
+        <button
+          type="submit"
+          className="w-[356px] h-[45px] bg-[#BCBCBC] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80"
+        >
           이메일로 로그인
         </button>
       </form>
-      <button type='button' className="w-[356px] h-[45px] bg-[#9A9A9A] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80"
-      onClick={KakaoLoginBtn}
-      > 
+      <button
+        type="button"
+        className="w-[356px] h-[45px] bg-[#9A9A9A] rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-opacity-80"
+        onClick={KakaoLoginBtn}
+      >
         카카오톡으로 로그인
       </button>
 
@@ -82,7 +86,8 @@ export const LoginModal = () => {
           아이디 찾기
         </span>
         <Vector />
-        <span role='none'
+        <span
+          role="none"
           className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]"
           onClick={() => navigate('/signup')}
         >

@@ -19,9 +19,6 @@ let mediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-  const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
-
   const getCookie = Cookies.get('accessKey');
   const params = useParams().id;
 
@@ -101,9 +98,7 @@ export const StreamRoom = () => {
   };
 
   const createPeerConnection = async () => {
-    const configuration = {
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-    };
+    // webrtc
     peerConnection = new RTCPeerConnection(PeerConnectionConfig);
 
     peerConnection.onicecandidate = (event) => {
@@ -124,7 +119,6 @@ export const StreamRoom = () => {
       // Add remote stream to the video element
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
-      setRemoteStream(stream);
       remoteVideoRef.current.srcObject = stream;
     };
 
@@ -134,89 +128,86 @@ export const StreamRoom = () => {
     });
     console.log('created peer connection: ', peerConnection);
   };
+  const startLocalStream = async () => {
+    try {
+      // eslint-disable-next-line no-undef
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      localVideoRef.current.srcObject = mediaStream;
+      console.log('adding media stream', mediaStream);
+      mediaStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, mediaStream);
+      });
+      console.log('media stream', mediaStream);
+    } catch (error) {
+      console.log('Error accessing media devices:', error);
+    }
+  };
+
+  const connectToSignalingServer = () => {
+    socket.onopen = () => {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'join',
+        data: roomNum,
+      });
+      console.log('WebSocket connection opened');
+      socket.send(message);
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    socket.onmessage = async (event) => {
+      const message = JSON.parse(event.data);
+
+      switch (message.type) {
+        case 'offer':
+          console.log('received offer message', message);
+          await handleOfferMessage(message);
+          break;
+        case 'answer':
+          console.log('received answer message', message);
+          await handleAnswerMessage(message);
+          break;
+        case 'ice':
+          console.log('received ice message', message);
+          await handleCandidateMessage(message);
+          break;
+        case 'join':
+          console.log('received join message');
+
+          message.data = await getRoom(params);
+          console.log(message.data.data.hostId);
+
+          await createPeerConnection();
+
+          if (message.data.data.hostId !== userId) {
+            console.log('starting call');
+            await startCall();
+          }
+
+          break;
+        default:
+          console.warn('Invalid message type:', message.type);
+      }
+    };
+  };
 
   useEffect(() => {
     const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
     socket = new WebSocket(signalingServerUrl);
-
-    const startLocalStream = async () => {
-      try {
-        // eslint-disable-next-line no-undef
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        localVideoRef.current.srcObject = mediaStream;
-        console.log('adding media stream', mediaStream);
-        setLocalStream((prev) => mediaStream);
-        mediaStream.getTracks().forEach((track) => {
-          peerConnection.addTrack(track, mediaStream);
-        });
-        console.log('media stream', mediaStream);
-      } catch (error) {
-        console.log('Error accessing media devices:', error);
-      }
-    };
     startLocalStream();
-    // Establish a connection with the signaling server
-    const connectToSignalingServer = () => {
-      socket.onopen = () => {
-        const message = JSON.stringify({
-          from: userId,
-          type: 'join',
-          data: roomNum,
-        });
-        console.log('WebSocket connection opened');
-        socket.send(message);
-      };
-
-      socket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-
-      socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-
-      socket.onmessage = async (event) => {
-        const message = JSON.parse(event.data);
-
-        switch (message.type) {
-          case 'offer':
-            console.log('received offer message', message);
-            await handleOfferMessage(message);
-            break;
-          case 'answer':
-            console.log('received answer message', message);
-            await handleAnswerMessage(message);
-            break;
-          case 'ice':
-            console.log('received ice message', message);
-            await handleCandidateMessage(message);
-            break;
-          case 'join':
-            console.log('received join message');
-            message.data = await getRoom(params);
-            console.log(message.data.data.hostId);
-            await createPeerConnection();
-            if (message.data.data.hostId !== userId) {
-              console.log('starting call');
-              await startCall();
-            }
-
-            break;
-          default:
-            console.warn('Invalid message type:', message.type);
-        }
-      };
-    };
-
     connectToSignalingServer();
 
     return () => {
-      if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop());
-      }
       if (peerConnection) {
         peerConnection.close();
       }

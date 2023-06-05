@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 export const AuthModal = ({
-  setIdOpenLogin
+  setIdOpenLogin,
 }: {
   setIdOpenLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -16,12 +16,10 @@ export const AuthModal = ({
       <button
         type="button"
         className="mb-2 mt-10 h-11 w-full bg-[#BCBCBC] rounded-lg text-white text-lg font-bold"
-        onClick={
-          () => {
-            setIdOpenLogin(true)
-          }
-        }
-        
+        onClick={() => {
+          setIdOpenLogin(true);
+          navigate('/login');
+        }}
       >
         이메일로 로그인
       </button>
@@ -31,7 +29,13 @@ export const AuthModal = ({
       >
         카카오톡으로 로그인
       </button>
-      <div role='none' className="cursor-pointer text-base mt-4" onClick={() => navigate('/signup')}>회원가입하기</div>
+      <div
+        role="none"
+        className="cursor-pointer text-base mt-4"
+        onClick={() => navigate('/signup')}
+      >
+        회원가입하기
+      </div>
     </div>
   );
 };

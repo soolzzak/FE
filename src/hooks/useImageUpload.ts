@@ -1,7 +1,10 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
+import { handleImageChangeAtom, imageAtom } from '../store/addRoomStore';
 
 const useImageUpload = () => {
-  const [image, setImage] = useState<File | undefined>();
+  const [image] = useAtom<File | null>(imageAtom);
+  const [, setImage] = useAtom(handleImageChangeAtom);
   const [view, setView] = useState<string | undefined>();
 
   const handleImageChange = (

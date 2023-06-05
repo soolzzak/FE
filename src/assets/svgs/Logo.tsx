@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const Logo = ({ logoSize = '70' }: { logoSize?: string }) => (
   <svg
     height={logoSize}
