@@ -23,7 +23,7 @@ export const CategoryTab = () => {
         {tabList.map((tab) => (
           <div
             role="none"
-            className={`f-jic cursor-pointer px-5 py-4 text-lg font-semibold text-[#454545] 
+            className={`f-jic cursor-pointer px-5 py-4 text-lg min-w-[155px] font-semibold text-[#454545] 
             ${
               activeTab === tab
                 ? 'border-b-[3px] border-primary-300 text-primary-200'
