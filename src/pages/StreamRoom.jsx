@@ -137,8 +137,6 @@ export const StreamRoom = () => {
       });
       localVideoRef.current.srcObject = mediaStream;
       console.log('this media stream', mediaStream);
-
-      console.log('media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
     }
