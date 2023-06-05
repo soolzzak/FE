@@ -8,9 +8,8 @@ import { CommonButton } from '../common/CommonButton';
 import { Modal } from '../common/Modal';
 import { LoginModal } from '../login/LoginModal';
 import { AddRoom } from './AddRoom';
-
-const username = Cookies.get('accessKey');
-export const usernameAtom = atom(username);
+import { usernameAtom } from '../../store/mainpageStore';
+import { ProfileMenu } from './ProfileMenu';
 
 interface AuthToken {
   sub: string;
@@ -34,7 +33,7 @@ export const HeaderRightSection = () => {
   return (
     <section className="f-ic justify-end mr-4 min-w-[469px]">
       <Modal isOpen={isOpenAuth} hasOverlay onClose={onCloseAuth}>
-        <LoginModal />
+        <LoginModal onClose={onCloseAuth} />
       </Modal>
       <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
         <AddRoom onClose={onCloseRoomCreate} />
@@ -47,9 +46,8 @@ export const HeaderRightSection = () => {
             dimensions="mr-7 min-w-[185px]"
           />
           <Notifications />
-
           {/* <div className="px-7 text-sm font-semibold">{userInfo.sub}</div> */}
-          <div className="cursor-pointer w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5" />
+          <ProfileMenu />
         </>
       ) : (
         <CommonButton

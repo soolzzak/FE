@@ -1,20 +1,31 @@
+import { useAtom } from 'jotai';
+import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { LoginApi, LoginInfo, getAccessKey } from '../../api/auth';
+import { LoginApi, LoginInfo } from '../../api/auth';
 import { Vector } from '../../assets/svgs/Vector';
+import { usernameAtom } from '../../store/mainpageStore';
 
-export const LoginModal = () => {
+export const LoginModal = ({ onClose }: { onClose: () => void }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
-
+  const [, setUserToken] = useAtom(usernameAtom);
   const emailHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
   const passwordHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(event.target.value);
 
-  const loginMutation = useMutation(LoginApi);
+  const loginMutation = useMutation(LoginApi, {
+    onSuccess: (response) => {
+      setUserToken(response?.headers.access_key);
+      onClose();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -31,7 +31,7 @@ export const privateInstance = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
   withCredentials: true,
   headers: {
-    "access_key": getAccessKey(),
+    access_key: getAccessKey(),
   },
 });
 
@@ -52,9 +52,20 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
     );
     const accessKey = response.headers.access_key;
     const refreshKey = response.headers.refresh_key;
-    Cookies.set('accessKey', accessKey);
-    Cookies.set('refreshKey', refreshKey);
-    console.log(response)
+
+    const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
+    const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
+    const accessExp = decodedAccessToken.exp;
+    const refreshExp = decodedRefreshToken.exp;
+    const accessExpireDate = new Date(accessExp * 1000);
+    const refreshExpireDate = new Date(refreshExp * 1000);
+    Cookies.set('accessKey', accessKey, {
+      expires: accessExpireDate,
+    });
+    Cookies.set('refreshKey', refreshKey, {
+      expires: refreshExpireDate,
+    });
+    console.log(response);
     return response;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
@@ -65,41 +76,41 @@ export const LogoutApi = async () => {
   try {
     const config = {
       headers: {
-        "access_key": getAccessKey(),
-        "refresh_key": getRefreshKey()
-      }
-    } 
-    await axiosInstance.get('/logout', config)
+        access_key: getAccessKey(),
+        refresh_key: getRefreshKey(),
+      },
+    };
+    await axiosInstance.get('/logout', config);
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
   }
-}
+};
 
 // 리프레시 토큰 요청 (body? header?)
 export const getNewRefreshKey = async () => {
   const config = {
     headers: {
-      "refresh_key" : getRefreshKey()
-    }
-  }
-  const response = await axiosInstance.post('/refresh주소', config)
-  console.log('리프레시 토큰 요청 응답: ', response)
-  return response
+      refresh_key: getRefreshKey(),
+    },
+  };
+  const response = await axiosInstance.post('/refresh주소', config);
+  console.log('리프레시 토큰 요청 응답: ', response);
+  return response;
 };
 
 // 토큰 인터셉터
-privateInstance.interceptors.response.use (
+privateInstance.interceptors.response.use(
   // 1.성공시
   (response) => response,
 
   // 2.실패
   async (error) => {
-    const originRequest = error.config
-    console.log('토큰 만료 인터셉터 오류 형태: ', error)
+    const originRequest = error.config;
+    console.log('토큰 만료 인터셉터 오류 형태: ', error);
 
     // 토큰 만료 (메세지 확인)
     if (error.response.data.msg === '토큰만료') {
-      const response = await getNewRefreshKey()
+      const response = await getNewRefreshKey();
 
       // 리프레시 토큰 요청 성공 (메세지 확인)
       if (response.data.msg === '토큰 성공') {
@@ -107,11 +118,12 @@ privateInstance.interceptors.response.use (
         Cookies.set('accessKey', newAccessKey);
 
         // 요청 이어하기
-        originRequest.headers.access_key = getAccessKey()
+        originRequest.headers.access_key = getAccessKey();
         return axios(originRequest);
-      } 
-        // navigate('/signup')
-        window.location.replace('/login')
+      }
+      // navigate('/signup')
+      window.location.replace('/login');
     }
-  return Promise.reject(error)
-})
+    return Promise.reject(error);
+  }
+);
