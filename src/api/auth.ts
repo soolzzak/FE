@@ -73,8 +73,20 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
     );
     const accessKey = response.headers.access_key;
     const refreshKey = response.headers.refresh_key;
-    Cookies.set('accessKey', accessKey);
-    Cookies.set('refreshKey', refreshKey);
+    const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
+    const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
+    const accessExp = decodedAccessToken.exp;
+    const refreshExp = decodedRefreshToken.exp;
+    const accessExpireDate = new Date(accessExp * 1000);
+    const refreshExpireDate = new Date(refreshExp * 1000);
+    Cookies.set('accessKey', accessKey, {
+      expires: accessExpireDate,
+    });
+    Cookies.set('refreshKey', refreshKey, {
+      expires: refreshExpireDate,
+    });
+    console.log(response);
+
     return response;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
@@ -92,12 +104,14 @@ export const LogoutApi = async () => {
       },
     };
     await axiosInstance.get('/logout', config);
+
     Cookies.remove('access_key');
     Cookies.remove('refresh_key');
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
   }
 };
+
 
 export const getNewAccessKey = async () => {
   try {
@@ -128,7 +142,9 @@ privateInstance.interceptors.response.use(
 
     // 토큰 만료 (메세지 확인)
     if (error.response.data.msg === '토큰만료') {
+
       const response = await getNewAccessKey();
+
 
       // 리프레시 토큰 요청 성공 (메세지 확인)
       if (response.data.msg === '토큰 성공') {
