@@ -8,16 +8,34 @@ interface ApiResponse {
 }
 
 export type MypageProfileResponse = {
-  image: string;
-  nickname: string;
+  userImageUrl: string;
+  username: string;
+  alcolhol: number;
+  socialName: string;
+  meetedUser: MeetUser[];
+  blacklistedUser: BlacklistedUser[];
+  followingUser: FollowingUser[];
 };
+
+export interface MeetUser {
+  metUser: string;
+  createdAt: string;
+}
+
+export interface BlacklistedUser {
+  blacklistedUser: string;
+}
+
+export interface FollowingUser {
+  followingUser: string;
+}
 
 export const getMypageProfile = async (): Promise<
   MypageProfileResponse | undefined
 > => {
   try {
     const response: AxiosResponse<MypageProfileResponse> =
-      await axiosInstance.get('/api/mypage');
+      await axiosInstance.get('/mypage');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
@@ -29,7 +47,7 @@ export const updateMypageProfile = async (
 ): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
-      '/api/mypage',
+      '/mypage',
       file,
       {
         headers: { 'Content-Type': 'multipart/form-data' },
