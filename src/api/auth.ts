@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
+import jwtDecode from 'jwt-decode';
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -23,7 +24,7 @@ export interface LoginInfo {
 }
 
 export interface EmailInfo {
-  email: string | undefined
+  email: string | undefined;
 }
 
 export const getAccessKey = () => Cookies.get('access_key');
@@ -46,21 +47,18 @@ export const SignupApi = async (signupInfo: SignupInfo) => {
     return response;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      return error.response?.data.message
+      return error.response?.data.message;
     }
   }
 };
 
 export const EmailConfirm = async (email: EmailInfo) => {
   try {
-    const response = await axiosInstance.post(
-      '/signup/mailconfirm',
-      email
-    )
-    return response.data.code
+    const response = await axiosInstance.post('/signup/mailconfirm', email);
+    return response.data.code;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      return error.response?.data.message
+      return error.response?.data.message;
     }
   }
 };
@@ -112,7 +110,6 @@ export const LogoutApi = async () => {
   }
 };
 
-
 export const getNewAccessKey = async () => {
   try {
     const config = {
@@ -142,9 +139,7 @@ privateInstance.interceptors.response.use(
 
     // 토큰 만료 (메세지 확인)
     if (error.response.data.msg === '토큰만료') {
-
       const response = await getNewAccessKey();
-
 
       // 리프레시 토큰 요청 성공 (메세지 확인)
       if (response.data.msg === '토큰 성공') {
