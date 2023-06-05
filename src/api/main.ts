@@ -46,7 +46,7 @@ export type CreateRoomData = {
     category: string;
     genderSetting: string;
     isPrivate: boolean;
-    roomPassword: string;
+    roomPassword: string | null;
   };
   image: File | null;
 };
@@ -60,7 +60,7 @@ export const createRoom = async ({
     const textBlob = new Blob([sentData], { type: 'application/json' });
 
     formData.append('roomRequestDto', textBlob);
-    if (image) formData.append('image', image);
+    if (image) formData.append('roomImage', image);
 
     const token = Cookies.get('accessKey');
     const headers = { ACCESS_KEY: `${token}` };

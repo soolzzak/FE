@@ -39,7 +39,7 @@ export const HomeBodySection = () => {
               방 설정
             </button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 h-full">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 h-full mb-14">
             {chatList?.map((chatRoom) => (
               <ChatroomCard key={chatRoom.roomId} chatRoom={chatRoom} />
             ))}

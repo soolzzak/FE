@@ -55,6 +55,7 @@ export const StreamRoom = () => {
       console.error('Error handling offer:', error);
     }
   };
+
   const handleAnswerMessage = async (message) => {
     console.log('have received answer', message.sdp);
     console.log(
