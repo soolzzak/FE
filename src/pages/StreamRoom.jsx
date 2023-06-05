@@ -99,9 +99,6 @@ export const StreamRoom = () => {
   };
 
   const createPeerConnection = async () => {
-    const configuration = {
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-    };
     peerConnection = new RTCPeerConnection(PeerConnectionConfig);
     console.log('created peer connection: ', peerConnection);
 
@@ -130,6 +127,21 @@ export const StreamRoom = () => {
     mediaStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
     });
+  };
+  const startLocalStream = async () => {
+    try {
+      // eslint-disable-next-line no-undef
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      localVideoRef.current.srcObject = mediaStream;
+      console.log('this media stream', mediaStream);
+
+      console.log('media stream', mediaStream);
+    } catch (error) {
+      console.log('Error accessing media devices:', error);
+    }
   };
 
   useEffect(() => {
@@ -174,6 +186,8 @@ export const StreamRoom = () => {
           case 'join':
             console.log('received join message');
             message.data = await getRoom(params);
+            await startLocalStream();
+            await createPeerConnection();
             console.log(message.data.data.hostId);
             if (message.data.data.hostId !== userId) {
               console.log('starting call');
@@ -187,26 +201,8 @@ export const StreamRoom = () => {
       };
     };
 
-    const startLocalStream = async () => {
-      try {
-        // eslint-disable-next-line no-undef
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        localVideoRef.current.srcObject = mediaStream;
-        console.log('this media stream', mediaStream);
-        await createPeerConnection(); // Move this line here
-        await connectToSignalingServer();
-        console.log('media stream', mediaStream);
-      } catch (error) {
-        console.log('Error accessing media devices:', error);
-      }
-    };
-
-    startLocalStream();
     // Establish a connection with the signaling server
-
+    connectToSignalingServer();
     return () => {
       if (peerConnection) {
         peerConnection.close();
