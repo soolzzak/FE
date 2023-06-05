@@ -8,7 +8,7 @@ export const Login = () => {
   return (
     <div className='flex flex-col items-center'>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <LoginModal />
+        <LoginModal onClose={onClose} />
       </Modal>
 
       <button type="button" className="mt-32"

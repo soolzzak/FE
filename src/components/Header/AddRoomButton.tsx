@@ -27,7 +27,7 @@ export const AddRoomButton = () => {
   const [genderSetting] = useAtom(genderAtom);
   const [isPrivate] = useAtom(publicOrPrivateAtom);
   const [roomPassword] = useAtom(roomPasswordAtom);
-
+  console.log(image);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const createRoomMutation = useMutation(createRoom, {
