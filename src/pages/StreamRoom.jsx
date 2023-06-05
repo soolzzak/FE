@@ -19,6 +19,7 @@ let mediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+
   const getCookie = Cookies.get('accessKey');
   const params = useParams().id;
 
@@ -98,8 +99,11 @@ export const StreamRoom = () => {
   };
 
   const createPeerConnection = async () => {
-    // webrtc
+    const configuration = {
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+    };
     peerConnection = new RTCPeerConnection(PeerConnectionConfig);
+    console.log('created peer connection: ', peerConnection);
 
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
@@ -122,89 +126,86 @@ export const StreamRoom = () => {
       remoteVideoRef.current.srcObject = stream;
     };
 
-    console.log('adding media stream', mediaStream);
+    console.log('adding media stream to track', mediaStream);
     mediaStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
     });
-    console.log('created peer connection: ', peerConnection);
-  };
-  const startLocalStream = async () => {
-    try {
-      // eslint-disable-next-line no-undef
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      localVideoRef.current.srcObject = mediaStream;
-      console.log('adding media stream', mediaStream);
-      mediaStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, mediaStream);
-      });
-      console.log('media stream', mediaStream);
-    } catch (error) {
-      console.log('Error accessing media devices:', error);
-    }
-  };
-
-  const connectToSignalingServer = () => {
-    socket.onopen = () => {
-      const message = JSON.stringify({
-        from: userId,
-        type: 'join',
-        data: roomNum,
-      });
-      console.log('WebSocket connection opened');
-      socket.send(message);
-    };
-
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    socket.onmessage = async (event) => {
-      const message = JSON.parse(event.data);
-
-      switch (message.type) {
-        case 'offer':
-          console.log('received offer message', message);
-          await handleOfferMessage(message);
-          break;
-        case 'answer':
-          console.log('received answer message', message);
-          await handleAnswerMessage(message);
-          break;
-        case 'ice':
-          console.log('received ice message', message);
-          await handleCandidateMessage(message);
-          break;
-        case 'join':
-          console.log('received join message');
-
-          message.data = await getRoom(params);
-          console.log(message.data.data.hostId);
-
-          await createPeerConnection();
-
-          if (message.data.data.hostId !== userId) {
-            console.log('starting call');
-            await startCall();
-          }
-
-          break;
-        default:
-          console.warn('Invalid message type:', message.type);
-      }
-    };
   };
 
   useEffect(() => {
     const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
     socket = new WebSocket(signalingServerUrl);
+
+    const startLocalStream = async () => {
+      try {
+        // eslint-disable-next-line no-undef
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        localVideoRef.current.srcObject = mediaStream;
+
+        await createPeerConnection(); // Move this line here
+
+        console.log('media stream', mediaStream);
+      } catch (error) {
+        console.log('Error accessing media devices:', error);
+      }
+    };
+
     startLocalStream();
+    // Establish a connection with the signaling server
+    const connectToSignalingServer = () => {
+      socket.onopen = () => {
+        const message = JSON.stringify({
+          from: userId,
+          type: 'join',
+          data: roomNum,
+        });
+        console.log('WebSocket connection opened');
+        socket.send(message);
+      };
+
+      socket.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      socket.onmessage = async (event) => {
+        const message = JSON.parse(event.data);
+
+        switch (message.type) {
+          case 'offer':
+            console.log('received offer message', message);
+            await handleOfferMessage(message);
+            break;
+          case 'answer':
+            console.log('received answer message', message);
+            await handleAnswerMessage(message);
+            break;
+          case 'ice':
+            console.log('received ice message', message);
+            await handleCandidateMessage(message);
+            break;
+          case 'join':
+            console.log('received join message');
+            message.data = await getRoom(params);
+            console.log(message.data.data.hostId);
+            if (message.data.data.hostId !== userId) {
+              console.log('starting call');
+              await startCall();
+            }
+
+            break;
+          default:
+            console.warn('Invalid message type:', message.type);
+        }
+      };
+    };
+
     connectToSignalingServer();
 
     return () => {
@@ -236,9 +237,9 @@ export const StreamRoom = () => {
       </div>
       <div className="grid grid-cols-2">
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-        <video ref={localVideoRef} autoPlay className=" rounded-xl" />
+        <video ref={localVideoRef} autoPlay muted className=" rounded-xl" />
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-        <video ref={remoteVideoRef} autoPlay className="rounded-xl" />
+        <video ref={remoteVideoRef} autoPlay muted className="rounded-xl" />
       </div>
     </div>
   );
