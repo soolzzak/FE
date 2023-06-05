@@ -19,7 +19,6 @@ interface AuthToken {
 export const HeaderRightSection = () => {
   const [isOpenAuth, onCloseAuth, setIsOpenAuth] = useModal();
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
-  const [isOpenLogin, onCloseLogin, setIdOpenLogin] = useModal();
   const [user] = useAtom(usernameAtom);
 
   const [userInfo, setUserInfo] = useState<AuthToken>();
@@ -34,7 +33,7 @@ export const HeaderRightSection = () => {
   return (
     <section className="f-ic justify-end mr-4 min-w-[469px]">
       <Modal isOpen={isOpenAuth} hasOverlay onClose={onCloseAuth}>
-        <LoginModal />
+        <LoginModal onClose={onCloseAuth}/>
       </Modal>
       <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
         <AddRoom onClose={onCloseRoomCreate} />
