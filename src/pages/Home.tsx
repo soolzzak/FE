@@ -11,7 +11,6 @@ export const Home = () => {
   const [isOpenJoinroom, onCloseJoinRoom, setIsOpenJoinRoom] = useModal();
   const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] =
     useModal();
-  const [isOpenLogin, onCloseLogin, setIsOpenLogin] = useModal();
 
   return (
     <div className="f-ic-col bg-primary-100 min-h-screen w-full">

@@ -2,10 +2,10 @@ import { AnimatePresence } from 'framer-motion';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from '../layout/Layout';
 import { Home } from '../pages/Home';
-import { Login } from '../pages/Login';
 import { Mypage } from '../pages/Mypage';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
+import { Login } from '../pages/Login';
 
 export const Router = () => (
   <Layout>
