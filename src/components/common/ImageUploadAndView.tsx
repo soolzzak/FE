@@ -9,7 +9,6 @@ export const ImageUploadAndView = () => {
       className="cursor-pointer f-jic rounded-lg object-cover shadow w-full h-full bg-primary-100 hoverAnim"
       title="Upload Image"
     >
-      <Logo logoSize="150" />
       <input
         type="file"
         id="imageInput"
@@ -24,7 +23,7 @@ export const ImageUploadAndView = () => {
           alt=""
         />
       ) : (
-        ''
+        <Logo logoSize="150" />
       )}
     </label>
   );

@@ -9,7 +9,8 @@ import { LoginModal } from '../components/login/LoginModal';
 
 export const Home = () => {
   const [isOpenJoinroom, onCloseJoinRoom, setIsOpenJoinRoom] = useModal();
-  const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] = useModal();
+  const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] =
+    useModal();
   const [isOpenLogin, onCloseLogin, setIsOpenLogin] = useModal();
 
   return (
@@ -18,12 +19,15 @@ export const Home = () => {
       <CategoryTab />
       <HomeBodySection />
       <Modal isOpen={isOpenJoinroom} onClose={onCloseJoinRoom}>
-        <JoinRoomModal onCloseJoinRoom={onCloseJoinRoom} setIsOpenJoinRoom={setIsOpenJoinRoom} setIsOpenWaitingRoom={setIsOpenWaitingRoom} />
+        <JoinRoomModal
+          onCloseJoinRoom={onCloseJoinRoom}
+          setIsOpenJoinRoom={setIsOpenJoinRoom}
+          setIsOpenWaitingRoom={setIsOpenWaitingRoom}
+        />
       </Modal>
       <Modal isOpen={isOpenWaitingRoom} onClose={onCloaseWaitingRoom}>
         <WaitingRoomModal onCloaseWaitingRoom={onCloaseWaitingRoom} />
       </Modal>
-      
     </div>
   );
 };
