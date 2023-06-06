@@ -5,15 +5,19 @@ import axiosInstance from './axios';
 interface ApiResponse {
   status: number;
   msg: string;
-  data: MainpageRooms[];
+  data: PageableContent;
+}
+interface PageableContent {
+  content: MainpageRooms[];
 }
 interface ApiResponse1 {
   status: number;
   msg: string;
   data: MainpageRooms;
 }
-
 export type MainpageRooms = {
+  hasGuest: boolean;
+  userList: object;
   roomId: number;
   hostId: number;
   title: string;
@@ -24,16 +28,43 @@ export type MainpageRooms = {
   roomPassword: string | null;
   createdAt: string;
   alcohol: number;
-  mypageImageUrl: string | null;
+  userImageUrl: string | undefined;
   roomImageUrl: string | undefined;
 };
 
-export const getMainpageRooms = async (): Promise<ApiResponse | undefined> => {
+export const getMainpageRooms = async (
+  tab: string
+): Promise<ApiResponse | undefined> => {
+  if (tab === 'ALL') {
+    try {
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+        '/main'
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error as Error;
+    }
+  } else {
+    try {
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+        `/rooms?category=${tab}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error as Error;
+    }
+  }
+};
+
+export const getByCategory = async (
+  category: string
+): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      '/main'
+      `/rooms/${category}`
     );
-
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error as Error;
@@ -50,6 +81,7 @@ export type CreateRoomData = {
   };
   image: File | null;
 };
+
 export const createRoom = async ({
   data,
   image,

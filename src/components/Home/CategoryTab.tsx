@@ -1,32 +1,33 @@
 import { motion } from 'framer-motion';
+import { useAtom } from 'jotai';
 import { useState } from 'react';
-
-export const tabList = [
-  '전체',
-  '🎞 영화/드라마 ',
-  '✈ 맛집/여행',
-  '⚽ 스포츠/게임',
-  '🎈 오늘하루',
-  '🔮 고민상담',
-  '🙌  자유방',
-];
+import {
+  handleDisplayedTabChangeAtom,
+  handleTabChangeAtom,
+} from '../../store/mainpageStore';
+import { selections, tabList } from '../../utils/switchSelections';
 
 export const CategoryTab = () => {
   const [activeTab, setActiveTab] = useState('전체');
+  const [, setTabAtom] = useAtom(handleTabChangeAtom);
+  const [, setDisplayedTabAtom] = useAtom(handleDisplayedTabChangeAtom);
 
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = (tab: string, index: number) => {
+    setTabAtom(selections[index]);
+    setDisplayedTabAtom(tab);
     setActiveTab(tab);
   };
 
   return (
-    <nav className="w-full ">
-      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 gap-0 min-w-[660px] lg:px-52">
-        {tabList.map((tab) => (
+    <nav className="w-full border-t">
+      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 min-w-[660px] gap-4 lg:px-32 ">
+        {tabList.map((tab, index) => (
           <motion.div
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.1 }}
             role="none"
             className={`
-            f-jic cursor-pointer px-5 py-4 text-lg min-w-[155px] font-semibold text-[#454545] 
+            f-jic cursor-pointer py-4 text-lg min-w-[120px] font-semibold text-[#454545] 
             ${
               activeTab === tab
                 ? 'border-b-[3px] border-primary-300 text-primary-200'
@@ -35,7 +36,7 @@ export const CategoryTab = () => {
             transition-colors duration-200 ease-in-out hover:text-primary-200
           `}
             key={tab}
-            onClick={() => handleTabChange(tab)}
+            onClick={() => handleTabChange(tab, index)}
           >
             {tab}
           </motion.div>
