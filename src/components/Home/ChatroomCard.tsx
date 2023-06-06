@@ -1,19 +1,24 @@
+import { atom, useAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { MainpageRooms } from '../../api/main';
+import { isOpenJoinRoomAtom } from '../../store/modalStore';
 
 type ChatroomCardProps = {
   chatRoom: MainpageRooms;
 };
-
+export const chatRoomInfoAtom = atom<MainpageRooms | null>(null);
 export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
-  const navigate = useNavigate();
+  const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
+  const [, setChatRoomInfo] = useAtom(chatRoomInfoAtom);
   return (
     <motion.div
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ scale: 1.04 }}
       role="none"
       className="cursor-pointer f-ic-col rounded-3xl bg-white w-[231px] h-[306px] py-5 px-3.5 relative shadow"
-      onClick={() => navigate(`/room/${chatRoom.roomId}`)}
+      onClick={() => {
+        setChatRoomInfo(chatRoom as MainpageRooms);
+        setIsOpenJoinRoom(true);
+      }}
     >
       {/* image */}
       <img
@@ -29,7 +34,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
         <div className="w-10 h-10 rounded-full bg-gray-300" />
         <div className="f-col justify-between ml-3 h-full w-36">
           <div className="pb-1">{chatRoom.username}</div>
-          <div className="w-full h-3 rounded-lg bg-[#9A9A9A;]" />
+          <div className="w-full h-2 rounded-lg bg-[#9A9A9A;]" />
         </div>
       </div>
     </motion.div>
