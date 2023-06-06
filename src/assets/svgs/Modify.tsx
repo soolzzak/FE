@@ -1,4 +1,4 @@
-export const Modify = ({ onClick }) => (
+export const Modify = ({ onClick }: { onClick?: () => void }) => (
   <svg
     width="50"
     height="50"

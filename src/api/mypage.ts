@@ -1,5 +1,4 @@
 import { AxiosResponse } from 'axios';
-
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -11,24 +10,19 @@ interface ApiResponse {
 export interface MypageProfileRooms {
   userImageUrl: string | undefined;
   username: string;
-  alcolhol: number;
-  socialName: string;
-  meetedUser: MeetUser[];
-  blacklistedUser: BlacklistedUser[];
-  followingUser: FollowingUser[];
+  alcohol: number;
+  socialProvider: string;
+  email: string;
+  metUser: TabUserList[];
+  blacklistedUser: TabUserList[];
+  followingUser: TabUserList[];
 }
 
-interface MeetUser {
-  metUser: string;
+export interface TabUserList {
+  userId: string;
+  username: string;
+  image: string;
   createdAt: string;
-}
-
-interface BlacklistedUser {
-  blacklistedUser: string;
-}
-
-interface FollowingUser {
-  followingUser: string;
 }
 
 export const getMypageProfile = async (): Promise<ApiResponse | undefined> => {
@@ -42,19 +36,19 @@ export const getMypageProfile = async (): Promise<ApiResponse | undefined> => {
   }
 };
 
-// export const updateMypageProfile = async (
-//   file: FormData
-// ): Promise<ApiResponse | undefined> => {
-//   try {
-//     const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
-//       '/mypage',
-//       file,
-//       {
-//         headers: { 'Content-Type': 'multipart/form-data' },
-//       }
-//     );
-//     return response.data;
-//   } catch (error) {
-//     throw error as Error;
-//   }
-// };
+export const updateMypageProfile = async (
+  file: FormData
+): Promise<ApiResponse | undefined> => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
+      '/mypage',
+      file,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error as Error;
+  }
+};
