@@ -1,17 +1,18 @@
+import { useAtom } from 'jotai';
+import { HeroSection } from '../components/Home/HeroSection';
 import { Suspense } from 'react';
 import { CategoryTab } from '../components/Home/CategoryTab';
 import { HeroSection } from '../components/Home/HeroSection';
 import { HomeBodySection } from '../components/Home/HomeBodySection';
 import { JoinRoomModal } from '../components/Home/JoinRoomModal';
 import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
+import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../store/modalStore';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
 
 export const Home = () => {
-  const [isOpenJoinroom, onCloseJoinRoom, setIsOpenJoinRoom] = useModal();
-  const [isOpenWaitingRoom, onCloaseWaitingRoom, setIsOpenWaitingRoom] =
-    useModal();
-
+  const [isOpenJoinRoom, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom)
+  const [isOpenWaitingRoom, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom)
   return (
     <div className="f-ic-col bg-primary-50 min-h-screen w-full min-w-[660px]">
       <HeroSection />
@@ -25,9 +26,11 @@ export const Home = () => {
           setIsOpenJoinRoom={setIsOpenJoinRoom}
           setIsOpenWaitingRoom={setIsOpenWaitingRoom}
         />
+      <Modal isOpen={isOpenJoinRoom} onClose={() => setIsOpenJoinRoom(false)} hasOverlay>
+        <JoinRoomModal />
       </Modal>
-      <Modal isOpen={isOpenWaitingRoom} onClose={onCloaseWaitingRoom}>
-        <WaitingRoomModal onCloaseWaitingRoom={onCloaseWaitingRoom} />
+      <Modal isOpen={isOpenWaitingRoom} onClose={() => setIsOpenWaitingRoom(false)} hasOverlay>
+        <WaitingRoomModal />
       </Modal>
     </div>
   );

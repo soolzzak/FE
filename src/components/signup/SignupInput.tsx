@@ -121,6 +121,8 @@ export const SignupInput = () => {
     }
   };
 
+  console.log('render')
+
   const EmailMutation = useMutation(EmailConfirm);
   const confirmEmailHandler = async () => {
     if (!email) {
@@ -158,6 +160,7 @@ export const SignupInput = () => {
       !email ||
       !emailType.test(email) ||
       !emailNumber ||
+      emailNumber !== EmailMutation.data ||
       !password ||
       !passwordType.test(password) ||
       !pwcheck ||
@@ -272,7 +275,7 @@ export const SignupInput = () => {
           <input
             type="text"
             name="year"
-            className="box-border w-[112px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
+            className="box-border w-[125px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
             value={birthday.year || ''}
             minLength={4}
             maxLength={4}
@@ -283,7 +286,7 @@ export const SignupInput = () => {
 
           <select
             name="month"
-            className="box-border w-[112px] h-[50px] rounded-lg border border-[#929292] indent-2 text-[16px]"
+            className="box-border w-[125px] h-[50px] rounded-lg border border-[#929292] indent-2 text-[16px]"
             onChange={birthdayselectHandler}
             value={birthday.month || ''}
             onBlur={birthdayCheckHandler}
@@ -303,7 +306,7 @@ export const SignupInput = () => {
             value={birthday.day || ''}
             min="1"
             max="31"
-            className="box-border w-[112px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
+            className="box-border w-[125px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
             onChange={birthdayHandler}
             onBlur={birthdayCheckHandler}
             placeholder="일"
