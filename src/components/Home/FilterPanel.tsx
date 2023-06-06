@@ -1,9 +1,5 @@
-import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
-import { categoryAtom } from '../../store/addRoomStore';
-import { tabList } from './CategoryTab';
 import { ArrowDown } from '../../assets/svgs/ArrowDown';
-import { CustomSelector } from '../common/CustomSelector';
 import { HorizontalSelector } from './HorizontalSelector';
 
 export const FilterPanel = () => {
@@ -44,7 +40,7 @@ export const FilterPanel = () => {
           <ArrowDown />
         </div>
         {isOpen && (
-          <div className="absolute w-[261px] top-full right-0 z-10 mt-2 p-4 bg-white rounded-lg shadow-lg">
+          <div className="absolute w-[261px] top-full right-0 z-10 mt-2 p-4 pt-0 bg-white rounded-lg shadow-lg">
             <HorizontalSelector
               title="성별"
               selections={['ANY', 'FEMALE', 'MALE']}

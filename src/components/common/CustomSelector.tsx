@@ -19,7 +19,7 @@ export const CustomSelector = () => {
           <div
             role="none"
             key={option}
-            className={`border-2 px-7 py-2 border-[#929292] rounded-lg cursor-pointer ${
+            className={`f-ic border-2 px-7 h-9 border-[#929292] rounded-lg cursor-pointer ${
               selectedOption === option
                 ? 'bg-primary-50 text-primary-200 border-primary-200'
                 : ''

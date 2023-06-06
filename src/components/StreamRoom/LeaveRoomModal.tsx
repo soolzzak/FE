@@ -2,7 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { CancelButton } from '../common/CancelButton';
 
-export const LeaveRoomModal = ({onCloseLeaveRoom}:{onCloseLeaveRoom: () => void}) => {
+export const LeaveRoomModal = ({
+  onCloseLeaveRoom,
+}: {
+  onCloseLeaveRoom: () => void;
+}) => {
   const navigation = useNavigate();
   return (
     <div className="relative w-[550px] h-52 bg-[#FFFFFF] rounded-[30px] flex flex-col justify-center items-center">
@@ -25,7 +29,7 @@ export const LeaveRoomModal = ({onCloseLeaveRoom}:{onCloseLeaveRoom: () => void}
         </button>
       </div>
 
-      <CancelButton onClose={onCloseLeaveRoom}/>
+      <CancelButton onClose={onCloseLeaveRoom} />
     </div>
   );
 };

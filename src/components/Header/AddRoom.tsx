@@ -16,12 +16,12 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   console.log('render');
 
   return (
-    <div className="relative f-col bg-white py-8 px-12 rounded-[20px]">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="relative f-col bg-white px-12 rounded-[20px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-7">
         <div className="w-[356px] h-[236px] mt-5 rounded-2xl bg-slate-400">
           <ImageUploadAndView />
         </div>
-        <div className="f-col gap-5">
+        <div className="f-col gap-3">
           <ModalInput
             title="방 제목"
             placeholderText="예시 : 분노의 질주 얘기하면서 같이 소주마셔요"

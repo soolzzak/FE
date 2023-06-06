@@ -19,7 +19,7 @@ export const TwoOptionsSelector = ({ title, leftRightSelect }: InputProps) => {
       <p className="text-base font-bold mb-2 text-[#454545]">{title}</p>
       <button
         type="button"
-        className={`rounded-l-lg h-11 w-16 border-2 
+        className={`rounded-l-lg h-9 w-16 border-2 
         ${
           selectedOption === leftRightSelect[0]
             ? 'bg-primary-50 text-primary-200 border-primary-200 -mr-[2px]'
@@ -31,7 +31,7 @@ export const TwoOptionsSelector = ({ title, leftRightSelect }: InputProps) => {
       </button>
       <button
         type="button"
-        className={`rounded-r-lg h-11 w-16  border-2 
+        className={`rounded-r-lg h-9 w-16  border-2 
         ${
           selectedOption === leftRightSelect[1]
             ? 'bg-primary-50 text-primary-200 border-primary-200 -ml-[1px]'

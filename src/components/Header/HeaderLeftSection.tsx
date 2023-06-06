@@ -1,15 +1,22 @@
+import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '../../assets/svgs/Logo';
 import { Search } from '../../assets/svgs/Search';
+import { usernameAtom } from '../../store/mainpageStore';
 
 export const HeaderLeftSection = () => {
+  const [userToken] = useAtom(usernameAtom);
   const navigate = useNavigate();
   return (
     <section className="f-ic max-w-[600px] w-full">
       <div role="none" onClick={() => navigate('/')} className="cursor-pointer">
         <Logo />
       </div>
-      <div className="f-ic min-w-[250px] ml-8 py-3.5 pl-4 h-12 bg-[#F4F4F4] rounded-2xl hidden md:flex">
+      <div
+        className={`f-ic w-[300px] ml-8 py-3.5 pl-4 h-12 bg-[#F4F4F4] rounded-2xl md:flex
+        ${userToken ? 'hidden' : ''} 
+        `}
+      >
         <Search />
         <input
           type="text"

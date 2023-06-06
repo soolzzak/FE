@@ -27,6 +27,9 @@
   .hoverAnim {
     @apply hover:bg-primary-50 transition-colors duration-200;
   }
+  .dropdownItemStyle {
+    @apply px-4 py-2 text-black hover:bg-primary-100 cursor-pointer;
+  }
 }
 
 *::-webkit-scrollbar {

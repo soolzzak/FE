@@ -1,19 +1,9 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { categoryAtom } from '../../store/addRoomStore';
-import { tabList } from '../Home/CategoryTab';
+import { selections, tabList } from '../../utils/switchSelections';
 
 export const DropdownSelector = () => {
-  const selections = [
-    'ALL',
-    'MOVIE_DRAMA',
-    'FOOD_TRAVEL',
-    'SPORTS_GAME',
-    'ABOUT_TODAY',
-    'COUNSELING',
-    'GENERAL',
-  ];
-
   const [selectedOption, handleOptionClick] = useAtom(categoryAtom);
   const [currentSelectionView, setCurrentSelectionView] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -57,15 +47,15 @@ export const DropdownSelector = () => {
       <div className="relative" ref={dropdownRef}>
         <div
           role="none"
-          className={`border-2 px-7 py-2 border-[#929292] rounded-lg cursor-pointer ${
+          className={`f-ic border-2 px-7 h-9 border-[#929292] rounded-lg cursor-pointer ${
             isOpen ? 'bg-primary-50 text-primary-200 border-primary-200' : ''
           }`}
           onClick={handleDropdownToggle}
         >
-          {currentSelectionView}
+          <span>{currentSelectionView}</span>
         </div>
         {isOpen && (
-          <div className="absolute top-full left-0 z-10 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
+          <div className="absolute top-full w-full left-0 z-10 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
             {selections.map((option, index) => (
               <div
                 role="none"
