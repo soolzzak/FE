@@ -16,7 +16,12 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
   const passwordHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(event.target.value);
 
-  const loginMutation = useMutation(LoginApi);
+  const loginMutation = useMutation(LoginApi, {
+    onSuccess: () => {
+      onClose();
+      navigate('/')
+    }
+  });
 
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,28 +33,15 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
       password,
     };
     await loginMutation.mutate(loginInfo);
-
-    if (loginMutation.isSuccess) {
-      if (loginMutation.data === '이메일이 존재하지 않습니다.') {
-        setErrMsg('존재하지 않는 이메일 입니다');
-      } else if (loginMutation.data === '비밀번호가 일치하지 않습니다.') {
-        setErrMsg('비밀번호가 일치하지 않습니다');
-      }
-    }
-    
+   
   };
 
-  console.log(errMsg)
-
   const KakaoLoginBtn = () => {
-    const REST_API_KEY = '8a0cad5b3db49758aed8e161a98f5a91';
-    const REDIRECT_URI = 'http://localhost:3001/oauth';
+    const REST_API_KEY = 'b39a9a7ab117d1d1c9ca71fa61285f13';
+    const REDIRECT_URI = 'https://api.honsoolzzak.com/api/login/oauth2/code/kakao&response_type=code&scope=profile_image,account_email,gender,birthday,age_range';
     const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     window.location.href = KAKAO_AUTH_URI;
   };
-  //   const code = new URL(window.location.href).searchParams.get("code");
-  //   window.open(KAKAO_AUTH_URI,"_self");
-  // }
 
   return (
     <div className="w-[470px] h-[625px] rounded-[20px] bg-[#FFFFFF] flex flex-col justify-center items-center text-center">
@@ -93,7 +85,10 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
       </button>
 
       <div className="flex items-center justify-center gap-2 mt-3">
-        <span className="text-[14px] text-[#7B7B7B] font-semibold">
+        <span role='none' onClick={() => {
+          navigate('/pwchange')
+          onClose();
+        }} className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]">
           비밀번호 찾기
         </span>
         <Vector />

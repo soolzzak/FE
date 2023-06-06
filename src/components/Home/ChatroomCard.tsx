@@ -1,19 +1,24 @@
+import { atom, useAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { MainpageRooms } from '../../api/main';
+import { isOpenJoinRoomAtom } from '../../store/modalStore';
 
 type ChatroomCardProps = {
   chatRoom: MainpageRooms;
 };
-
+export const chatRoomInfoAtom = atom<MainpageRooms | null>(null);
 export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
-  const navigate = useNavigate();
+  const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
+  const [, setChatRoomInfo] = useAtom(chatRoomInfoAtom);
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
       role="none"
       className="cursor-pointer f-ic-col rounded-3xl bg-white w-[231px] h-[306px] py-5 px-3.5 relative shadow"
-      onClick={() => navigate(`/room/${chatRoom.roomId}`)}
+      onClick={() => {
+        setChatRoomInfo(chatRoom as MainpageRooms);
+        setIsOpenJoinRoom(true);
+      }}
     >
       {/* image */}
       <img
