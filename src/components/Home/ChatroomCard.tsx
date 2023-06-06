@@ -63,7 +63,11 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
           {chatRoom.hasGuest ? '2/2' : '1/2'}
         </span>
       </div>
-      <div className="self-start mt-1 text-md text-left">{chatRoom.title}</div>
+      <div className="self-start mt-1 text-md text-left overflow-hidden">
+        <div className="h-[48px] overflow-ellipsis overflow-hidden">
+          {chatRoom.title}
+        </div>
+      </div>
       <div className="absolute bottom-5 f-ic w-full px-3.5">
         {chatRoom.userImageUrl ? (
           <img
