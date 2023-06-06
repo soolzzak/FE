@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
+import jwtDecode from 'jwt-decode';
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -88,7 +89,6 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
     Cookies.set('refreshKey', refreshKey, {
       expires: refreshExpireDate,
     });
-    console.log('aaa ', response)
     return response;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {

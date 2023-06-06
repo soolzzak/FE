@@ -1,15 +1,23 @@
+import { useAtom } from 'jotai';
+import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { LoginApi, LoginInfo } from '../../api/auth';
 import { Vector } from '../../assets/svgs/Vector';
+import { usernameAtom } from '../../store/mainpageStore';
 import { Logo } from '../../assets/svgs/Logo';
+
 
 export const LoginModal = ({ onClose }: { onClose: () => void }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
+
+  const [, setUserToken] = useAtom(usernameAtom);
+
   const [errMsg, setErrMsg] = useState<string | undefined>();
+
 
   const emailHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
@@ -17,10 +25,14 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
     setPassword(event.target.value);
 
   const loginMutation = useMutation(LoginApi, {
-    onSuccess: () => {
+    onSuccess: (response) => {
       onClose();
+      setUserToken(response?.headers.access_key);
       navigate('/')
-    }
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
 
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
