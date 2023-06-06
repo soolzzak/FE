@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
-import jwtDecode from 'jwt-decode';
 import axiosInstance from './axios';
 
 interface ApiResponse {

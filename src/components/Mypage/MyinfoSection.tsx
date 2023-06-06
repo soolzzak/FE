@@ -65,13 +65,13 @@ export const MyinfoSection = ({
     }
   };
   return (
-    <div className="bg-[#D9D9D9] basis-2/5 h-[750px] rounded-3xl flex flex-col gap-y-6 pb-10">
+    <div className="bg-[#D9D9D9] basis-2/5 h-[700px] rounded-3xl flex flex-col gap-y-6 pb-10">
       <div className="relative">
         <div className="absolute top-4 right-4 ">
           {/* <Modify onClick={} /> */}
           {editMode ? (
             <button
-              className="w-83 h-50 border-2 bg-primary-50 text-primary-200 border-primary-200 rounded-2xl"
+              className="w-[83px] h-[29px] border-2 bg-primary-50 text-primary-200 border-primary-200 rounded-2xl"
               type="button"
               onClick={editUserInfo}
             >
@@ -123,13 +123,14 @@ export const MyinfoSection = ({
 
         {editMode ? (
           <input
-            className="w-[120px] h-[45px] rounded-lg border border-[#929292]"
+            className="w-[211px] h-[42px] rounded-lg border border-[#FF6700]"
             type="text"
             onChange={modifyUserNameHandler}
             value={modifyUserName}
+            placeholder={myinfo?.username}
           />
         ) : (
-          <p>{modifyUserName || myinfo?.username}</p>
+          <p className="text-xl">{modifyUserName || myinfo?.username}</p>
         )}
       </div>
       <div className="ml-20 mt-5">
