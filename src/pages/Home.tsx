@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import { HeroSection } from '../components/Home/HeroSection';
 import { Suspense } from 'react';
 import { CategoryTab } from '../components/Home/CategoryTab';
 import { HeroSection } from '../components/Home/HeroSection';
@@ -20,12 +19,6 @@ export const Home = () => {
       <Suspense fallback={<div>Loading...</div>}>
         <HomeBodySection />
       </Suspense>
-      <Modal isOpen={isOpenJoinroom} onClose={onCloseJoinRoom}>
-        <JoinRoomModal
-          onCloseJoinRoom={onCloseJoinRoom}
-          setIsOpenJoinRoom={setIsOpenJoinRoom}
-          setIsOpenWaitingRoom={setIsOpenWaitingRoom}
-        />
       <Modal isOpen={isOpenJoinRoom} onClose={() => setIsOpenJoinRoom(false)} hasOverlay>
         <JoinRoomModal />
       </Modal>
