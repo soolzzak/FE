@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { CategoryTab } from '../components/Home/CategoryTab';
 import { HeroSection } from '../components/Home/HeroSection';
 import { HomeBodySection } from '../components/Home/HomeBodySection';
@@ -13,12 +12,12 @@ export const Home = () => {
     useModal();
 
   return (
-    <div className="f-ic-col bg-primary-50 min-h-screen w-full min-w-[660px]">
+    <div className="f-ic-col bg-[#F5F5F7] min-h-screen w-full min-w-[660px]">
       <HeroSection />
-      <CategoryTab />
-      <Suspense fallback={<div>Loading...</div>}>
-        <HomeBodySection />
-      </Suspense>
+      <div className="sticky top-[70px] z-10 w-full">
+        <CategoryTab />
+      </div>
+      <HomeBodySection />
       <Modal isOpen={isOpenJoinroom} onClose={onCloseJoinRoom}>
         <JoinRoomModal
           onCloseJoinRoom={onCloseJoinRoom}

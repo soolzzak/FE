@@ -187,8 +187,8 @@ export const StreamRoom = () => {
             message.data = await getRoom(params);
             await startLocalStream();
             await createPeerConnection();
-            console.log(message.data.data.hostId);
-            if (message.data.data.hostId !== userId) {
+            console.log(message.data);
+            if (message.data.hostId !== userId) {
               console.log('starting call');
               await startCall();
             }

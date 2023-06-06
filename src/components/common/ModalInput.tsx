@@ -24,7 +24,7 @@ export const ModalInput = ({
         type={inputType}
         autoFocus={autofocus}
         disabled={disabled}
-        className={`w-full h-11 pl-4 px-3 text-sm rounded-lg border border-[#929292]
+        className={`w-full h-9 pl-4 px-3 border-2 border-[#929292] text-sm rounded-lg 
         ${disabled ? 'bg-primary-50 text-' : ''}`}
         placeholder={placeholderText}
         onChange={(e) => handleInputChange(e.target.value)}

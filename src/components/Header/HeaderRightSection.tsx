@@ -1,5 +1,4 @@
-import { atom, useAtom } from 'jotai';
-import Cookies from 'js-cookie';
+import { useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 import { Notifications } from '../../assets/svgs/Notifications';
@@ -11,9 +10,9 @@ import { AddRoom } from './AddRoom';
 import { usernameAtom } from '../../store/mainpageStore';
 import { ProfileMenu } from './ProfileMenu';
 
-interface AuthToken {
+type AuthToken = {
   sub: string;
-}
+};
 
 export const HeaderRightSection = () => {
   const [isOpenAuth, onCloseAuth, setIsOpenAuth] = useModal();
@@ -30,7 +29,10 @@ export const HeaderRightSection = () => {
 
   console.log(userInfo);
   return (
-    <section className="f-ic justify-end mr-4 min-w-[469px]">
+    <section
+      className={`f-ic justify-end mr-4 md:min-w-[200px]
+      ${user ? 'min-w-[490px]' : 'min-w-[180px]'}`}
+    >
       <Modal isOpen={isOpenAuth} hasOverlay onClose={onCloseAuth}>
         <LoginModal onClose={onCloseAuth} />
       </Modal>
@@ -45,14 +47,13 @@ export const HeaderRightSection = () => {
             dimensions="mr-7 min-w-[185px]"
           />
           <Notifications />
-          {/* <div className="px-7 text-sm font-semibold">{userInfo.sub}</div> */}
-          <ProfileMenu />
+          <ProfileMenu user={userInfo.sub} setUserInfo={setUserInfo} />
         </>
       ) : (
         <CommonButton
           buttonText="로그인"
           clickHandler={() => setIsOpenAuth(true)}
-          dimensions="mr-7"
+          dimensions="mr-7 min-w-[70px]"
         />
       )}
     </section>

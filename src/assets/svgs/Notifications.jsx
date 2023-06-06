@@ -1,5 +1,6 @@
 export const Notifications = () => (
   <svg
+    className="min-w-[16px]"
     width="16"
     height="20"
     viewBox="0 0 16 20"
