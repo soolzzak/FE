@@ -18,7 +18,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
   const [category, setCategory] = useState('');
   const [genderSetting, setGenderSetting] = useState('');
 
-  const alcohol = `h-2 rounded-full bg-secondary-200 w-[${chatRoom.alcohol}%]`;
+  const alcohol = `h-2 rounded-full bg-secondary-200 w-[${chatRoom.alcohol}%] shadow`;
 
   useEffect(() => {
     setCategory(categorySelection(chatRoom.category) as string);
@@ -53,26 +53,30 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
           </span>
         </div>
         <span
-          className={`mt-2.5 text-xs absolute right-1 font-semibold bg-primary-50 px-1 rounded
-          ${chatRoom.hasGuest ? 'text-red-600' : 'text-green-600'}`}
+          className={`mt-2.5 text-xs absolute right-1 font-semibold px-1 rounded
+          ${
+            chatRoom.hasGuest
+              ? 'text-red-600 bg-primary-50'
+              : 'text-green-600 bg-secondary-50'
+          }`}
         >
           {chatRoom.hasGuest ? '2/2' : '1/2'}
         </span>
       </div>
-      <div className="self-start mt-1 text-lg text-left">{chatRoom.title}</div>
+      <div className="self-start mt-1 text-md text-left">{chatRoom.title}</div>
       <div className="absolute bottom-5 f-ic w-full px-3.5">
         {chatRoom.userImageUrl ? (
           <img
             alt="Profile Pic"
             src={chatRoom.userImageUrl}
-            className="w-10 h-10 rounded-full shadow"
+            className="w-10 h-10 rounded-full shadow-sm"
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gray-300 shadow" />
+          <div className="w-10 h-10 rounded-full bg-gray-300 shadow-sm" />
         )}
         <div className="f-col justify-between ml-3 h-full w-36">
           <div className="pb-1 text-sm">{chatRoom.username}</div>
-          <div className="h-2 rounded-lg bg-secondary-100 z-0 shadow">
+          <div className="h-2 rounded-lg bg-secondary-100 z-0 shadow-sm">
             <div className={alcohol} />
           </div>
         </div>
