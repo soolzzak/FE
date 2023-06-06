@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
+import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -27,16 +27,10 @@ export interface EmailInfo {
   email: string | undefined;
 }
 
-export const getAccessKey = () => Cookies.get('access_key');
-export const getRefreshKey = () => Cookies.get('refresh_key');
-
-export const privateInstance = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL,
-  withCredentials: true,
-  headers: {
-    access_key: getAccessKey(),
-  },
-});
+export interface ChangePwdInfo {
+  email: string | undefined;
+  password: string | undefined;
+}
 
 export const SignupApi = async (signupInfo: SignupInfo) => {
   try {
@@ -56,6 +50,17 @@ export const EmailConfirm = async (email: EmailInfo) => {
   try {
     const response = await axiosInstance.post('/signup/mailconfirm', email);
     return response.data.code;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data.message;
+    }
+  }
+};
+
+export const ChangePassword = async (changePwdInfo: ChangePwdInfo) => {
+  try {
+    const response = await axiosInstance.put('/change_password', changePwdInfo);
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data.message;
@@ -83,8 +88,6 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
     Cookies.set('refreshKey', refreshKey, {
       expires: refreshExpireDate,
     });
-    console.log(response);
-
     return response;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
@@ -97,62 +100,61 @@ export const LogoutApi = async () => {
   try {
     const config = {
       headers: {
-        access_key: getAccessKey(),
-        refresh_key: getRefreshKey(),
+        access_key: Cookies.get('accessKey'),
+        refresh_key: Cookies.get('refreshKey'),
       },
     };
     await axiosInstance.get('/logout', config);
-
-    Cookies.remove('access_key');
-    Cookies.remove('refresh_key');
+    Cookies.remove('accessKey');
+    Cookies.remove('refreshKey');
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;
   }
 };
 
-export const getNewAccessKey = async () => {
-  try {
-    const config = {
-      headers: {
-        refresh_key: getRefreshKey(),
-      },
-    };
-    const response = await axiosInstance.get('/refreshtoken', config);
-    const accessKey = response.headers.access_key;
-    Cookies.set('accessKey', accessKey);
-    return response;
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) throw error;
-    return error.response.data.message;
-  }
-};
+// export const getNewAccessKey = async () => {
+//   try {
+//     const config = {
+//       headers: {
+//         refresh_key: Cookies.get('accessKey'),
+//       },
+//     };
+//     const response = await axios.get('https://api.honsoolzzak.com/api/refreshtoken', config);
+//     const accessKey = response.headers.access_key;
+//     Cookies.set('accessKey', accessKey);
+//     return response;
+//   } catch (error: any) {
+//     if (axios.isAxiosError(error)) throw error;
+//     return error.response.data.message;
+//   }
+// };
 
-// 토큰 인터셉터
-privateInstance.interceptors.response.use(
-  // 1.성공시
-  (response) => response,
+// // 토큰 인터셉터
+// axiosInstance.interceptors.response.use(
+//   // 1.성공시
+//   (response) => response,
 
-  // 2.실패
-  async (error) => {
-    const originRequest = error.config;
-    console.log('토큰 만료 인터셉터 오류 형태: ', error);
+//   // 2.실패
+//   async (error) => {
+//     const originRequest = error.config;
+//     console.log('토큰 만료 인터셉터 오류 형태: ', error);
 
-    // 토큰 만료 (메세지 확인)
-    if (error.response.data.msg === '토큰만료') {
-      const response = await getNewAccessKey();
+//     // 토큰 만료 (메세지 확인)
+//     if (error.response.data.msg === '토큰만료') {
+//       const response = await getNewAccessKey();
 
-      // 리프레시 토큰 요청 성공 (메세지 확인)
-      if (response.data.msg === '토큰 성공') {
-        const newAccessKey = response.headers.access_key;
-        Cookies.set('accessKey', newAccessKey);
+//       // 리프레시 토큰 요청 성공 (메세지 확인)
+//       if (response.data.msg === '토큰 성공') {
+//         const newAccessKey = response.headers.access_key;
+//         Cookies.set('accessKey', newAccessKey);
 
-        // 요청 이어하기
-        originRequest.headers.access_key = getAccessKey();
-        return axios(originRequest);
-      }
-      // navigate('/signup')
-      window.location.replace('/login');
-    }
-    return Promise.reject(error);
-  }
-);
+//         // 요청 이어하기
+//         originRequest.headers.access_key = getNewAccessKey();
+//         return axios(originRequest);
+//       }
+//       // navigate('/signup')
+//       window.location.replace('/login');
+//     }
+//     return Promise.reject(error);
+//   }
+// );

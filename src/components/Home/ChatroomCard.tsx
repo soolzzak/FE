@@ -1,20 +1,23 @@
+import { atom, useAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { MainpageRooms } from '../../api/main';
 import {
   categorySelection,
   genderSelection,
 } from '../../utils/switchSelections';
+import { isOpenJoinRoomAtom } from '../../store/modalStore';
 
 type ChatroomCardProps = {
   chatRoom: MainpageRooms;
 };
-
+export const chatRoomInfoAtom = atom<MainpageRooms | null>(null);
 export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
+  const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
+  const [, setChatRoomInfo] = useAtom(chatRoomInfoAtom);
   const [category, setCategory] = useState('');
   const [genderSetting, setGenderSetting] = useState('');
-  const navigate = useNavigate();
+
   const alcohol = `h-2 rounded-full bg-secondary-200 w-[${chatRoom.alcohol}%]`;
 
   useEffect(() => {
@@ -22,12 +25,16 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
     setGenderSetting(genderSelection(chatRoom.genderSetting) as string);
   }, []);
   console.log(alcohol);
+
   return (
     <motion.div
       whileHover={{ scale: 1.04 }}
       role="none"
-      className="cursor-pointer f-ic-col rounded-3xl bg-white w-[231px] h-[306px] py-3.5 px-3.5 relative shadow"
-      onClick={() => navigate(`/room/${chatRoom.roomId}`)}
+      className="cursor-pointer f-ic-col rounded-3xl bg-white w-[231px] h-[306px] py-5 px-3.5 relative shadow"
+      onClick={() => {
+        setChatRoomInfo(chatRoom as MainpageRooms);
+        setIsOpenJoinRoom(true);
+      }}
     >
       {/* image */}
       <img
