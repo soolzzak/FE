@@ -10,13 +10,16 @@ import { Modal } from '../common/Modal';
 import { LoginModal } from '../login/LoginModal';
 import { AddRoom } from './AddRoom';
 import { ProfileMenu } from './ProfileMenu';
+import { AuthModal } from './AuthModal';
+import { isOpenAuthModalAtom, isOpenLoginModalAtom } from '../../store/modalStore';
 
 type AuthToken = {
   sub: string;
 };
 
 export const HeaderRightSection = () => {
-  const [isOpenAuth, onCloseAuth, setIsOpenAuth] = useModal();
+  const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom)
+  const [isOpenLogin, setIsOpenLogin] = useAtom(isOpenLoginModalAtom)
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
   const [user] = useAtom(usernameAtom);
 
@@ -34,8 +37,11 @@ export const HeaderRightSection = () => {
       className={`f-ic justify-end mr-4 md:min-w-[200px]
       ${user ? 'min-w-[490px]' : 'min-w-[180px]'}`}
     >
-      <Modal isOpen={isOpenAuth} hasOverlay onClose={onCloseAuth}>
-        <LoginModal onClose={onCloseAuth} />
+      <Modal isOpen={isOpenAuth} hasOverlay onClose={()=>setIsOpenAuth(false)}>
+        <AuthModal />
+      </Modal>
+      <Modal isOpen={isOpenLogin} hasOverlay onClose={()=>setIsOpenLogin(false)}>
+        <LoginModal />
       </Modal>
       <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
         <AddRoom onClose={onCloseRoomCreate} />

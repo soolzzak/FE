@@ -9,8 +9,9 @@ import { Mypage } from '../pages/Mypage';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
 import { handleTokenChangeAtom } from '../store/mainpageStore';
-import { Login } from '../pages/Login';
-
+import { NotFound } from '../pages/NotFound';
+import { ChangePassword } from '../pages/ChangePassword';
+import { KakaoCallback } from '../pages/KakaoCallBack';
 
 export const Router = () => {
   const token = Cookies.get('accessKey');
@@ -26,10 +27,12 @@ export const Router = () => {
     <Layout>
       <AnimatePresence mode="wait">
         <Routes>
+          <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Home />} />
           <Route path="/mypage" element={<Mypage />} />
           <Route path="/room/:id" element={<StreamRoom />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/pwchange" element={<ChangePassword />} />
+          <Route path="/kakao/callback" element={<KakaoCallback />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
       </AnimatePresence>

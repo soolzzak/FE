@@ -1,6 +1,10 @@
 export const HeroSection = () => (
   <div className="w-full">
-    <section className="relative w-full h-[480px] min-w-[660px] bg-[url('https://images.unsplash.com/photo-1590189182193-1fd44f2b4048?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80')] bg-cover bg-center">
+    <section
+      className="relative w-full h-[480px] min-w-[660px] 
+      bg-[url('https://images.unsplash.com/photo-1590189182193-1fd44f2b4048?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80')] 
+      bg-cover"
+    >
       <div className="absolute bg-black w-full h-full opacity-30 z-10" />
       <div className="f-jic-col text-[#494949] min-w-[660px]">
         <h1 className="font-bold text-3xl  mt-48 text-white z-20">

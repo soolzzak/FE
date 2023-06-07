@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -7,17 +6,24 @@ import { LoginApi, LoginInfo } from '../../api/auth';
 import { Vector } from '../../assets/svgs/Vector';
 import { usernameAtom } from '../../store/mainpageStore';
 import { Logo } from '../../assets/svgs/Logo';
+import { isOpenLoginModalAtom } from '../../store/modalStore';
 
+export const KakaoLoginBtn = () => {
+  const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
+  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  window.location.href = KAKAO_AUTH_URI;
+};
 
-export const LoginModal = ({ onClose }: { onClose: () => void }) => {
+export const LoginModal = () => {
   const navigate = useNavigate();
+  const [, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
 
   const [, setUserToken] = useAtom(usernameAtom);
 
   const [errMsg, setErrMsg] = useState<string | undefined>();
-
 
   const emailHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
@@ -26,9 +32,9 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
 
   const loginMutation = useMutation(LoginApi, {
     onSuccess: (response) => {
-      onClose();
+      setIsOpenLogin(false);
       setUserToken(response?.headers.access_key);
-      navigate('/')
+      navigate('/');
     },
     onError: (error) => {
       console.log(error);
@@ -45,19 +51,11 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
       password,
     };
     await loginMutation.mutate(loginInfo);
-   
-  };
-
-  const KakaoLoginBtn = () => {
-    const REST_API_KEY = 'b39a9a7ab117d1d1c9ca71fa61285f13';
-    const REDIRECT_URI = 'https://api.honsoolzzak.com/api/login/oauth2/code/kakao&response_type=code&scope=profile_image,account_email,gender,birthday,age_range';
-    const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-    window.location.href = KAKAO_AUTH_URI;
   };
 
   return (
     <div className="w-[470px] h-[625px] rounded-[20px] bg-[#FFFFFF] flex flex-col justify-center items-center text-center">
-      <Logo logoSize='150'/>
+      <Logo logoSize="150" />
       <form onSubmit={submitHandler}>
         <p className="font-bold text-[20px] mb-7">
           따로 또 같이, 함께하는 혼술!
@@ -97,10 +95,14 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
       </button>
 
       <div className="flex items-center justify-center gap-2 mt-3">
-        <span role='none' onClick={() => {
-          navigate('/pwchange')
-          onClose();
-        }} className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]">
+        <span
+          role="none"
+          onClick={() => {
+            navigate('/pwchange');
+            setIsOpenLogin(false);
+          }}
+          className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]"
+        >
           비밀번호 찾기
         </span>
         <Vector />
@@ -108,8 +110,8 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
           role="none"
           className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]"
           onClick={() => {
-            navigate('/signup')
-            onClose();
+            navigate('/signup');
+            setIsOpenLogin(false);
           }}
         >
           회원가입

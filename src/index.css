@@ -1,6 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard.css');
+
+body {
+  font-family: 'Pretendard', sans-serif;
+}
 
 @layer components {
   .f-col {
@@ -29,6 +34,30 @@
   }
   .dropdownItemStyle {
     @apply px-4 py-2 text-black hover:bg-primary-100 cursor-pointer;
+  }
+}
+
+.grad {
+  background: linear-gradient(180deg, #f6fff9, #f0f0f0);
+  background-size: 200% 200%;
+  animation: gradient 5s linear infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
   }
 }
 

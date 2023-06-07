@@ -1,12 +1,10 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { useMutation } from 'react-query';
 import { reportApi } from '../api/report';
+import { isOpenReportAtom } from '../store/modalStore';
 
-export const ReportModal = ({
-  onCloseReport,
-}: {
-  onCloseReport: () => void;
-}) => {
+export const ReportModal = () => {
+  const [,setIsOpenReport] = useAtom(isOpenReportAtom)
   const [reportKind, setReportKind] = useState<string | undefined>();
   const [another, setAnother] = useState<string | null>(null);
   const [errMsg, setErrMsg] = useState<string | undefined>();
@@ -34,7 +32,7 @@ export const ReportModal = ({
     if (reportKind) {
       await reportApi(userId, reportDetail);
       setErrMsg('');
-      onCloseReport();
+      setIsOpenReport(false);
     } else {
       setErrMsg('신고사유를 선택해주세요');
     }

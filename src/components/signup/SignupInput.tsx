@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
+import { useState } from 'react';
 import { useMutation } from 'react-query';
-import { EmailConfirm, SignupApi, SignupInfo } from '../../api/auth';
+import { useNavigate } from 'react-router-dom';
+import { EmailSignupConfirm, SignupApi, SignupInfo } from '../../api/auth';
 import { Checkbox } from '../../assets/svgs/Checkbox';
-import { useInput } from '../../hooks/useInput';
 import { Logo } from '../../assets/svgs/Logo';
+import { useInput } from '../../hooks/useInput';
+import { isOpenLoginModalAtom } from '../../store/modalStore';
 
 export const SignupInput = () => {
+  const navigate = useNavigate();
+  const [,setIsOpenLogin] = useAtom(isOpenLoginModalAtom)
   const [
     email,
     emailErrorMsg,
@@ -121,9 +126,7 @@ export const SignupInput = () => {
     }
   };
 
-  console.log('render')
-
-  const EmailMutation = useMutation(EmailConfirm);
+  const EmailMutation = useMutation(EmailSignupConfirm);
   const confirmEmailHandler = async () => {
     if (!email) {
       return;
@@ -133,7 +136,7 @@ export const SignupInput = () => {
     };
     await EmailMutation.mutate(emailInput);
     if (EmailMutation.data === '이미 가입된 이메일입니다.') {
-      alert('이미 가입');
+      alert('이미 가입된 이메일입니다.');
     }
   };
 
@@ -150,7 +153,15 @@ export const SignupInput = () => {
     }
   };
 
-  const signupMutation = useMutation(SignupApi);
+  const signupMutation = useMutation(SignupApi, {
+    onSuccess: (response) => {
+      alert('혼술짝 회원이 되신것을 환영합니다')
+      setIsOpenLogin(true)
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  });
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (admin && !adminkey) {
@@ -182,7 +193,7 @@ export const SignupInput = () => {
     };
     await signupMutation.mutate(userInfo);
     if (signupMutation.data === '이미 가입되어있는 이메일입니다.') {
-      alert('이미 가입');
+      alert('이미 가입된 이메일입니다.');
     }
   };
 

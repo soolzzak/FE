@@ -1,6 +1,9 @@
+import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
+import { isOpenJoinHostAtom } from '../../store/modalStore';
 
-export const JoinGuestModal = ({ onClose }: { onClose: () => void}) => {
+export const JoinGuestModal = () => {
+  const [,setIsOpenJoinHost] = useAtom(isOpenJoinHostAtom)
   const [timeLeft, setTimeLeft] = useState(5);
 
   useEffect(() => {
@@ -10,13 +13,13 @@ export const JoinGuestModal = ({ onClose }: { onClose: () => void}) => {
 
     if (timeLeft === 0) {
       clearInterval(timer);
-      onClose();
+      setIsOpenJoinHost(false);
     }
 
     return () => {
       clearInterval(timer);
     };
-  }, [timeLeft,onClose]);
+  }, [timeLeft,setIsOpenJoinHost]);
 
   return (
     <div className="w-[600px] h-[400px] bg-[#FFFFFF] rounded-[30px] border text-center flex flex-col justify-center items-center">
