@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
 import { Report } from '../assets/svgs/Report';
 // import { useRef } from 'react';
 // import { useEffect } from 'react';
 // import { ReactComponent as Water } from '../assets/svgs/Water';
-
+import { Camera } from '../assets/svgs/Camera';
+import { Dooropen } from '../assets/svgs/Dooropen';
+import { Mic } from '../assets/svgs/Mic';
 import { Thumbdown } from '../assets/svgs/Thumbdown';
 import { Thumbup } from '../assets/svgs/Thumbup';
-import { ReportModal } from '../report/ReportModal';
-import { useModal } from '../hooks/useModal';
-import { Modal } from '../components/common/Modal';
-import { JoinGuestModal } from '../components/StreamRoom/JoinGuestModal';
-import { Mic } from '../assets/svgs/Mic';
-import { Setting } from '../assets/svgs/Setting';
-import { Dooropen } from '../assets/svgs/Dooropen';
-import { Camera } from '../assets/svgs/Camera';
-import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
 import { CategoryDropDown } from '../components/StreamRoom/CategoryDropDown';
 import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
+import { JoinGuestModal } from '../components/StreamRoom/JoinGuestModal';
 import { KickoutModal } from '../components/StreamRoom/KickoutModal';
+import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
+import { Modal } from '../components/common/Modal';
+import { useModal } from '../hooks/useModal';
+import { ReportModal } from '../report/ReportModal';
+import { isOpenJoinHostAtom, isOpenLeaveRoomAtom, isOpenModifyRoomAtom, isOpenReportAtom } from '../store/modalStore';
+import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 
-export const StreamRoom = () => {
+export const StreamRoom1 = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
 
   // const [roominfo, setRoominfo] = useState<Room | null>(null);
@@ -44,10 +45,12 @@ export const StreamRoom = () => {
     setIsFilled(true);
   };
 
-  const [isOpenReport, onCloseReport, setIsOpenReport] = useModal();
-  const [isOpenJoinPartner, onCloseJoinPartner, setIsOpenJoinPartner] =
-    useModal();
-  const [isOpenLeaveRoom, onCloseLeaveRoom, setIsOpenLeaveRoom] = useModal();
+  const [isOpenReport, setIsOpenReport] = useAtom(isOpenReportAtom);
+  const [isOpenJoinHost, setIsOpenJoinHost] = useAtom(isOpenJoinHostAtom);
+  const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
+
+  // 여기서부터
+  const [isOpenModifyRoom, setIsOpenModifyRoom] = useAtom(isOpenModifyRoomAtom);
 
   return (
     <div className="flex flex-col h-screen rounded-3xl bg-[#cdcdcd]">
@@ -95,23 +98,31 @@ export const StreamRoom = () => {
         <div className="col-span-2 row-span-1 bg-[#eae8e8]">텍스트보내기</div>
       </div>
 
-      <Modal isOpen={isOpenReport} onClose={onCloseReport}>
-        <ReportModal onCloseReport={onCloseReport} />
+      <Modal isOpen={isOpenReport} onClose={() => setIsOpenReport(false)} hasOverlay>
+        <ReportModal />
       </Modal>
 
-      <Modal isOpen={isOpenJoinPartner} onClose={onCloseJoinPartner}>
-        <JoinGuestModal onClose={onCloseJoinPartner} />
+      <Modal isOpen={isOpenJoinHost} onClose={() => setIsOpenJoinHost(false)} hasOverlay>
+        <JoinGuestModal />
       </Modal>
 
-      <Modal isOpen={isOpenLeaveRoom} onClose={onCloseLeaveRoom}>
-        <LeaveRoomModal onCloseLeaveRoom={onCloseLeaveRoom} />
+      <Modal isOpen={isOpenLeaveRoom} onClose={() => setIsOpenLeaveRoom(false)} hasOverlay>
+        <LeaveRoomModal />
       </Modal>
 
       <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
         <KickoutModal onClose={onCloseKickout} />
       </Modal>
 
-      <button type="button" onClick={() => setIsOpenJoinPartner(true)}>
+      <Modal isOpen={isOpenModifyRoom} onClose={() => setIsOpenModifyRoom(false)} hasOverlay>
+      <ModifyRoomModal />  
+      </Modal> 
+
+      <button type="button" onClick={() => setIsOpenModifyRoom(true)}>
+        방 수정 임시버튼
+      </button>
+
+      <button type="button" onClick={() => setIsOpenJoinHost(true)}>
         상대방 입장 임시버튼
       </button>
     </div>

@@ -1,8 +1,10 @@
+import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
-import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { isOpenLeaveRoomAtom } from '../../store/modalStore';
 import { CancelButton } from '../common/CancelButton';
 
-export const LeaveRoomModal = ({onCloseLeaveRoom}:{onCloseLeaveRoom: () => void}) => {
+export const LeaveRoomModal = () => {
+  const [,setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const navigation = useNavigate();
   return (
     <div className="relative w-[550px] h-52 bg-[#FFFFFF] rounded-[30px] flex flex-col justify-center items-center">
@@ -12,7 +14,7 @@ export const LeaveRoomModal = ({onCloseLeaveRoom}:{onCloseLeaveRoom: () => void}
         <button
           type="button"
           className="w-36 h-11 text-base font-semibold text-[#6A6A6A] rounded-lg border border-[#6A6A6A] text-center hover:bg-opacity-80"
-          onClick={onCloseLeaveRoom}
+          onClick={() => setIsOpenLeaveRoom(false)}
         >
           아니요
         </button>
@@ -25,7 +27,7 @@ export const LeaveRoomModal = ({onCloseLeaveRoom}:{onCloseLeaveRoom: () => void}
         </button>
       </div>
 
-      <CancelButton onClose={onCloseLeaveRoom}/>
+      <CancelButton onClose={() => setIsOpenLeaveRoom(false)}/>
     </div>
   );
 };

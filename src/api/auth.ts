@@ -46,9 +46,20 @@ export const SignupApi = async (signupInfo: SignupInfo) => {
   }
 };
 
-export const EmailConfirm = async (email: EmailInfo) => {
+export const EmailSignupConfirm = async (email: EmailInfo) => {
   try {
     const response = await axiosInstance.post('/signup/mailconfirm', email);
+    return response.data.code;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data.message;
+    }
+  }
+};
+
+export const EmailLoginConfirm = async (email: EmailInfo) => {
+  try {
+    const response = await axiosInstance.post('/login/mailconfirm', email);
     return response.data.code;
   } catch (error) {
     if (axios.isAxiosError(error)) {

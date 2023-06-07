@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import { EmailConfirm, SignupApi, SignupInfo } from '../../api/auth';
+import { EmailSignupConfirm, SignupApi, SignupInfo } from '../../api/auth';
 import { Checkbox } from '../../assets/svgs/Checkbox';
 import { useInput } from '../../hooks/useInput';
 import { Logo } from '../../assets/svgs/Logo';
@@ -121,9 +121,7 @@ export const SignupInput = () => {
     }
   };
 
-  console.log('render')
-
-  const EmailMutation = useMutation(EmailConfirm);
+  const EmailMutation = useMutation(EmailSignupConfirm);
   const confirmEmailHandler = async () => {
     if (!email) {
       return;

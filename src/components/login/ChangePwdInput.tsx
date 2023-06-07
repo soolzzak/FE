@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from 'react-query';
-import { ChangePassword, ChangePwdInfo, EmailConfirm } from '../../api/auth';
+import { ChangePassword, ChangePwdInfo, EmailLoginConfirm } from '../../api/auth';
 
 export const ChangePwdInput = () => {
   const [email, setEmail] = useState<string | undefined>();
@@ -23,7 +23,7 @@ export const ChangePwdInput = () => {
   }
   const authNumberChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => setAuthNumber(event.target.value);
 
-  const EmailMutation = useMutation(EmailConfirm);
+  const EmailMutation = useMutation(EmailLoginConfirm);
   const confirmEmailHandler = async () => {
     if (!email) {
       return;
