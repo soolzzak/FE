@@ -3,8 +3,12 @@ import { useState } from 'react';
 import { reportApi } from '../api/report';
 import { isOpenReportAtom } from '../store/modalStore';
 
-export const ReportModal = () => {
-  const [,setIsOpenReport] = useAtom(isOpenReportAtom)
+export const ReportModal = ({
+  onCloseReport,
+}: {
+  onCloseReport: () => void;
+}) => {
+  const [, setIsOpenReport] = useAtom(isOpenReportAtom);
   const [reportKind, setReportKind] = useState<string | undefined>();
   const [another, setAnother] = useState<string | null>(null);
   const [errMsg, setErrMsg] = useState<string | undefined>();

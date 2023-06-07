@@ -24,6 +24,7 @@ import {
   isOpenReportAtom,
 } from '../store/modalStore';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
+import { flattenDiagnosticMessageText } from 'typescript';
 
 export const StreamRoom1 = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -54,6 +55,10 @@ export const StreamRoom1 = () => {
   const [isOpenReport, setIsOpenReport] = useAtom(isOpenReportAtom);
   const [isOpenJoinHost, setIsOpenJoinHost] = useAtom(isOpenJoinHostAtom);
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
+
+  const handleClose = () => {
+    setIsOpenReport(false);
+  };
 
   // 여기서부터
   const [isOpenModifyRoom, setIsOpenModifyRoom] = useAtom(isOpenModifyRoomAtom);
@@ -109,7 +114,7 @@ export const StreamRoom1 = () => {
         onClose={() => setIsOpenReport(false)}
         hasOverlay
       >
-        <ReportModal />
+        <ReportModal onCloseReport={handleClose} />
       </Modal>
 
       <Modal
