@@ -50,7 +50,7 @@ export const genderSelection = (chatCategory: string) => {
   let result;
   switch (chatCategory) {
     case 'ANY':
-      result = '전체';
+      result = '누구나';
       break;
     case 'MALE':
       result = '남자만';

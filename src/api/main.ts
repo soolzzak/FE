@@ -57,6 +57,19 @@ export const getMainpageRooms = async (
     }
   }
 };
+export const getFilteredData = async (
+  genderOption: string,
+  isFull: boolean
+): Promise<ApiResponse | undefined> => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+      `/rooms/setting?genderSetting=${genderOption}&roomCapacityCheck=${isFull}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error as Error;
+  }
+};
 
 export const getByCategory = async (
   category: string

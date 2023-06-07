@@ -27,7 +27,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
     <motion.div
       whileHover={{ scale: 1.04 }}
       role="none"
-      className="cursor-pointer f-ic-col rounded-3xl bg-white min-w-[231px] w-[231px] h-[306px] py-5 px-3.5 relative shadow"
+      className="cursor-pointer f-ic-col rounded-3xl bg-white min-w-[221px] w-[221px] h-[306px] py-5 px-3.5 relative shadow"
       onClick={() => {
         setChatRoomInfo(chatRoom as MainpageRooms);
         setIsOpenJoinRoom(true);

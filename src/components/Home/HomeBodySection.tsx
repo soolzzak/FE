@@ -3,7 +3,11 @@ import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { MainpageRooms, getMainpageRooms } from '../../api/main';
-import { displayedTabAtom, tabAtom } from '../../store/mainpageStore';
+import {
+  displayedTabAtom,
+  roomListAtom,
+  tabAtom,
+} from '../../store/mainpageStore';
 import { ChatroomCard } from './ChatroomCard';
 import { FilterPanel } from './FilterPanel';
 
@@ -18,7 +22,7 @@ export const HomeBodySection = () => {
       refetchOnWindowFocus: false,
     }
   );
-  const [chatList, setChatList] = useState<MainpageRooms[] | undefined>([]);
+  const [chatList, setChatList] = useAtom(roomListAtom);
 
   useEffect(() => {
     if (data) {

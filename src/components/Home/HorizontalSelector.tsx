@@ -2,10 +2,10 @@ import { Dispatch, SetStateAction } from 'react';
 
 interface SelectorProps {
   title: string;
-  selections: string[];
+  selections: any[];
   displayedSelections: string[];
-  selectedOption: string;
-  handleOptionClick: Dispatch<SetStateAction<string>>;
+  selectedOption: any;
+  handleOptionClick: Dispatch<SetStateAction<any>>;
 }
 export const HorizontalSelector = ({
   title,
@@ -17,7 +17,7 @@ export const HorizontalSelector = ({
   console.log(selectedOption);
   return (
     <section className="f-col mt-3">
-      <p className="text-md font-bold mb-2 text-[#454545]">{title}</p>
+      <p className="text-lg font-bold mb-2 text-[#454545]">{title}</p>
       <div className="f-ic w-full justify-between gap-3">
         {selections.map((option, index) => (
           <div

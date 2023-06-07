@@ -19,7 +19,10 @@ export const ProfileMenu = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { data } = useQuery('profile', getMypageProfile);
+  const { data } = useQuery('profile', getMypageProfile, {
+    refetchOnWindowFocus: false,
+  });
+
   const navigate = useNavigate();
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
