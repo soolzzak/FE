@@ -7,7 +7,7 @@ const instance: AxiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
   headers: {
-    access_key: Cookies.get('accessKey')
+    access_key: Cookies.get('accessKey'),
   },
 });
 

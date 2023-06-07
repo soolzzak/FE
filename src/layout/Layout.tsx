@@ -6,7 +6,7 @@ type ChildenType = {
 };
 
 export const Layout = ({ children }: ChildenType) => (
-  <div className="min-h-screen">
+  <div className="min-h-screen bg-[#F5F5F7]">
     <Header />
     {children}
     {/* <Footer /> */}

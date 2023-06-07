@@ -30,6 +30,7 @@ export const AddRoomButton = () => {
   console.log(image);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
   const createRoomMutation = useMutation(createRoom, {
     onSuccess: (data) => {
       queryClient.invalidateQueries('chatrooms');
@@ -40,6 +41,7 @@ export const AddRoomButton = () => {
       console.log(error);
     },
   });
+
   console.log('post');
   const onSubmit = () => {
     const data = {

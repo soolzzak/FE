@@ -17,7 +17,12 @@ import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
 import { ReportModal } from '../report/ReportModal';
-import { isOpenJoinHostAtom, isOpenLeaveRoomAtom, isOpenModifyRoomAtom, isOpenReportAtom } from '../store/modalStore';
+import {
+  isOpenJoinHostAtom,
+  isOpenLeaveRoomAtom,
+  isOpenModifyRoomAtom,
+  isOpenReportAtom,
+} from '../store/modalStore';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 
 export const StreamRoom1 = () => {
@@ -37,6 +42,7 @@ export const StreamRoom1 = () => {
   //     console.log(data);
   //   }
   // }, [data]);
+
   const [isFilled, setIsFilled] = useState(false);
 
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
@@ -98,15 +104,27 @@ export const StreamRoom1 = () => {
         <div className="col-span-2 row-span-1 bg-[#eae8e8]">텍스트보내기</div>
       </div>
 
-      <Modal isOpen={isOpenReport} onClose={() => setIsOpenReport(false)} hasOverlay>
+      <Modal
+        isOpen={isOpenReport}
+        onClose={() => setIsOpenReport(false)}
+        hasOverlay
+      >
         <ReportModal />
       </Modal>
 
-      <Modal isOpen={isOpenJoinHost} onClose={() => setIsOpenJoinHost(false)} hasOverlay>
+      <Modal
+        isOpen={isOpenJoinHost}
+        onClose={() => setIsOpenJoinHost(false)}
+        hasOverlay
+      >
         <JoinGuestModal />
       </Modal>
 
-      <Modal isOpen={isOpenLeaveRoom} onClose={() => setIsOpenLeaveRoom(false)} hasOverlay>
+      <Modal
+        isOpen={isOpenLeaveRoom}
+        onClose={() => setIsOpenLeaveRoom(false)}
+        hasOverlay
+      >
         <LeaveRoomModal />
       </Modal>
 
@@ -114,9 +132,13 @@ export const StreamRoom1 = () => {
         <KickoutModal onClose={onCloseKickout} />
       </Modal>
 
-      <Modal isOpen={isOpenModifyRoom} onClose={() => setIsOpenModifyRoom(false)} hasOverlay>
-      <ModifyRoomModal />  
-      </Modal> 
+      <Modal
+        isOpen={isOpenModifyRoom}
+        onClose={() => setIsOpenModifyRoom(false)}
+        hasOverlay
+      >
+        <ModifyRoomModal />
+      </Modal>
 
       <button type="button" onClick={() => setIsOpenModifyRoom(true)}>
         방 수정 임시버튼

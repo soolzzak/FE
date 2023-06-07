@@ -34,7 +34,7 @@ export const ReportModal = () => {
       setErrMsg('');
       setIsOpenReport(false);
     } else {
-        setErrMsg('신고사유를 선택해주세요');
+      setErrMsg('신고사유를 선택해주세요');
     }
   };
 
