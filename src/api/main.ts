@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
+import { handleImageCompression } from '../utils/compressImage';
 
 interface ApiResponse {
   status: number;
@@ -16,7 +17,7 @@ interface ApiResponse1 {
   data: MainpageRooms;
 }
 export type MainpageRooms = {
-  hasGuest: boolean;
+  roomCapacity: number;
   userList: object;
   roomId: number;
   hostId: number;
@@ -56,6 +57,19 @@ export const getMainpageRooms = async (
     }
   }
 };
+export const getFilteredData = async (
+  genderOption: string,
+  isFull: boolean
+): Promise<ApiResponse | undefined> => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+      `/rooms/setting?genderSetting=${genderOption}&roomCapacityCheck=${isFull}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error as Error;
+  }
+};
 
 export const getByCategory = async (
   category: string
@@ -92,7 +106,11 @@ export const createRoom = async ({
     const textBlob = new Blob([sentData], { type: 'application/json' });
 
     formData.append('roomRequestDto', textBlob);
-    if (image) formData.append('roomImage', image);
+
+    if (image) {
+      const compressedImage = await handleImageCompression(image);
+      formData.append('roomImage', image);
+    }
 
     const token = Cookies.get('accessKey');
     const headers = { ACCESS_KEY: `${token}` };

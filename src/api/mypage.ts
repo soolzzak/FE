@@ -8,6 +8,7 @@ interface ApiResponse {
 }
 
 export type MypageProfileResponse = {
+  data: any;
   image: string;
   nickname: string;
 };
@@ -17,7 +18,7 @@ export const getMypageProfile = async (): Promise<
 > => {
   try {
     const response: AxiosResponse<MypageProfileResponse> =
-      await axiosInstance.get('/api/mypage');
+      await axiosInstance.get('/mypage');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) throw error;

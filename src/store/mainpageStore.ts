@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { MainpageRooms } from '../api/main';
 
 export const usernameAtom = atom('');
 export const handleTokenChangeAtom = atom(null, (get, set, update: string) => {
@@ -13,5 +14,13 @@ export const handleDisplayedTabChangeAtom = atom(
   null,
   (get, set, update: string) => {
     set(displayedTabAtom, () => update);
+  }
+);
+export const roomListAtom = atom([] as MainpageRooms[]);
+
+export const handleRoomListChangeAtom = atom(
+  null,
+  (get, set, update: MainpageRooms[]) => {
+    set(roomListAtom, () => update);
   }
 );

@@ -2,10 +2,10 @@ import { Dispatch, SetStateAction } from 'react';
 
 interface SelectorProps {
   title: string;
-  selections: string[];
+  selections: any[];
   displayedSelections: string[];
-  selectedOption: string;
-  handleOptionClick: Dispatch<SetStateAction<string>>;
+  selectedOption: any;
+  handleOptionClick: Dispatch<SetStateAction<any>>;
 }
 export const HorizontalSelector = ({
   title,
