@@ -1,8 +1,11 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
-import { ChangePassword, ChangePwdInfo, EmailConfirm } from '../../api/auth';
+import { ChangePassword, ChangePwdInfo, EmailLoginConfirm } from '../../api/auth';
+import { isOpenLoginModalAtom } from '../../store/modalStore';
 
 export const ChangePwdInput = () => {
+  const [,setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
   const [email, setEmail] = useState<string | undefined>();
   const [pwd, setPwd] = useState<string | undefined>();
   const [pwdCheck, setPwdCheck] = useState<string | undefined>();
@@ -23,7 +26,7 @@ export const ChangePwdInput = () => {
   }
   const authNumberChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => setAuthNumber(event.target.value);
 
-  const EmailMutation = useMutation(EmailConfirm);
+  const EmailMutation = useMutation(EmailLoginConfirm);
   const confirmEmailHandler = async () => {
     if (!email) {
       return;
@@ -42,7 +45,13 @@ export const ChangePwdInput = () => {
     }
   }
 
-  const changePasswordMutation = useMutation(ChangePassword);
+  const changePasswordMutation = useMutation(ChangePassword, {
+    onSuccess: (response) => {
+      alert('비밀번호가 변경되었습니다')
+      setIsOpenLogin(true);
+    }
+  }
+    );
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
 

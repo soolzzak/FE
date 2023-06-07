@@ -1,9 +1,9 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 
-interface ApiResponse {
+export interface ApiResponse {
   status: number;
   msg: string;
 }
@@ -46,9 +46,20 @@ export const SignupApi = async (signupInfo: SignupInfo) => {
   }
 };
 
-export const EmailConfirm = async (email: EmailInfo) => {
+export const EmailSignupConfirm = async (email: EmailInfo) => {
   try {
     const response = await axiosInstance.post('/signup/mailconfirm', email);
+    return response.data.code;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data.message;
+    }
+  }
+};
+
+export const EmailLoginConfirm = async (email: EmailInfo) => {
+  try {
+    const response = await axiosInstance.post('/login/mailconfirm', email);
     return response.data.code;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -112,22 +123,29 @@ export const LogoutApi = async () => {
   }
 };
 
-// export const getNewAccessKey = async () => {
-//   try {
-//     const config = {
-//       headers: {
-//         refresh_key: Cookies.get('accessKey'),
-//       },
-//     };
-//     const response = await axios.get('https://api.honsoolzzak.com/api/refreshtoken', config);
-//     const accessKey = response.headers.access_key;
-//     Cookies.set('accessKey', accessKey);
-//     return response;
-//   } catch (error: any) {
-//     if (axios.isAxiosError(error)) throw error;
-//     return error.response.data.message;
-//   }
-// };
+const refreshinstance: AxiosInstance = axios.create({
+  baseURL: 'https://api.honsoolzzak.com/api',
+  withCredentials: true,
+  headers: {
+    refresh_key: Cookies.get('refreshKey'),
+  },
+});
+
+export const getNewAccessKey = async () => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await refreshinstance.post(
+      '/getAccessToken'
+    );
+    const accessKey = response.headers.access_key;
+    Cookies.set('accessKey', accessKey);
+    console.log(response);
+    return response;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.log(error);
+    }
+  }
+};
 
 // // 토큰 인터셉터
 // axiosInstance.interceptors.response.use(
