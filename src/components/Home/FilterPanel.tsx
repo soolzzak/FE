@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowDown } from '../../assets/svgs/ArrowDown';
 import { HorizontalSelector } from './HorizontalSelector';
@@ -40,7 +41,13 @@ export const FilterPanel = () => {
           <ArrowDown />
         </div>
         {isOpen && (
-          <div className="absolute w-[261px] top-full right-0 z-10 mt-2 p-4 pt-0 bg-white rounded-lg shadow-lg">
+          <motion.div
+            initial={{ opacity: 0, scale: 0, y: -100, x: 100 }}
+            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+            exit={{ opacity: 0, scale: 0, y: -100, x: 100 }}
+            transition={{ duration: 0.2 }}
+            className="absolute w-[261px] top-full right-0 z-10 mt-2 p-4 pt-0 bg-white rounded-lg shadow-lg"
+          >
             <HorizontalSelector
               title="성별"
               selections={['ANY', 'FEMALE', 'MALE']}
@@ -55,7 +62,7 @@ export const FilterPanel = () => {
               selectedOption={allOrEmpty}
               handleOptionClick={setAllOrEmpty}
             />
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

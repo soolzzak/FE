@@ -17,7 +17,7 @@ export const HorizontalSelector = ({
   console.log(selectedOption);
   return (
     <section className="f-col mt-3">
-      <p className="text-lg font-bold mb-2 text-[#454545]">{title}</p>
+      <p className="text-md font-bold mb-2 text-[#454545]">{title}</p>
       <div className="f-ic w-full justify-between gap-3">
         {selections.map((option, index) => (
           <div

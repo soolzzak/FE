@@ -18,19 +18,16 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
   const [category, setCategory] = useState('');
   const [genderSetting, setGenderSetting] = useState('');
 
-  const alcohol = `h-2 rounded-full bg-secondary-200 w-[${chatRoom.alcohol}%] shadow`;
-
   useEffect(() => {
     setCategory(categorySelection(chatRoom.category) as string);
     setGenderSetting(genderSelection(chatRoom.genderSetting) as string);
   }, []);
-  console.log(alcohol);
 
   return (
     <motion.div
       whileHover={{ scale: 1.04 }}
       role="none"
-      className="cursor-pointer f-ic-col rounded-3xl bg-white w-[231px] h-[306px] py-5 px-3.5 relative shadow"
+      className="cursor-pointer f-ic-col rounded-3xl bg-white min-w-[231px] w-[231px] h-[306px] py-5 px-3.5 relative shadow"
       onClick={() => {
         setChatRoomInfo(chatRoom as MainpageRooms);
         setIsOpenJoinRoom(true);
@@ -40,7 +37,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
       <img
         alt={chatRoom.title}
         src={chatRoom.roomImageUrl}
-        className="w-full h-36 bg-[#D9D9D9] rounded-[20px]"
+        className="w-full h-36 bg-[#D9D9D9] rounded-lg"
       />
       {/* body */}
       <div className="flex self-start w-full relative">
@@ -55,12 +52,12 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
         <span
           className={`mt-2.5 text-xs absolute right-1 font-semibold px-1 rounded
           ${
-            chatRoom.hasGuest
+            chatRoom.roomCapacity === 2
               ? 'text-red-600 bg-primary-50'
               : 'text-green-600 bg-secondary-50'
           }`}
         >
-          {chatRoom.hasGuest ? '2/2' : '1/2'}
+          {chatRoom.roomCapacity === 2 ? '2/2' : '1/2'}
         </span>
       </div>
       <div className="self-start mt-1 text-md text-left overflow-hidden">
@@ -81,7 +78,10 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
         <div className="f-col justify-between ml-3 h-full w-36">
           <div className="pb-1 text-sm">{chatRoom.username}</div>
           <div className="h-2 rounded-lg bg-secondary-100 z-0 shadow-sm">
-            <div className={alcohol} />
+            <div
+              className="h-2 rounded-full bg-secondary-200 shadow"
+              style={{ width: `${chatRoom.alcohol}%` }}
+            />
           </div>
         </div>
       </div>

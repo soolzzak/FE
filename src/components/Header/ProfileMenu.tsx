@@ -1,7 +1,10 @@
+import { motion } from 'framer-motion';
 import { SetStateAction } from 'jotai';
 import Cookies from 'js-cookie';
 import { Dispatch, useEffect, useRef, useState } from 'react';
+import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { getMypageProfile } from '../../api/mypage';
 
 type AuthToken = {
   sub: string;
@@ -16,6 +19,7 @@ export const ProfileMenu = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { data } = useQuery('profile', getMypageProfile);
   const navigate = useNavigate();
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
@@ -44,13 +48,29 @@ export const ProfileMenu = ({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <div
-        role="none"
-        onClick={handleDropdownToggle}
-        className="cursor-pointer w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5"
-      />
+      {data?.data.userImageUrl ? (
+        <img
+          alt="Profile pic"
+          src={data.data.userImageUrl}
+          role="none"
+          onClick={handleDropdownToggle}
+          className="cursor-pointer w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5"
+        />
+      ) : (
+        <div
+          role="none"
+          onClick={handleDropdownToggle}
+          className="cursor-pointer w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5"
+        />
+      )}
       {isOpen && (
-        <div className="absolute border top-full right-3 z-10 mt-1  bg-white rounded-lg shadow-lg">
+        <motion.div
+          initial={{ opacity: 0, scale: 0, y: -100, x: 100 }}
+          animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+          exit={{ opacity: 0, scale: 0, y: -100, x: 100 }}
+          transition={{ duration: 0.15 }}
+          className="absolute border top-full right-3 z-10 mt-1 bg-white rounded-lg shadow-lg"
+        >
           <div className="rounded-t-md px-4 py-1  border-b border-green-200  text-black ">
             <div>Signed in as</div>
             <div className="font-bold text-sm">{user}</div>
@@ -69,7 +89,7 @@ export const ProfileMenu = ({
           >
             <div>Logout</div>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

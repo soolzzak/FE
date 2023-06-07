@@ -10,7 +10,7 @@ import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
 import { handleTokenChangeAtom } from '../store/mainpageStore';
 import { Login } from '../pages/Login';
-
+import { NotFound } from '../pages/NotFound';
 
 export const Router = () => {
   const token = Cookies.get('accessKey');
@@ -26,6 +26,7 @@ export const Router = () => {
     <Layout>
       <AnimatePresence mode="wait">
         <Routes>
+          <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Home />} />
           <Route path="/mypage" element={<Mypage />} />
           <Route path="/room/:id" element={<StreamRoom />} />
