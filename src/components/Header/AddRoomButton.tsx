@@ -55,7 +55,7 @@ export const AddRoomButton = () => {
     <CommonButton
       buttonText="혼술짝 방만들기"
       clickHandler={onSubmit}
-      dimensions="mt-7 w-2/3 h-14 self-center"
+      dimensions="mt-7 mb-3 w-full h-14 self-center"
     />
   );
 };

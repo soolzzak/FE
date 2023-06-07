@@ -1,4 +1,3 @@
-import React from 'react';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 
 export const CancelButton = ({ onClose }: { onClose: () => void }) => (
