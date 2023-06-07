@@ -6,15 +6,12 @@ import { JoinRoomModal } from '../components/Home/JoinRoomModal';
 import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
 import { Modal } from '../components/common/Modal';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../store/modalStore';
-import { Modal } from '../components/common/Modal';
 
 export const Home = () => {
   const [isOpenJoinRoom, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
   const [isOpenWaitingRoom, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom);
-  const [isOpenJoinRoom, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
-  const [isOpenWaitingRoom, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom);
   return (
-    <div className="f-ic-col bg-[#F5F5F7] min-h-screen w-full min-w-[660px]">
+    <div className="f-ic-col  min-h-screen w-full min-w-[660px]">
       <HeroSection />
       <div className="sticky top-[70px] z-10 w-full">
         <CategoryTab />

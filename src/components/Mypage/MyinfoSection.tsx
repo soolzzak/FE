@@ -1,17 +1,20 @@
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
+import { useMutation } from 'react-query';
+import {
+  MypageProfileRooms,
+  UpdateMypageData,
+  updateMypageProfile,
+} from '../../api/mypage';
 import { Modify } from '../../assets/svgs/Modify';
-import { MypageProfileRooms } from '../../api/mypage';
 
 // 얘가 원래꺼
-export const MyinfoSection = ({
-  myinfo,
-}: {
-  myinfo: MypageProfileRooms | undefined;
-}) => {
+export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const [image, setImage] = useState<File | undefined>();
 
+  console.log(myinfo.userImageUrl);
+
   // const [view, setView] = useState<string | undefined>();
-  const [view, setView] = useState<string | undefined>(undefined);
+  const [view, setView] = useState<string | undefined>(myinfo.userImageUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [editMode, setEditMode] = useState(false);
 
@@ -20,6 +23,22 @@ export const MyinfoSection = ({
   );
   const modifyUserNameHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setmodifyUserName(event.target.value);
+
+  // 수정 ,,,
+  const updateMyProfileMutation = useMutation(updateMypageProfile);
+
+  const submitHandler = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+
+    const updateMypageData: UpdateMypageData = {
+      userImage: image || null,
+      username: modifyUserName || '',
+    };
+    await updateMyProfileMutation.mutate(updateMypageData);
+    setEditMode(!editMode);
+  };
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -64,8 +83,11 @@ export const MyinfoSection = ({
       setEditMode(true);
     }
   };
+
+  console.log('뷰', view);
+
   return (
-    <div className="bg-[#D9D9D9] basis-2/5 h-[700px] rounded-3xl flex flex-col gap-y-6 pb-10">
+    <div className="bg-[#ffffff] basis-2/5 h-[700px] rounded-3xl flex flex-col gap-y-6 pb-10">
       <div className="relative">
         <div className="absolute top-4 right-4 ">
           {/* <Modify onClick={} /> */}
@@ -73,7 +95,7 @@ export const MyinfoSection = ({
             <button
               className="w-[83px] h-[29px] border-2 bg-primary-50 text-primary-200 border-primary-200 rounded-2xl"
               type="button"
-              onClick={editUserInfo}
+              onClick={submitHandler}
             >
               저장하기
             </button>
@@ -83,10 +105,7 @@ export const MyinfoSection = ({
         </div>
       </div>
       <div className="flex flex-col justify-center items-center gap-y-6">
-        <div
-          className="transition-opacity duration-300 ease-in-out hover:opacity-70 group w-80 h-80 rounded-full bg-[#9A9A9A] mt-10 flex justify-center items-center relative"
-          style={{ backgroundImage: `url(${view || myinfo?.userImageUrl})` }}
-        >
+        <div className="transition-opacity duration-300 ease-in-out hover:opacity-70 group w-80 h-80 rounded-full bg-[#9A9A9A] mt-10 flex justify-center items-center relative">
           {editMode ? (
             <label
               htmlFor="imageInput"
@@ -138,7 +157,7 @@ export const MyinfoSection = ({
         <p>{myinfo?.email}</p>
       </div>
       <div className="ml-20">
-        <p className="font-bold text-lg">연결된 소설계정</p>
+        <p className="font-bold text-lg">연결된 소셜계정</p>
         <p>카카오톡 계정으로 연결되었습니다</p>
       </div>
     </div>

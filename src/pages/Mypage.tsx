@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { MypageProfileRooms, getMypageProfile } from '../api/mypage';
 import { AlcoholSection } from '../components/Mypage/AlcoholSection';
-
 import { MyinfoSection } from '../components/Mypage/MyinfoSection';
 import { BadgeSection } from '../components/Mypage/BadgeSection';
 import { FollowSection } from '../components/Mypage/FollowSection';
@@ -33,7 +32,7 @@ export const Mypage = () => {
         <div className="text-2xl font-bold my-11">마이페이지</div>
         <div className="flex w-full h-full gap-10">
           {/* <div className="h-[400px]"> */}
-          <MyinfoSection myinfo={myinfo} />
+          {myinfo && <MyinfoSection myinfo={myinfo} />}
           {/* </div> */}
 
           <div className="flex flex-col basis-3/5 gap-y-6">
