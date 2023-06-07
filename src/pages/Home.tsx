@@ -7,7 +7,6 @@ import { JoinRoomModal } from '../components/Home/JoinRoomModal';
 import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
 import { Modal } from '../components/common/Modal';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../store/modalStore';
-import { getNewAccessKey } from '../api/auth';
 
 export const Home = () => {
   const [isOpenJoinRoom, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
@@ -39,10 +38,6 @@ export const Home = () => {
       >
         <WaitingRoomModal />
       </Modal>
-
-      <button type="button" onClick={getNewAccessKey}>
-        getaccess임시버튼
-      </button>
     </motion.div>
   );
 };
