@@ -6,3 +6,5 @@ export const isOpenModifyRoomAtom = atom<boolean>(false);
 export const isOpenReportAtom = atom<boolean>(false);
 export const isOpenJoinHostAtom = atom<boolean>(false);
 export const isOpenLeaveRoomAtom = atom<boolean>(false);
+export const isOpenAuthModalAtom = atom<boolean>(false);
+export const isOpenLoginModalAtom = atom<boolean>(false);
