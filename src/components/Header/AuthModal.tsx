@@ -2,7 +2,7 @@ import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import { isOpenAuthModalAtom, isOpenLoginModalAtom } from '../../store/modalStore';
 import { Logo } from '../../assets/svgs/Logo';
-import { KakaoLoginBtn } from '../login/KakaoLogin';
+import { KakaoLoginBtn } from '../login/LoginModal';
 
 export const AuthModal = () => {
   const navigate = useNavigate();

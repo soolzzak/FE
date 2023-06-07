@@ -1,9 +1,9 @@
-import axios, { AxiosHeaders, AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 
-interface ApiResponse {
+export interface ApiResponse {
   status: number;
   msg: string;
 }
@@ -127,16 +127,18 @@ const refreshinstance: AxiosInstance = axios.create({
   baseURL: 'https://api.honsoolzzak.com/api',
   withCredentials: true,
   headers: {
-    refresh_key: Cookies.get('refreshKey')
-  }
-})
+    refresh_key: Cookies.get('refreshKey'),
+  },
+});
 
 export const getNewAccessKey = async () => {
   try {
-    const response: AxiosResponse<ApiResponse> = await refreshinstance.post('/getAccessToken',);
+    const response: AxiosResponse<ApiResponse> = await refreshinstance.post(
+      '/getAccessToken'
+    );
     const accessKey = response.headers.access_key;
     Cookies.set('accessKey', accessKey);
-    console.log(response)
+    console.log(response);
     return response;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
