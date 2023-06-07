@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosHeaders, AxiosInstance, AxiosResponse } from 'axios';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
@@ -123,22 +123,27 @@ export const LogoutApi = async () => {
   }
 };
 
-// export const getNewAccessKey = async () => {
-//   try {
-//     const config = {
-//       headers: {
-//         refresh_key: Cookies.get('accessKey'),
-//       },
-//     };
-//     const response = await axios.get('https://api.honsoolzzak.com/api/refreshtoken', config);
-//     const accessKey = response.headers.access_key;
-//     Cookies.set('accessKey', accessKey);
-//     return response;
-//   } catch (error: any) {
-//     if (axios.isAxiosError(error)) throw error;
-//     return error.response.data.message;
-//   }
-// };
+const refreshinstance: AxiosInstance = axios.create({
+  baseURL: 'https://api.honsoolzzak.com/api',
+  withCredentials: true,
+  headers: {
+    refresh_key: Cookies.get('refreshKey')
+  }
+})
+
+export const getNewAccessKey = async () => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await refreshinstance.post('/getAccessToken',);
+    const accessKey = response.headers.access_key;
+    Cookies.set('accessKey', accessKey);
+    console.log(response)
+    return response;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.log(error);
+    }
+  }
+};
 
 // // 토큰 인터셉터
 // axiosInstance.interceptors.response.use(

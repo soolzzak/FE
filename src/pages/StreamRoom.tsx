@@ -7,7 +7,7 @@ import { Thumbup } from '../assets/svgs/Thumbup';
 import { Report } from '../assets/svgs/Report';
 import { getRoom } from '../api/streamRoom';
 
-interface JwtPayload {
+export interface JwtPayload {
   auth: {
     email: string;
     id: string;
@@ -35,7 +35,7 @@ const PeerConnectionConfig = {
 
 let mediaStream: MediaStream;
 
-export const Stream = () => {
+export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -206,11 +206,13 @@ useEffect(() => {
           break;
         case 'join':
           console.log('received join message');
-          message.data = await getRoom(params || '');
+          if (message.data) {
+            message.data = await getRoom(params || '');
+          }
           await startLocalStream();
           await createPeerConnection();
-          console.log(message.data.data.hostId);
-          if (message.data.data.hostId !== userId) {
+          // console.log(message.data.data.hostId);
+          if (message.data?.data.hostId !== userId) {
             console.log('starting call');
             await startCall();
           }

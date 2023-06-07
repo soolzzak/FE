@@ -9,7 +9,6 @@ import { Mypage } from '../pages/Mypage';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
 import { handleTokenChangeAtom } from '../store/mainpageStore';
-import { Login } from '../pages/Login';
 import { ChangePassword } from '../pages/ChangePassword';
 
 
@@ -30,8 +29,7 @@ export const Router = () => {
           <Route path="/" element={<Home />} />
           <Route path="/mypage" element={<Mypage />} />
           <Route path="/room/:id" element={<StreamRoom />} />
-          <Route path="/pwdchange" element={<ChangePassword />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/pwchange" element={<ChangePassword />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
       </AnimatePresence>

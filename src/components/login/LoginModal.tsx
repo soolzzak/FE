@@ -1,16 +1,17 @@
 import { useAtom } from 'jotai';
-import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { LoginApi, LoginInfo } from '../../api/auth';
+import { LoginApi, LoginInfo, getNewAccessKey } from '../../api/auth';
 import { Vector } from '../../assets/svgs/Vector';
 import { usernameAtom } from '../../store/mainpageStore';
 import { Logo } from '../../assets/svgs/Logo';
+import { isOpenLoginModalAtom } from '../../store/modalStore';
+import { KakaoLoginBtn } from './KakaoLogin';
 
-
-export const LoginModal = ({ onClose }: { onClose: () => void }) => {
+export const LoginModal = () => {
   const navigate = useNavigate();
+  const [,setIsOpenLogin] = useAtom(isOpenLoginModalAtom)
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
 
@@ -26,7 +27,7 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
 
   const loginMutation = useMutation(LoginApi, {
     onSuccess: (response) => {
-      onClose();
+      setIsOpenLogin(false);
       setUserToken(response?.headers.access_key);
       navigate('/')
     },
@@ -46,13 +47,6 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
     };
     await loginMutation.mutate(loginInfo);
    
-  };
-
-  const KakaoLoginBtn = () => {
-    const REST_API_KEY = 'b39a9a7ab117d1d1c9ca71fa61285f13';
-    const REDIRECT_URI = 'https://api.honsoolzzak.com/api/login/oauth2/code/kakao&response_type=code&scope=profile_image,account_email,gender,birthday,age_range';
-    const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-    window.location.href = KAKAO_AUTH_URI;
   };
 
   return (
@@ -99,7 +93,7 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
       <div className="flex items-center justify-center gap-2 mt-3">
         <span role='none' onClick={() => {
           navigate('/pwchange')
-          onClose();
+          setIsOpenLogin(false);
         }} className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]">
           비밀번호 찾기
         </span>
@@ -109,11 +103,12 @@ export const LoginModal = ({ onClose }: { onClose: () => void }) => {
           className="text-[14px] text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]"
           onClick={() => {
             navigate('/signup')
-            onClose();
+            setIsOpenLogin(false);
           }}
         >
           회원가입
         </span>
+        
       </div>
     </div>
   );
