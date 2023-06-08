@@ -1,16 +1,20 @@
 import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
-import { isOpenAuthModalAtom, isOpenLoginModalAtom } from '../../store/modalStore';
+import {
+  isOpenAuthModalAtom,
+  isOpenLoginModalAtom,
+} from '../../store/modalStore';
 import { Logo } from '../../assets/svgs/Logo';
 import { KakaoLoginBtn } from '../login/LoginModal';
 
 export const AuthModal = () => {
   const navigate = useNavigate();
-  const [,setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
-  const [,setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
+  const [, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
+  const [, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
+
   return (
     <div className="f-ic-col px-14 w-[470px] h-[625px] bg-white rounded-2xl justify-center items-center text-center">
-      <Logo logoSize='150' />
+      <Logo logoSize="150" />
       <div className="text-2xl font-bold mt-8">따로 또 같이, 함께하는 혼술</div>
       <div className="mt-3 text-xl font-semibold text-[#555555]">
         로그인하고 혼술 같이해요 !
@@ -34,12 +38,11 @@ export const AuthModal = () => {
       </button>
       <div
         role="none"
-        className="cursor-pointer text-base mt-4 text-[#7B7B7B] font-semibold cursor-pointer hover:text-[black]"
-        onClick={() => 
-          {navigate('/signup');
+        className="cursor-pointer text-base mt-4 text-[#7B7B7B] font-semibold hover:text-[black]"
+        onClick={() => {
+          navigate('/signup');
           setIsOpenAuth(false);
-        }
-        }
+        }}
       >
         회원가입하기
       </div>

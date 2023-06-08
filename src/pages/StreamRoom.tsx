@@ -86,7 +86,7 @@ export const StreamRoom = () => {
     } catch (error) {
       console.error('Error handling answer:', error);
     }
-  }; 
+  };
 
   const handleCandidateMessage = async (message: RTCIceMessage) => {
     try {
@@ -141,124 +141,121 @@ export const StreamRoom = () => {
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = stream;
       }
-      
     };
 
     console.log('adding media stream to track', mediaStream);
     mediaStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
     });
-};
-const startLocalStream = async () => {
-  try {
-    // eslint-disable-next-line no-undef
-    mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = mediaStream;
-    }
-    console.log('this media stream', mediaStream);
-  } catch (error) {
-    console.log('Error accessing media devices:', error);
-  }
-};
-
-useEffect(() => {
-  const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
-  socket = new WebSocket(signalingServerUrl);
-
-  const connectToSignalingServer = async () => {
-    socket.onopen = () => {
-      const message = JSON.stringify({
-        from: userId,
-        type: 'join',
-        data: roomNum,
+  };
+  const startLocalStream = async () => {
+    try {
+      // eslint-disable-next-line no-undef
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
       });
-      console.log('WebSocket connection opened', message);
-      socket.send(message);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = mediaStream;
+      }
+      console.log('this media stream', mediaStream);
+    } catch (error) {
+      console.log('Error accessing media devices:', error);
+    }
+  };
+
+  useEffect(() => {
+    const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
+    socket = new WebSocket(signalingServerUrl);
+
+    const connectToSignalingServer = async () => {
+      socket.onopen = () => {
+        const message = JSON.stringify({
+          from: userId,
+          type: 'join',
+          data: roomNum,
+        });
+        console.log('WebSocket connection opened', message);
+        socket.send(message);
+      };
+
+      socket.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      socket.onmessage = async (event) => {
+        const message = JSON.parse(event.data);
+
+        switch (message.type) {
+          case 'offer':
+            console.log('received offer message', message);
+            await handleOfferMessage(message);
+            break;
+          case 'answer':
+            console.log('received answer message', message);
+            await handleAnswerMessage(message);
+            break;
+          case 'ice':
+            console.log('received ice message', message);
+            await handleCandidateMessage(message);
+            break;
+          case 'join':
+            console.log('received join message');
+            message.data = await getRoom(params as string);
+            await startLocalStream();
+            await createPeerConnection();
+            // console.log(message.data.data.hostId);
+            if (message.data?.hostId !== userId) {
+              console.log('starting call');
+              await startCall();
+            }
+
+            break;
+          default:
+            console.warn('Invalid message type:', message.type);
+        }
+      };
     };
 
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    socket.onmessage = async (event) => {
-      const message = JSON.parse(event.data);
-
-      switch (message.type) {
-        case 'offer':
-          console.log('received offer message', message);
-          await handleOfferMessage(message);
-          break;
-        case 'answer':
-          console.log('received answer message', message);
-          await handleAnswerMessage(message);
-          break;
-        case 'ice':
-          console.log('received ice message', message);
-          await handleCandidateMessage(message);
-          break;
-        case 'join':
-          console.log('received join message');
-          if (message.data) {
-            message.data = await getRoom(params || '');
-          }
-          await startLocalStream();
-          await createPeerConnection();
-          // console.log(message.data.data.hostId);
-          if (message.data?.data.hostId !== userId) {
-            console.log('starting call');
-            await startCall();
-          }
-
-          break;
-        default:
-          console.warn('Invalid message type:', message.type);
+    // Establish a connection with the signaling server
+    connectToSignalingServer();
+    return () => {
+      if (peerConnection) {
+        peerConnection.close();
+      }
+      if (socket) {
+        socket.close();
       }
     };
-  };
+  }, []);
 
-  // Establish a connection with the signaling server
-  connectToSignalingServer();
-  return () => {
-    if (peerConnection) {
-      peerConnection.close();
-    }
-    if (socket) {
-      socket.close();
-    }
-  };
-}, []);
+  return (
+    <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
+      <div className="basis-1/12  flex justify-between p-4">
+        <div className="flex flex-row items-center">
+          <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4" />
+          <p className="text-[20px] font-semibold mr-4">
+            카리나님과 따로 또 같이 혼술하는 중!
+          </p>
 
-return (
-  <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
-    <div className="basis-1/12  flex justify-between p-4">
-      <div className="flex flex-row items-center">
-        <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4" />
-        <p className="text-[20px] font-semibold mr-4">
-          카리나님과 따로 또 같이 혼술하는 중!
-        </p>
-
-        <div className="flex flex-row gap-4 ">
-          <Thumbdown />
-          <Thumbup />
-          {/* <Report /> */}
+          <div className="flex flex-row gap-4 ">
+            <Thumbdown />
+            <Thumbup />
+            {/* <Report /> */}
+          </div>
         </div>
+        <p className="font-semibold text-[32px]">얘기하면서 같이 소주마셔요!</p>
       </div>
-      <p className="font-semibold text-[32px]">얘기하면서 같이 소주마셔요!</p>
+      <div className="grid grid-cols-2">
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <video ref={localVideoRef} autoPlay muted className=" rounded-xl" />
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <video ref={remoteVideoRef} autoPlay muted className="rounded-xl" />
+      </div>
     </div>
-    <div className="grid grid-cols-2">
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-      <video ref={localVideoRef} autoPlay muted className=" rounded-xl" />
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-      <video ref={remoteVideoRef} autoPlay muted className="rounded-xl" />
-    </div>
-  </div>
-);
+  );
 };

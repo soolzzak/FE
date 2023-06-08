@@ -24,7 +24,7 @@ import {
   isOpenReportAtom,
 } from '../store/modalStore';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
-import { flattenDiagnosticMessageText } from 'typescript';
+// import { flattenDiagnosticMessageText } from 'typescript';
 
 export const StreamRoom1 = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
