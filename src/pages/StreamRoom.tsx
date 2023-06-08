@@ -2,8 +2,7 @@ import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Thumbdown } from '../assets/svgs/Thumbdown';
-import { Thumbup } from '../assets/svgs/Thumbup';
+
 import { Report } from '../assets/svgs/Report';
 import { getRoom } from '../api/streamRoom';
 
@@ -86,6 +85,7 @@ export const StreamRoom = () => {
     } catch (error) {
       console.error('Error handling answer:', error);
     }
+  };
   };
 
   const handleCandidateMessage = async (message: RTCIceMessage) => {

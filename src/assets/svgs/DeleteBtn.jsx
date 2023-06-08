@@ -6,7 +6,7 @@ export const DeleteBtn = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <circle
+    {/* <circle
       cx="17.9809"
       cy="18.2538"
       r="17.7309"
@@ -14,7 +14,7 @@ export const DeleteBtn = () => (
       fill=""
       stroke="#FFFFFF"
       strokeWidth="0.5"
-    />
+    /> */}
     <mask
       id="mask0_367_919"
       // style="mask-type:alpha"

@@ -4,14 +4,15 @@ import {
   DetailUserProfile,
   FollowHandler,
   TabUserList,
-  ThumbUpHandler,
   ThumbDownHandler,
+  ThumbUpHandler,
   getDetailUserProfile,
 } from '../../api/mypage';
-import { Thumbdown } from '../../assets/svgs/Thumbdown';
-import { Thumbup } from '../../assets/svgs/Thumbup';
+import { Like } from '../../assets/svgs/Like';
+import { UnLike } from '../../assets/svgs/UnLike';
 import { Water } from '../../assets/svgs/Water';
 import { DetailDropdown } from './DetailDropdown';
+import { CancelButton } from '../common/CancelButton';
 
 export const DetailUserInfoModal = ({
   onClose,
@@ -40,9 +41,9 @@ export const DetailUserInfoModal = ({
 
   const [userinfo, setUserinfo] = useState<DetailUserProfile | undefined>();
 
-  const [currentFollow, setCurrentFollow] = useState<boolean>(
-    userinfo?.follow || false
-  );
+  // const [currentFollow, setCurrentFollow] = useState<boolean>(
+  //   userinfo?.follow || false
+  // );
 
   console.log('얘', userinfo);
 
@@ -52,13 +53,11 @@ export const DetailUserInfoModal = ({
     }
   }, [data]);
 
-  const [isThumbupActive, setThumbupActive] = useState(() => false);
-  const [isThumbdownActive, setThumbdownActive] = useState(false);
-
   const handleFollowClick = async () => {
     const response = await FollowHandler(userinfo?.userId);
     if (response.status === 200) {
       await queryClient.invalidateQueries('mypageInfo');
+      await queryClient.invalidateQueries('detailUserInfo');
     }
   };
 
@@ -80,60 +79,67 @@ export const DetailUserInfoModal = ({
     }
   };
 
+  const upBackgroundColor = () =>
+    userinfo?.alcoholUp ? 'bg-[#E5F9EA]' : 'bg-slate-300';
+
+  const downBackgroundColor = () =>
+    userinfo?.alcoholUp ? 'bg-[#E5F9EA]' : 'bg-slate-300';
+
   return (
     <div className="justify-center items-center">
-      <div className="w-[542px] h-[230px] rounded-2xl bg-white flex flex-row p-6">
+      <div className="w-[542px] h-[230px] rounded-2xl bg-white flex flex-row px-6">
         <div className="flex flex-col justify-center items-center gap-2">
           <img
             alt=""
-            className="min-w-[97px] h-[97px] rounded-full bg-[#9A9A9A]"
+            className="min-w-[97px] h-[97px] rounded-full bg-[#9A9A9A] object-cover"
+            src={userinfo?.userImage}
           />
+
           <button
             type="button"
             onClick={handleFollowClick}
-            className={`w-[68px] h-[33px] border-2 rounded-2xl ${
-              currentFollow
-                ? 'bg-[#0BA332] hover:bg-primary-100 transition duration-300 text-[#ffffff]'
-                : 'border-gray-400 bg-[#E5F9EA] text-[#0BA332]'
-            }  `}
+            className={`w-[68px] h-[33px] border rounded-2xl ${
+              userinfo?.follow
+                ? 'bg-[#0BA332] border-[#0BA332] text-[#ffffff]'
+                : 'border-[#0BA332] bg-[#E5F9EA] text-[#0BA332]'
+            }`}
           >
             팔로우
           </button>
         </div>
 
-        <div className="flex flex-col w-full ml-6">
-          <div className="self-end">
+        <div className="flex flex-col w-full ml-6 mr-6">
+          <div className="flex flex-row justify-end mt-3">
             <DetailDropdown userinfo={userinfo} />
-          </div>
-          <div className="flex flex-row justify-between  ">
-            <div className="text-2xl">{userinfo?.username}</div>
-            {/* <Menu /> */}
+            <CancelButton onClose={onClose} />
           </div>
 
-          <div>{userinfo?.email}</div>
+          <div className="flex flex-col gap-2">
+            <div className="text-2xl font-semibold">{userinfo?.username}</div>
+            <div className="font-medium">{userinfo?.email}</div>
+          </div>
 
-          <div className="flex justify-between mt-10 ">
+          <div className="flex justify-between mt-8">
             <div className="flex flex-row justify-center items-center gap-2">
               <Water />
-              <div>{userinfo?.alcohol}%</div>
+              <div className="text-[#0BA332] text-lg font-semibold">
+                {userinfo?.alcohol}%
+              </div>
             </div>
-            <div className="flex flex-row justify-center items-center w-[95px] h-[33px]  gap-3 border-2 rounded-2xl bg-primary-50 text-primary-200 border-primary-200 hover:bg-primary-100 transition duration-300">
-              <div>
-                <Thumbup
-                  onClick={handleThumbupClick}
-                  isActive={userinfo?.alcoholUp}
-                />
-              </div>
-              <div>
-                <Thumbdown
-                  onClick={handleThumbdownClick}
-                  isActive={userinfo?.alcoholDown}
-                />
-              </div>
+            <div className="flex flex-row justify-center items-center gap-3 rounded-2xl mb-2">
+              <Like
+                onClick={handleThumbupClick}
+                isActive={userinfo?.alcoholUp}
+              />
+
+              <UnLike
+                onClick={handleThumbdownClick}
+                isActive={userinfo?.alcoholDown}
+              />
             </div>
           </div>
 
-          <div className="w-full  bg-[#B6ECC4] rounded-full h-2.5 dark:bg-gray-700 mt-2">
+          <div className="w-full  bg-[#B6ECC4] rounded-full h-2.5 dark:bg-gray-700 ">
             <div
               className="bg-[#179638] h-2.5 rounded-full"
               style={{ width: `${userinfo?.alcohol}%` }}
