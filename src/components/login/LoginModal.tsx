@@ -81,7 +81,7 @@ export const LoginModal = () => {
         <div className="text-lg text-red-600 mt-1 mb-4 pl-1">{errMsg}</div>
         <button
           type="submit"
-          className="w-[356px] h-[45px] bg-primary-300 rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-[#FF5500]"
+          className="w-[356px] h-[45px] bg-primary-300 rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-primary-400"
         >
           이메일로 로그인
         </button>

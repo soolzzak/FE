@@ -13,8 +13,6 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
   const [isOpenExit, onCloseExit] = useModal();
 
-  console.log('render');
-
   return (
     <div className="relative f-col bg-white px-12 rounded-[20px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-7">
@@ -34,7 +32,7 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
           <OptionalFieldChange />
         </div>
       </div>
-      <AddRoomButton />
+      <AddRoomButton closeModal={onClose} />
       <div
         role="none"
         className="absolute right-3 top-3 hover:cursor-pointer"

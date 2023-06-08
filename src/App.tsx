@@ -8,6 +8,7 @@ const queryClient = new QueryClient();
 const toastConfig = {
   position: 'top-center',
 };
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>

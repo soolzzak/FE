@@ -1,12 +1,14 @@
-import { atom, useAtom } from 'jotai';
 import { motion } from 'framer-motion';
+import { atom, useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { MainpageRooms } from '../../api/main';
+import { userTokenAtom } from '../../store/mainpageStore';
+import { isOpenJoinRoomAtom } from '../../store/modalStore';
 import {
   categorySelection,
   genderSelection,
 } from '../../utils/switchSelections';
-import { isOpenJoinRoomAtom } from '../../store/modalStore';
 
 type ChatroomCardProps = {
   chatRoom: MainpageRooms;
@@ -17,21 +19,29 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
   const [, setChatRoomInfo] = useAtom(chatRoomInfoAtom);
   const [category, setCategory] = useState('');
   const [genderSetting, setGenderSetting] = useState('');
-
+  const [userToken] = useAtom(userTokenAtom);
   useEffect(() => {
     setCategory(categorySelection(chatRoom.category) as string);
     setGenderSetting(genderSelection(chatRoom.genderSetting) as string);
   }, []);
 
+  const handleCardClick = () => {
+    if (
+      chatRoom.genderSetting !== 'ANY' &&
+      userToken?.auth.gender !== chatRoom.genderSetting
+    ) {
+      toast.error(`${genderSetting} 들어오세요`);
+    } else {
+      setChatRoomInfo(chatRoom as MainpageRooms);
+      setIsOpenJoinRoom(true);
+    }
+  };
   return (
     <motion.div
       whileHover={{ scale: 1.04 }}
       role="none"
       className="cursor-pointer f-ic-col rounded-3xl bg-white min-w-[221px] w-[221px] h-[306px] py-5 px-3.5 relative shadow"
-      onClick={() => {
-        setChatRoomInfo(chatRoom as MainpageRooms);
-        setIsOpenJoinRoom(true);
-      }}
+      onClick={handleCardClick}
     >
       {/* image */}
       <img

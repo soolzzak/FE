@@ -86,6 +86,7 @@ export const StreamRoom = () => {
       console.error('Error handling answer:', error);
     }
   };
+  };
 
   const handleCandidateMessage = async (message: RTCIceMessage) => {
     try {
@@ -204,13 +205,11 @@ export const StreamRoom = () => {
             break;
           case 'join':
             console.log('received join message');
-            if (message.data) {
-              message.data = await getRoom(params || '');
-            }
+            message.data = await getRoom(params as string);
             await startLocalStream();
             await createPeerConnection();
             // console.log(message.data.data.hostId);
-            if (message.data?.data.hostId !== userId) {
+            if (message.data?.hostId !== userId) {
               console.log('starting call');
               await startCall();
             }
@@ -243,7 +242,11 @@ export const StreamRoom = () => {
             카리나님과 따로 또 같이 혼술하는 중!
           </p>
 
-          <div className="flex flex-row gap-4 ">{/* <Report /> */}</div>
+          <div className="flex flex-row gap-4 ">
+            <Thumbdown />
+            <Thumbup />
+            {/* <Report /> */}
+          </div>
         </div>
         <p className="font-semibold text-[32px]">얘기하면서 같이 소주마셔요!</p>
       </div>

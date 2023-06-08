@@ -10,8 +10,9 @@ export const DeleteBtn = () => (
       cx="17.9809"
       cy="18.2538"
       r="17.7309"
-      fill="#F3F3F3"
-      stroke="#BDBDBD"
+      
+      fill=""
+      stroke="#FFFFFF"
       strokeWidth="0.5"
     /> */}
     <mask
