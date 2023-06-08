@@ -7,7 +7,7 @@ import { isOpenWaitingAtom } from '../../store/modalStore';
 import { chatRoomInfoAtom } from './ChatroomCard';
 
 export const WaitingRoomModal = () => {
-  const [timeLeft, setTimeLeft] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(3);
   const navigation = useNavigate();
   const [, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom)
   const [chatRoomInfo] =useAtom(chatRoomInfoAtom)

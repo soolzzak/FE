@@ -43,7 +43,9 @@ export const CategoryDropDown = () => {
         tabIndex={0}
         aria-label="Profile picture"
         className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4"
-      />
+      >
+        <img alt='userProfile' className='w-16 m-w-[64px] h-16 rounded-full'/>
+      </div>
 
       <Modal isOpen={isOpenBlock} onClose={onCloseBlock} hasOverlay>
         <BlockModal onClose={onCloseBlock} />

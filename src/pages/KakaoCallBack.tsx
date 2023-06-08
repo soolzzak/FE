@@ -10,9 +10,10 @@ export const KakaoCallback = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const code = new URL(document.location.toString()).searchParams.get('code');
+    
     (async () => {
         try {
-            const response: AxiosResponse<ApiResponse> = await axiosInstance.post('/login/oauth2/code/kakao',);
+            const response: AxiosResponse<ApiResponse> = await axios.get(`https://api.honsoolzzak.com/api/login?code=${code}`);
             const accessKey = response.headers.access_key;
             const refreshKey = response.headers.refresh_key;
             const decodedAccessToken: { exp: number } = jwtDecode(accessKey);

@@ -5,7 +5,6 @@ import { Report } from '../assets/svgs/Report';
 // import { useEffect } from 'react';
 // import { ReactComponent as Water } from '../assets/svgs/Water';
 import { Camera } from '../assets/svgs/Camera';
-import { Dooropen } from '../assets/svgs/Dooropen';
 import { Mic } from '../assets/svgs/Mic';
 import { Thumbdown } from '../assets/svgs/Thumbdown';
 import { Thumbup } from '../assets/svgs/Thumbup';
@@ -19,6 +18,7 @@ import { useModal } from '../hooks/useModal';
 import { ReportModal } from '../report/ReportModal';
 import { isOpenJoinHostAtom, isOpenLeaveRoomAtom, isOpenModifyRoomAtom, isOpenReportAtom } from '../store/modalStore';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
+import { Exit } from '../assets/svgs/Exit';
 
 export const StreamRoom1 = () => {
   // const { data, isLoading, isError, error } = useQuery('roomInfo', getRoom);
@@ -75,7 +75,7 @@ export const StreamRoom1 = () => {
           <div className="absolute top-0">상대방</div>
           <div className="absolute bottom-10 flex flex-row gap-4 left-1/2 -translate-x-1/2">
             <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
-              <Mic />
+              {/* <Mic /> */}
             </div>
 
             <div className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer">
@@ -89,7 +89,7 @@ export const StreamRoom1 = () => {
               className="rounded-full bg-[#F90707] w-20 h-20 flex justify-center items-center hover:cursor-pointer"
               onClick={() => setIsOpenLeaveRoom(true)}
             >
-              <Dooropen />
+              <Exit />
             </div>
           </div>
         </div>
