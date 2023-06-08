@@ -4,27 +4,23 @@ import { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { getFilteredData } from '../../api/main';
 import { ArrowDown } from '../../assets/svgs/ArrowDown';
-import {
-  handleRoomListChangeAtom,
-  roomListAtom,
-} from '../../store/mainpageStore';
+import { handleRoomListChangeAtom } from '../../store/mainpageStore';
 import { HorizontalSelector } from './HorizontalSelector';
 
 export const FilterPanel = () => {
   const [genderOption, setGenderOption] = useState('ANY');
   const [allOrEmpty, setAllOrEmpty] = useState(false);
   const [, setChatList] = useAtom(handleRoomListChangeAtom);
-  const [isNotFirstTry, setIsNotFirstTry] = useState(false);
+  const [isNotFirstTry, setIsNotFirstTry] = useState(0);
 
-  const { data, isError, error } = useQuery(
+  const { data } = useQuery(
     ['chatrooms', genderOption, allOrEmpty],
     () => getFilteredData(genderOption, allOrEmpty),
     {
       refetchOnWindowFocus: false,
-      enabled: isNotFirstTry,
+      enabled: isNotFirstTry === 2,
     }
   );
-
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const handleDropdownToggle = () => {
@@ -32,7 +28,7 @@ export const FilterPanel = () => {
   };
 
   useEffect(() => {
-    setIsNotFirstTry(true);
+    setIsNotFirstTry(1);
     const handleOutsideClick = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -50,6 +46,10 @@ export const FilterPanel = () => {
   useEffect(() => {
     if (data) {
       setChatList(data.data.content);
+      window.scrollTo({
+        top: 410,
+        behavior: 'smooth',
+      });
     }
   }, [data]);
 
@@ -79,6 +79,7 @@ export const FilterPanel = () => {
               displayedSelections={['누구나', '여자만', '남자만']}
               selectedOption={genderOption}
               handleOptionClick={setGenderOption}
+              activateSearch={setIsNotFirstTry}
             />
             <HorizontalSelector
               title="방 정렬"
@@ -86,6 +87,7 @@ export const FilterPanel = () => {
               displayedSelections={['전체', '빈방']}
               selectedOption={allOrEmpty}
               handleOptionClick={setAllOrEmpty}
+              activateSearch={setIsNotFirstTry}
             />
           </motion.div>
         )}

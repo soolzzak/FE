@@ -154,48 +154,48 @@ export const StreamRoom = () => {
     mediaStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
     });
-  };
-  const startLocalStream = async () => {
-    try {
-      // eslint-disable-next-line no-undef
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = mediaStream;
-      }
-      console.log('this media stream', mediaStream);
-    } catch (error) {
-      console.log('Error accessing media devices:', error);
+};
+const startLocalStream = async () => {
+  try {
+    // eslint-disable-next-line no-undef
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = mediaStream;
     }
-  };
+    console.log('this media stream', mediaStream);
+  } catch (error) {
+    console.log('Error accessing media devices:', error);
+  }
+};
 
-  useEffect(() => {
-    const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
-    socket = new WebSocket(signalingServerUrl);
+useEffect(() => {
+  const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
+  socket = new WebSocket(signalingServerUrl);
 
-    const connectToSignalingServer = async () => {
-      socket.onopen = () => {
-        const message = JSON.stringify({
-          from: userId,
-          type: 'join',
-          data: roomNum,
-        });
-        console.log('WebSocket connection opened', message);
-        socket.send(message);
-      };
+  const connectToSignalingServer = async () => {
+    socket.onopen = () => {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'join',
+        data: roomNum,
+      });
+      console.log('WebSocket connection opened', message);
+      socket.send(message);
+    };
 
-      socket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
 
-      socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
 
-      socket.onmessage = async (event) => {
-        const message = JSON.parse(event.data);
+    socket.onmessage = async (event) => {
+      const message = JSON.parse(event.data);
 
         switch (message.type) {
           case 'offer':
@@ -212,117 +212,58 @@ export const StreamRoom = () => {
             break;
           case 'join':
             console.log('received join message');
-            if (message.data) {
-              message.data = await getRoom(params || '');
-            }
+            message.data = await getRoom(params as string);
             await startLocalStream();
             await createPeerConnection();
             // console.log(message.data.data.hostId);
-            if (message.data?.data.hostId !== userId) {
+            if (message.data?.hostId !== userId) {
               console.log('starting call');
               await startCall();
             }
 
-            break;
-          default:
-            console.warn('Invalid message type:', message.type);
-        }
-      };
-    };
-
-    // Establish a connection with the signaling server
-    connectToSignalingServer();
-    return () => {
-      if (peerConnection) {
-        peerConnection.close();
-      }
-      if (socket) {
-        socket.close();
+          break;
+        default:
+          console.warn('Invalid message type:', message.type);
       }
     };
-  }, []);
+  };
 
-  const [micOff, setMicOff] = useState(true);
-  const [monitorOn, setMonitorOn] = useState(true);
+  // Establish a connection with the signaling server
+  connectToSignalingServer();
+  return () => {
+    if (peerConnection) {
+      peerConnection.close();
+    }
+    if (socket) {
+      socket.close();
+    }
+  };
+}, []);
 
-  return (
-    <div className="flex flex-col rounded-3xl p-5">
-      <div className="bg-white mt-20 mx-10 py-8 px-16 rounded-3xl">
-        <div className="flex justify-center">
-          <div className="flex flex-row w-full justify-between mb-5">
-            <div className="flex flex-row justify-center items-center">
-              <CategoryDropDown />
-              <div className="flex flex-col gap-2">
-                <div className="xl:text-3xl font-semibold mr-4">
-                  상대방 이름 과 따로 또 같이 혼술하는 중!
-                </div>
-                <div className="h-2 rounded-lg bg-secondary-100 z-0 shadow-sm">
-                  <div
-                    className="h-2 rounded-full bg-secondary-200 shadow"
-                    style={{ width: '16%' }}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row gap-3 pl-5 pb-2 self-end">
-                <Thumbup />
-                <Thumbdown />
-              </div>
-            </div>
+return (
+  <div className="flex flex-col h-screen p-5 m-5 rounded-3xl bg-[#cdcdcd]">
+    <div className="basis-1/12  flex justify-between p-4">
+      <div className="flex flex-row items-center">
+        <div className="w-16 h-16 rounded-full bg-[#9A9A9A] mr-4" />
+        <p className="text-[20px] font-semibold mr-4">
+          카리나님과 따로 또 같이 혼술하는 중!
+        </p>
 
-            <div className="flex items-center xl:text-3xl font-semibold">
-              분노의질주 얘기하면서 같이 소주마셔요!
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="gap-5 grid grid-cols-9 grid-rows-6 h-[80vh] w-full">
-            <div className="col-span-6 row-span-6 flex flex-col justify-between">
-              <video
-                ref={localVideoRef}
-                autoPlay
-                muted
-                className="bg-red-300 w-full h-5/6 object-cover rounded-xl"
-              />
-              <div className="h-1/6 flex items-center justify-center gap-6">
-                <Mic micOff={micOff} setMicOff={setMicOff}/>
-                <Monitor />
-                <Setting />
-                <Exit />
-              </div>
-            </div>
-
-            <div className="w-full h-full col-span-3 row-span-4 rounded-xl">
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                muted
-                className="bg-red-100 w-full h-full object-cover rounded-xl"
-              />
-            </div>
-            <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <div className="h-full flex items-center xl:text-3xl font-semibold gap-4">
-                  <Camera />
-                  함께 사진찍기
-                </div>
-              </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="h-full flex items-center xl:text-3xl font-semibold gap-4 ">
-                  <Game />
-                  게임하기
-                </span>
-              </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="h-full flex items-center xl:text-3xl font-semibold gap-4">
-                  <Youtube />
-                  유튜브 같이보기
-                </span>
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-row gap-4 ">
+          <Thumbdown />
+          <Thumbup />
+          {/* <Report /> */}
         </div>
       </div>
+      <p className="font-semibold text-[32px]">얘기하면서 같이 소주마셔요!</p>
     </div>
-  );
+    <div className="grid grid-cols-2">
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <video ref={localVideoRef} autoPlay muted className=" rounded-xl" />
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <video ref={remoteVideoRef} autoPlay muted className="rounded-xl" />
+    </div>
+  </div>
+); 
 };
+

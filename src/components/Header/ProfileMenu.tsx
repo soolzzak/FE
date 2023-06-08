@@ -1,28 +1,19 @@
 import { motion } from 'framer-motion';
-import { SetStateAction } from 'jotai';
+import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
-import { Dispatch, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { getMypageProfile } from '../../api/mypage';
+import { userTokenAtom } from '../../store/mainpageStore';
 
-type AuthToken = {
-  sub: string;
-};
-
-export const ProfileMenu = ({
-  user,
-  setUserInfo,
-}: {
-  user: string;
-  setUserInfo: Dispatch<SetStateAction<AuthToken | undefined>>;
-}) => {
+export const ProfileMenu = ({ user }: { user: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { data } = useQuery('profile', getMypageProfile, {
     refetchOnWindowFocus: false,
   });
-
+  const [, setUserInfo] = useAtom(userTokenAtom);
   const navigate = useNavigate();
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
@@ -57,7 +48,7 @@ export const ProfileMenu = ({
           src={data.data.userImageUrl}
           role="none"
           onClick={handleDropdownToggle}
-          className="cursor-pointer w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5"
+          className="cursor-pointer min-w-[48px] w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5"
         />
       ) : (
         <div
@@ -80,7 +71,10 @@ export const ProfileMenu = ({
           </div>
           <div
             role="none"
-            onClick={() => navigate('/mypage')}
+            onClick={() => {
+              setIsOpen(false);
+              navigate('/mypage');
+            }}
             className="dropdownItemStyle"
           >
             <div>Mypage</div>

@@ -6,6 +6,7 @@ interface SelectorProps {
   displayedSelections: string[];
   selectedOption: any;
   handleOptionClick: Dispatch<SetStateAction<any>>;
+  activateSearch: Dispatch<SetStateAction<any>>;
 }
 export const HorizontalSelector = ({
   title,
@@ -13,8 +14,12 @@ export const HorizontalSelector = ({
   displayedSelections,
   selectedOption,
   handleOptionClick,
+  activateSearch,
 }: SelectorProps) => {
-  console.log(selectedOption);
+  const onOptionSelect = (option: string | boolean) => {
+    handleOptionClick(option);
+    activateSearch(2);
+  };
   return (
     <section className="f-col mt-3">
       <p className="text-lg font-bold mb-2 text-[#454545]">{title}</p>
@@ -28,7 +33,7 @@ export const HorizontalSelector = ({
                 ? 'bg-primary-50 text-primary-200 border-primary-200'
                 : ''
             }`}
-            onClick={() => handleOptionClick(option)}
+            onClick={() => onOptionSelect(option)}
           >
             {displayedSelections[index]}
           </div>

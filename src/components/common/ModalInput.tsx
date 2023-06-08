@@ -14,9 +14,7 @@ export const ModalInput = ({
   autofocus = false,
   disabled = false,
   handleInputChange,
-}: InputProps) => {
-  console.log(title);
-  return (
+}: InputProps) => (
     <div className="w-full">
       <p className="text-base font-bold mb-2 text-[#454545]">{title}</p>
       <input
@@ -31,4 +29,3 @@ export const ModalInput = ({
       />
     </div>
   );
-};
