@@ -22,7 +22,7 @@ export const HeaderRightSection = () => {
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
-
+  console.log(user);
   useEffect(() => {
     if (user) {
       setUserAtom(jwtDecode(user));
@@ -51,7 +51,7 @@ export const HeaderRightSection = () => {
       <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
         <AddRoom onClose={onCloseRoomCreate} />
       </Modal>
-      {userAtom ? (
+      {userAtom && user ? (
         <motion.div
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
