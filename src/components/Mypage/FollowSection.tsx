@@ -36,10 +36,10 @@ export const FollowSection = ({
           {tabList.map((tab) => (
             <div
               role="none"
-              className={`f-jic cursor-pointer font-semibold text-[#454545] 
+              className={`f-jic cursor-pointer font-semibold 
           ${
             activeTab === tab
-              ? 'border-b-[3px] border-primary-300 text-primary-200'
+              ? 'border-b-[3px] border-[#0BA332] text-[#0BA332]'
               : ''
           }`}
               key={tab}

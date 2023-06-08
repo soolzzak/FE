@@ -22,7 +22,7 @@ export interface MypageProfileRooms {
 export interface TabUserList {
   userId: string;
   username: string;
-  image: string;
+  userImage: string;
   createdAt: string;
 }
 
@@ -49,7 +49,7 @@ export const updateMypageProfile = async ({
 }: UpdateMypageData) => {
   try {
     const formData = new FormData();
-    console.log(userImage);
+    // console.log(userImage);
     if (userImage) formData.append('userImage', userImage);
     formData.append('username', username);
 
