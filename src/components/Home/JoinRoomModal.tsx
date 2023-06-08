@@ -1,18 +1,15 @@
 import { useAtom } from 'jotai';
-import Cookies from 'js-cookie';
-import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
+import { useQuery } from 'react-query';
+import { getMypageProfile } from '../../api/mypage';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
-import { JwtPayload } from '../../pages/StreamRoom';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../../store/modalStore';
 import {
-  categorySelection,
   genderSelection,
   selections,
-  tabList,
+  tabList
 } from '../../utils/switchSelections';
 import { chatRoomInfoAtom } from './ChatroomCard';
-import { usernameAtom } from '../../store/mainpageStore';
 
 export const JoinRoomModal = () => {
   const myVideoRef = useRef<HTMLVideoElement>(null);
@@ -22,9 +19,8 @@ export const JoinRoomModal = () => {
   const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
   const [, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom);
   const [chatRoomInfo] = useAtom(chatRoomInfoAtom);
-  const getCookie = Cookies.get('accessKey');
-  const userInfo = jwtDecode<JwtPayload>(getCookie || '').auth;
-  console.log('d', userInfo);
+  const { data } = useQuery('userProfile', getMypageProfile);
+  console.log(data?.data)
 
   useEffect(() => {
     if (chatRoomInfo) {
@@ -71,14 +67,14 @@ export const JoinRoomModal = () => {
 
       <div className="w-[40%] h-[90%] flex flex-col items-center self-center px-4">
         <div className="w-[100%] h-[10%]" />
-        <div className="flex items-center w-40 justify-center self-end h-[15%] gap-4 rounded-2xl bg-[#E0F5E6]">
+        <div className="flex items-center justify-center self-end h-[15%] gap-4 rounded-2xl bg-[#E0F5E6] px-2">
           <div>
-            <img alt="userImg" className="w-14 h-14 rounded-full bg-black" />
+            <img alt="userImg" src={data?.data.userImageUrl} className="w-14 min-w-[56px] h-14 rounded-full" />
           </div>
 
           <div>
-            <p className="font-bold">곽준희님</p>
-            <p className="font-bold">몇도</p>
+            <p className="font-bold">{data?.data.username}님</p>
+            <p className="font-bold">{data?.data.alcohol}%</p>
           </div>
         </div>
         <div className="w-[100%] h-[75%] flex flex-col justify-between ">

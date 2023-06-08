@@ -10,7 +10,6 @@ export const DeleteBtn = () => (
       cx="17.9809"
       cy="18.2538"
       r="17.7309"
-      
       fill=""
       stroke="#FFFFFF"
       strokeWidth="0.5"

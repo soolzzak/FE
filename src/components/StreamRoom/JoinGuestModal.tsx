@@ -25,7 +25,7 @@ export const JoinGuestModal = () => {
     <div className="w-[600px] h-[400px] bg-[#FFFFFF] rounded-[30px] border text-center flex flex-col justify-center items-center">
       <div className='font-bold text-2xl text-[#454545] mb-2'>{timeLeft}초 뒤에 카리나님이 입장합니다!</div>
 
-      <div className='flex justify-center items-center w-20 h-20 font-bold text-[40px] text-[#454545] mb-2 border border-[#AEAEAE] rounded-full'>{timeLeft}</div>
+      <div className='flex justify-center items-center w-20 h-20 font-bold text-[40px] text-[#454545] mb-2 border border-primary-300 rounded-full'>{timeLeft}</div>
 
       <div className='font-semibold text-xl text-[#454545] mb-2'>매너와 예의를 지키며 즐겁게 혼술짝 해요 😊</div>
 
