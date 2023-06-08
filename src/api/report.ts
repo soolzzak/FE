@@ -3,7 +3,7 @@ import axiosInstance from './axios';
 
 interface ApiResponse {
   status: number;
-  msg: string;
+  message: string;
 }
 
 export type Report = {
@@ -11,12 +11,19 @@ export type Report = {
   another: string | null;
 };
 
-export const reportApi = async (userId: string, reportData: Report): Promise<ApiResponse | undefined> => {
+export const ReportApi = async (
+  userId: string | undefined,
+  reportData: Report
+): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
-      `/report/${userId}`,reportData);
+      `/report/${userId}`,
+      reportData
+    );
+    console.log(response.data);
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) throw error;
+    console.error(error);
+    throw error as Error;
   }
 };

@@ -72,9 +72,12 @@ export const DetailDropdown = ({
       </Modal>
 
       <Modal isOpen={isOpenReport} onClose={onCloseReport} hasOverlay>
-        <ReportModal onCloseReport={onCloseReport} />
+        {userinfo && (
+          <ReportModal userinfo={userinfo} onCloseReport={onCloseReport} />
+        )}
       </Modal>
-      <div className="relative  font-semibold">
+
+      <div className="relative font-semibold">
         {isOpen && (
           <div className="bg-white rounded-lg w-20 h-24 flex flex-col justify-center items-center absolute z-10 right-0 top-0 border  ">
             <div
