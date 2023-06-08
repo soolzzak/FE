@@ -66,7 +66,6 @@ export const getSearchData = async (
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
       `/search?title=${searchword}`
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error as Error;
@@ -80,7 +79,6 @@ export const getByCategory = async (
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
       `/rooms/${category}`
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error as Error;

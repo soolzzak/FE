@@ -10,6 +10,6 @@ export const handleImageCompression = async (imageFile: File) => {
     const compressedFile = await imageCompression(imageFile, options);
     return compressedFile;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
