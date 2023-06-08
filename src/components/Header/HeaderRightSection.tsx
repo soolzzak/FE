@@ -1,52 +1,57 @@
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Notifications } from '../../assets/svgs/Notifications';
 import { useModal } from '../../hooks/useModal';
-import { usernameAtom } from '../../store/mainpageStore';
+import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
+import {
+  isOpenAuthModalAtom,
+  isOpenLoginModalAtom,
+} from '../../store/modalStore';
 import { CommonButton } from '../common/CommonButton';
 import { Modal } from '../common/Modal';
 import { LoginModal } from '../login/LoginModal';
 import { AddRoom } from './AddRoom';
-import { ProfileMenu } from './ProfileMenu';
 import { AuthModal } from './AuthModal';
-import { isOpenAuthModalAtom, isOpenLoginModalAtom } from '../../store/modalStore';
-
-type AuthToken = {
-  sub: string;
-};
+import { ProfileMenu } from './ProfileMenu';
 
 export const HeaderRightSection = () => {
-  const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom)
-  const [isOpenLogin, setIsOpenLogin] = useAtom(isOpenLoginModalAtom)
+  const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
+  const [isOpenLogin, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
   const [user] = useAtom(usernameAtom);
-
-  const [userInfo, setUserInfo] = useState<AuthToken>();
+  const [userAtom, setUserAtom] = useAtom(userTokenAtom);
 
   useEffect(() => {
     if (user) {
-      setUserInfo(jwtDecode(user));
+      setUserAtom(jwtDecode(user));
     }
   }, [user]);
 
-  console.log(userInfo);
   return (
     <motion.section
       className={`f-ic justify-end mr-4 md:min-w-[200px]
       ${user ? 'min-w-[490px]' : 'min-w-[180px]'}`}
     >
-      <Modal isOpen={isOpenAuth} hasOverlay onClose={()=>setIsOpenAuth(false)}>
+      <Modal
+        isOpen={isOpenAuth}
+        hasOverlay
+        onClose={() => setIsOpenAuth(false)}
+      >
         <AuthModal />
       </Modal>
-      <Modal isOpen={isOpenLogin} hasOverlay onClose={()=>setIsOpenLogin(false)}>
+      <Modal
+        isOpen={isOpenLogin}
+        hasOverlay
+        onClose={() => setIsOpenLogin(false)}
+      >
         <LoginModal />
       </Modal>
       <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
         <AddRoom onClose={onCloseRoomCreate} />
       </Modal>
-      {userInfo ? (
+      {userAtom ? (
         <motion.div
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -60,7 +65,7 @@ export const HeaderRightSection = () => {
             dimensions="mr-7 min-w-[185px]"
           />
           <Notifications />
-          <ProfileMenu user={userInfo.sub} setUserInfo={setUserInfo} />
+          <ProfileMenu user={userAtom.sub} />
         </motion.div>
       ) : (
         <motion.div

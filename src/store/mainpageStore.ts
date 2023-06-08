@@ -1,6 +1,18 @@
 import { atom } from 'jotai';
 import { MainpageRooms } from '../api/main';
 
+export type AuthToken = {
+  sub: string;
+  exp: number;
+  auth: UserInfo;
+};
+export type UserInfo = {
+  role: string;
+  gender: string;
+  id: number;
+  email: string;
+};
+
 export const usernameAtom = atom('');
 export const handleTokenChangeAtom = atom(null, (get, set, update: string) => {
   set(usernameAtom, () => update);
@@ -24,3 +36,15 @@ export const handleRoomListChangeAtom = atom(
     set(roomListAtom, () => update);
   }
 );
+
+export const userTokenAtom = atom({} as AuthToken | undefined);
+export const handleUserTokenAtom = atom(
+  null,
+  (get, set, update: AuthToken | undefined) => {
+    set(userTokenAtom, () => update);
+  }
+);
+export const searchwordAtom = atom('');
+export const handleSearchwordAtom = atom(null, (get, set, update: string) => {
+  set(searchwordAtom, () => update);
+});

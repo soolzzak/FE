@@ -4,6 +4,8 @@ import { categoryAtom } from '../../store/addRoomStore';
 import { selections, tabList } from '../../utils/switchSelections';
 
 export const DropdownSelector = () => {
+  const dropdownSelection = selections.slice(1);
+  const dropdownDisplayedSelection = tabList.slice(1);
   const [selectedOption, handleOptionClick] = useAtom(categoryAtom);
   const [currentSelectionView, setCurrentSelectionView] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -20,8 +22,8 @@ export const DropdownSelector = () => {
   };
 
   useEffect(() => {
-    handleOptionClick(selections[0]);
-    setCurrentSelectionView(tabList[0]);
+    handleOptionClick(dropdownSelection[0]);
+    setCurrentSelectionView(dropdownDisplayedSelection[0]);
   }, []);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export const DropdownSelector = () => {
         </div>
         {isOpen && (
           <div className="absolute top-full w-full left-0 z-10 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
-            {selections.map((option, index) => (
+            {dropdownSelection.map((option, index) => (
               <div
                 role="none"
                 key={option}
@@ -67,7 +69,7 @@ export const DropdownSelector = () => {
                 `}
                 onClick={() => handleOptionSelect(option, tabList[index])}
               >
-                {tabList[index]}
+                {dropdownDisplayedSelection[index]}
               </div>
             ))}
           </div>

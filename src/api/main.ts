@@ -8,7 +8,9 @@ interface ApiResponse {
   msg: string;
   data: PageableContent;
 }
-interface PageableContent {
+export interface PageableContent {
+  number: number;
+  totalPages: number;
   content: MainpageRooms[];
 }
 interface ApiResponse1 {
@@ -34,27 +36,14 @@ export type MainpageRooms = {
 };
 
 export const getMainpageRooms = async (
-  tab: string
+  url: string
 ): Promise<ApiResponse | undefined> => {
-  if (tab === 'ALL') {
-    try {
-      const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-        '/main'
-      );
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(url);
 
-      return response.data;
-    } catch (error) {
-      throw error as Error;
-    }
-  } else {
-    try {
-      const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-        `/rooms?category=${tab}`
-      );
-      return response.data;
-    } catch (error) {
-      throw error as Error;
-    }
+    return response.data;
+  } catch (error) {
+    throw error as Error;
   }
 };
 export const getFilteredData = async (
@@ -65,6 +54,19 @@ export const getFilteredData = async (
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
       `/rooms/setting?genderSetting=${genderOption}&roomCapacityCheck=${isFull}`
     );
+    return response.data;
+  } catch (error) {
+    throw error as Error;
+  }
+};
+export const getSearchData = async (
+  searchword: string
+): Promise<ApiResponse | undefined> => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+      `/search?title=${searchword}`
+    );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error as Error;

@@ -7,7 +7,7 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
       <div className="w-24 h-24 rounded-full bg-[#9A9A9A] mr-4 " />
     </div>
     {/* 프로그래스바 */}
-    <div className="w-full bg-[#B6ECC4] rounded-full h-2.5 dark:bg-gray-700 mt-5">
+    <div className="w-full bg-[#B6ECC4] rounded-full h-2.5 mt-5">
       <div
         className="bg-[#179638] h-2.5 rounded-full"
         style={{ width: `${alcohol}%` }}

@@ -1,6 +1,7 @@
 import { useAtom } from 'jotai';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { ToastContent, toast } from 'react-toastify';
 import { createRoom } from '../../api/main';
 import {
   categoryAtom,
@@ -20,29 +21,28 @@ export type CreateRoomData = {
   roomPassword: string;
 };
 
-export const AddRoomButton = () => {
+export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
   const [image] = useAtom(imageAtom);
   const [title] = useAtom(titleAtom);
   const [category] = useAtom(categoryAtom);
   const [genderSetting] = useAtom(genderAtom);
   const [isPrivate] = useAtom(publicOrPrivateAtom);
   const [roomPassword] = useAtom(roomPasswordAtom);
-  console.log(image);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const createRoomMutation = useMutation(createRoom, {
     onSuccess: (data) => {
       queryClient.invalidateQueries('chatrooms');
+      closeModal();
       navigate(`/room/${data.data.roomId}`);
-      console.log('success');
+      toast.success('방 반들기 성공!');
     },
     onError: (error) => {
-      console.log(error);
+      toast.error(error as ToastContent);
     },
   });
 
-  console.log('post');
   const onSubmit = () => {
     const data = {
       title,

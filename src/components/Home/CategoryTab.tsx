@@ -16,11 +16,15 @@ export const CategoryTab = () => {
     setTabAtom(selections[index]);
     setDisplayedTabAtom(tab);
     setActiveTab(tab);
+    window.scrollTo({
+      top: 410,
+      behavior: 'smooth',
+    });
   };
 
   return (
     <nav className="w-full border-t">
-      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 min-w-[660px] gap-4 lg:px-32 ">
+      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 min-w-[660px] gap-4 xl:px-32 ">
         {tabList.map((tab, index) => (
           <motion.div
             whileHover={{ scale: 1.02 }}
