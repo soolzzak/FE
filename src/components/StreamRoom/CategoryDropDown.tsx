@@ -60,25 +60,25 @@ export const CategoryDropDown = () => {
               role="button"
               tabIndex={0}
             >
-              팔로우
+              팔로우하기
             </div>
             <div
-              className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20"
+              className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20 text-[#F81C1C]"
               onClick={handleBlockClick}
               onKeyDown={handleKeyDown}
               role="button"
               tabIndex={0}
             >
-              차단
+              차단하기
             </div>
             <div
-              className=" basis-1/3 flex items-center justify-center relative z-20"
+              className=" basis-1/3 flex items-center justify-center relative z-20 text-[#F81C1C]"
               onClick={handleReportClick}
               onKeyDown={handleKeyDown}
               role="button"
               tabIndex={0}
             >
-              신고
+              신고하기
             </div>
           </div>
         )}

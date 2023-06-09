@@ -1,16 +1,25 @@
+/* eslint-disable jsx-a11y/media-has-caption */
+import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getRoom } from '../api/streamRoom';
+import { LuMic, LuMicOff, LuMonitor, LuMonitorOff } from 'react-icons/lu';
+import { AiOutlineSetting } from 'react-icons/ai';
+import { useMutation } from 'react-query';
+import { ToastContent, toast } from 'react-toastify';
+import { Room, getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
+import { Exit } from '../assets/svgs/Exit';
 import { Game } from '../assets/svgs/Game';
+import { Setting } from '../assets/svgs/Setting';
 import { Youtube } from '../assets/svgs/Youtube';
 import { CategoryDropDown } from '../components/StreamRoom/CategoryDropDown';
-import { Mic } from '../assets/svgs/Mic';
-import { Monitor } from '../assets/svgs/Monitor';
-import { Setting } from '../assets/svgs/Setting';
-import { Exit } from '../assets/svgs/Exit';
+import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
+import { Modal } from '../components/common/Modal';
+import { isOpenLeaveRoomAtom } from '../store/modalStore';
+import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
+import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 
 export interface JwtPayload {
   auth: {
@@ -43,6 +52,22 @@ let mediaStream: MediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+  const [roomInfo, setRoomInfo] = useState<Room>();
+  const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
+  const [micOn, setMicOn] = useState<boolean>(true);
+  const [monitorOn, setMonitorOn] = useState<boolean>(true);
+
+  const guestProfileMutation = useMutation(getDetailUserProfile, {
+    onSuccess: (data) => {
+      setGuestProfile(data?.data);
+    },
+    onError: (error) => {
+      toast.error(error as ToastContent);
+    },
+  });
+
+  const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
 
   const getCookie = Cookies.get('accessKey');
   const params = useParams().id;
@@ -144,8 +169,10 @@ export const StreamRoom = () => {
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
       if (remoteVideoRef.current) {
+        console.log('adding remote stream to video element');
         remoteVideoRef.current.srcObject = stream;
       }
+      console.log('remote ref', remoteVideoRef.current);
     };
     peerConnection.oniceconnectionstatechange = () => {
       if (
@@ -177,6 +204,7 @@ export const StreamRoom = () => {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = mediaStream;
       }
+
       console.log('this media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
@@ -212,6 +240,7 @@ export const StreamRoom = () => {
         switch (message.type) {
           case 'offer':
             console.log('received offer message', message);
+
             await handleOfferMessage(message);
             break;
           case 'answer':
@@ -219,6 +248,7 @@ export const StreamRoom = () => {
             await handleAnswerMessage(message);
             break;
           case 'ice':
+            guestProfileMutation.mutate(message.from);
             console.log('received ice message', message);
             await handleCandidateMessage(message);
             break;
@@ -254,46 +284,46 @@ export const StreamRoom = () => {
     };
   }, []);
 
-  const [micOff, setMicOff] = useState(true);
-  const [monitorOn, setMonitorOn] = useState(true);
+  const micToggleHandler = () => {
+    const audio = localVideoRef.current;
+    if (audio) {
+      audio.muted = !audio.muted;
+      setMicOn((prev) => !prev);
+    }
+  };
+
+  const videoToggleHandler = () => {
+    const video = localVideoRef.current;
+    if (video) {
+      const videoTrack = mediaStream.getVideoTracks()[0];
+      videoTrack.enabled = !videoTrack.enabled;
+      setMonitorOn((prev) => !prev);
+    }
+  };
 
   return (
     <div className="flex flex-col rounded-3xl p-5">
       <div className="bg-white mt-20 mx-10 py-8 px-16 rounded-3xl">
         <div className="flex justify-center">
           <div className="flex flex-row w-full justify-between mb-5">
-            <div className="flex flex-row justify-center items-center">
-              <CategoryDropDown />
-              <div className="flex flex-col gap-2">
-                <div className="xl:text-3xl font-semibold mr-4">
-                  상대방 이름 과 따로 또 같이 혼술하는 중!
-                </div>
-                <div className="h-2 rounded-lg bg-secondary-100 z-0 shadow-sm">
-                  <div
-                    className="h-2 rounded-full bg-secondary-200 shadow"
-                    style={{ width: '16%' }}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row gap-3 pl-5 pb-2 self-end">
-                조아요 시러용
-              </div>
-            </div>
-
+            {guestProfile && (
+              <RemoteUserSection
+                guestProfile={guestProfile}
+                guestProfileMutation={guestProfileMutation}
+              />
+            )}
             <div className="flex items-center xl:text-3xl font-semibold">
-              분노의질주 얘기하면서 같이 소주마셔요!
+              {roomInfo?.title}
             </div>
           </div>
         </div>
-
         <div className="flex justify-center">
           <div className="gap-5 grid grid-cols-9 grid-rows-6 h-[80vh] w-full">
-            <div className="col-span-6 row-span-6 flex flex-col justify-between">
+            <div className="col-span-6 row-span-6 flex flex-col justify-between gap-5">
               <video
                 ref={localVideoRef}
                 autoPlay
-                muted
-                className="bg-red-300 w-full h-5/6 object-cover rounded-xl"
+                className="bg-black w-full h-5/6 object-cover rounded-xl"
               />
               <div className="h-1/6 flex items-center justify-center gap-6">
                 <Mic micOff={micOff} setMicOff={setMicOff} />
@@ -308,7 +338,7 @@ export const StreamRoom = () => {
                 ref={remoteVideoRef}
                 autoPlay
                 muted
-                className="bg-red-100 w-full h-full object-cover rounded-xl"
+                className="bg-black w-full h-full object-cover rounded-xl"
               />
             </div>
             <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
@@ -334,6 +364,13 @@ export const StreamRoom = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpenLeaveRoom}
+        onClose={() => setIsOpenLeaveRoom(false)}
+        hasOverlay
+      >
+        <LeaveRoomModal />
+      </Modal>
     </div>
   );
 };

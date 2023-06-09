@@ -4,7 +4,7 @@ import { isOpenLeaveRoomAtom } from '../../store/modalStore';
 import { CancelButton } from '../common/CancelButton';
 
 export const LeaveRoomModal = () => {
-  const [,setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
+  const [, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const navigation = useNavigate();
   return (
     <div className="relative w-[550px] h-52 bg-[#FFFFFF] rounded-[30px] flex flex-col justify-center items-center">
@@ -21,13 +21,16 @@ export const LeaveRoomModal = () => {
         <button
           type="button"
           className="w-36 h-11 text-base font-semibold text-[#6A6A6A] rounded-lg border border-[#6A6A6A] bg-[#DEDEDE] text-center hover:bg-opacity-80"
-          onClick={() => navigation('/')}
+          onClick={() => {
+            setIsOpenLeaveRoom(false);
+            navigation('/');
+          }}
         >
           네, 나갈께요
         </button>
       </div>
 
-      <CancelButton onClose={() => setIsOpenLeaveRoom(false)}/>
+      <CancelButton onClose={() => setIsOpenLeaveRoom(false)} />
     </div>
   );
 };
