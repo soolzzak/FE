@@ -51,7 +51,7 @@ export const HomeBodySection = () => {
     if (pageNum >= pageableDetail[1]) return;
     if (pageNum !== pageableDetail[1])
       if (tab === 'SEARCH') {
-        chatListMutation.mutate(`/search?title=${searchword}`);
+        chatListMutation.mutate(`/search?page=${pageNum}&title=${searchword}`);
       } else {
         chatListMutation.mutate(
           tab === 'ALL'
