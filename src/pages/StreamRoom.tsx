@@ -189,6 +189,7 @@ export const StreamRoom = () => {
       });
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = mediaStream;
+      
       }
 
       console.log('this media stream', mediaStream);
@@ -198,8 +199,6 @@ export const StreamRoom = () => {
   };
 
   useEffect(() => {
-    
-
     const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
     socket = new WebSocket(signalingServerUrl);
 
@@ -228,7 +227,7 @@ export const StreamRoom = () => {
         switch (message.type) {
           case 'offer':
             console.log('received offer message', message);
-            guestProfileMutation.mutate(message.from);
+            
             await handleOfferMessage(message);
             break;
           case 'answer':
@@ -236,6 +235,7 @@ export const StreamRoom = () => {
             await handleAnswerMessage(message);
             break;
           case 'ice':
+            guestProfileMutation.mutate(message.from);
             console.log('received ice message', message);
             await handleCandidateMessage(message);
             break;
@@ -284,10 +284,8 @@ export const StreamRoom = () => {
   const videoToggleHandler = () => {
     const video = localVideoRef.current;
     if (video) {
-      mediaStream.getVideoTracks().forEach((track) => ({
-        ...track,
-        enabled: !track.enabled,
-      }));
+      const videoTrack = mediaStream.getVideoTracks()[0]
+      videoTrack.enabled = !videoTrack.enabled;
       setMonitorOn((prev) => !prev);
     }
   };
@@ -357,7 +355,7 @@ export const StreamRoom = () => {
                 ref={remoteVideoRef}
                 autoPlay
                 muted
-                className="bg-red-100 w-full h-full object-cover rounded-xl"
+                className="bg-black w-full h-full object-cover rounded-xl"
               />
             </div>
             <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
