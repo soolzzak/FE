@@ -189,6 +189,7 @@ export const StreamRoom = () => {
         }
       }
     };
+
     console.log('adding media stream to track', mediaStream);
     mediaStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
@@ -256,6 +257,8 @@ export const StreamRoom = () => {
             console.log('received join message');
 
             message.data = await getRoom(params as string);
+            setRoomInfo(message.data);
+            console.log('get room? ', message.data);
 
             await startLocalStream();
             await createPeerConnection();
@@ -325,11 +328,39 @@ export const StreamRoom = () => {
                 autoPlay
                 className="bg-black w-full h-5/6 object-cover rounded-xl"
               />
-              <div className="h-1/6 flex items-center justify-center gap-6">
-                <Mic micOff={micOff} setMicOff={setMicOff} />
-                <Monitor />
-                <Setting />
-                <Exit />
+              <div className="bg-slate-200 h-1/6 flex items-center justify-center gap-6 rounded-xl">
+                <div
+                  role="none"
+                  onClick={micToggleHandler}
+                  className={`iconStyle ${
+                    micOn ? 'bg-[#727272]' : 'bg-[#525252]'
+                  } `}
+                >
+                  {micOn ? (
+                    <LuMic className="text-4xl text-white" />
+                  ) : (
+                    <LuMicOff className="text-4xl text-white" />
+                  )}
+                </div>
+                <div
+                  role="none"
+                  onClick={videoToggleHandler}
+                  className={`iconStyle ${
+                    monitorOn ? 'bg-[#727272]' : 'bg-[#525252]'
+                  } `}
+                >
+                  {monitorOn ? (
+                    <LuMonitor className="text-4xl text-white" />
+                  ) : (
+                    <LuMonitorOff className="text-4xl text-white" />
+                  )}
+                </div>
+
+                <div className="iconStyle bg-[#727272]">
+                  <AiOutlineSetting className="text-5xl text-white hover:animate-spin" />
+                </div>
+
+                <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
               </div>
             </div>
 
