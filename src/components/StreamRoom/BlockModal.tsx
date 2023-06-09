@@ -8,7 +8,7 @@ export const BlockModal = ({
   userinfo,
 }: {
   onClose: () => void;
-  userinfo?: DetailUserProfile;
+  userinfo: DetailUserProfile;
 }) => {
   const queryClient = useQueryClient();
 

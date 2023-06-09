@@ -7,6 +7,7 @@ import {
 } from '../../api/mypage';
 import { Like } from '../../assets/svgs/Like';
 import { UnLike } from '../../assets/svgs/UnLike';
+import { CategoryDropDown } from './CategoryDropDown';
 
 interface ApiResponse1 {
   status: number;
@@ -43,12 +44,12 @@ export const RemoteUserSection = ({
 
   return (
     <section className="flex flex-row justify-center items-center">
-      <img
+      {/* <img
         alt="guestImg"
         src={guestProfile?.userImage}
         className="f-jic object-cover w-16 h-16 min-w-[64px] rounded-full mr-2"
-      />
-      {/* <CategoryDropDown /> */}
+      /> */}
+      <CategoryDropDown guestProfile={guestProfile} />
       <div className="flex flex-col gap-2">
         <div className="xl:text-3xl font-semibold mr-4">
           {guestProfile.username}과 따로 또 같이 혼술하는 중!
