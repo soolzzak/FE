@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
@@ -52,6 +52,9 @@ export const StreamRoom = () => {
 
   let socket: WebSocket;
   let peerConnection: RTCPeerConnection;
+
+  const [micOff, setMicOff] = useState<boolean>(true);
+  const [monitorOff, setMonitorOff] = useState<boolean>(true);  
 
   const handleOfferMessage = async (message: RTCSessionMessage) => {
     console.log('accepting offer', message);
@@ -216,7 +219,7 @@ export const StreamRoom = () => {
             await startLocalStream();
             await createPeerConnection();
             // console.log(message.data.data.hostId);
-            if (message.data?.data.hostId !== userId) {
+            if (message.data?.hostId !== userId) {
               console.log('starting call');
               await startCall();
             }
@@ -240,9 +243,8 @@ export const StreamRoom = () => {
     };
   }, []);
 
-  const [micOff, setMicOff] = useState(true);
-  const [monitorOn, setMonitorOn] = useState(true);
-
+  
+ 
   return (
     <div className="flex flex-col rounded-3xl p-5">
       <div className="bg-white mt-20 mx-10 py-8 px-16 rounded-3xl">
@@ -265,7 +267,6 @@ export const StreamRoom = () => {
                 조아요 시러용
               </div>
             </div>
-
             <div className="flex items-center xl:text-3xl font-semibold">
               분노의질주 얘기하면서 같이 소주마셔요!
             </div>
@@ -283,7 +284,7 @@ export const StreamRoom = () => {
               />
               <div className="h-1/6 flex items-center justify-center gap-6">
                 <Mic micOff={micOff} setMicOff={setMicOff}/>
-                <Monitor />
+                <Monitor monitorOff={monitorOff} setMonitorOff={setMonitorOff}/>
                 <Setting />
                 <Exit />
               </div>
