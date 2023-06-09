@@ -1,10 +1,14 @@
-export const Exit = () => (
+import { Dispatch, SetStateAction } from 'react';
+
+export const Exit = ({setIsOpenLeaveRoom}: {setIsOpenLeaveRoom: Dispatch<SetStateAction<boolean>>}) => (
   <svg
-    width="100"
-    height="100"
+    width="80"
+    height="80"
     viewBox="0 0 76 76"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    onClick={() => setIsOpenLeaveRoom(prev => !prev)}
+    style={{ cursor: 'pointer' }}
   >
     <circle cx="37.6807" cy="37.5864" r="37.5" fill="#F90707" />
     <path

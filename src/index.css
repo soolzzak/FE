@@ -40,6 +40,9 @@ body {
   .dropdownItemStyle {
     @apply px-4 py-2 text-black hover:bg-primary-100 cursor-pointer;
   }
+  .iconStyle {
+    @apply f-jic w-20 h-20 rounded-full cursor-pointer bg-opacity-50
+  }
 }
 
 .grad {
