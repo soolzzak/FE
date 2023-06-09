@@ -30,7 +30,7 @@ export const FollowSection = ({
 
   const tabList = ['방문기록', '팔로우 목록', '차단 목록'];
   return (
-    <div className=" basis-3/5 rounded-3xl bg-[#ffffff] p-8">
+    <div className=" basis-3/5 rounded-3xl bg-[#ffffff] p-8 shadow">
       <div className="flex justify-between">
         <div className="flex gap-x-5">
           {tabList.map((tab) => (

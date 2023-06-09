@@ -68,7 +68,7 @@ export const DetailDropdown = ({
       </div>
 
       <Modal isOpen={isOpenBlock} onClose={onCloseBlock} hasOverlay>
-        <BlockModal userinfo={userinfo} onClose={onCloseBlock} />
+        {userinfo && <BlockModal userinfo={userinfo} onClose={onCloseBlock} />}
       </Modal>
 
       <Modal isOpen={isOpenReport} onClose={onCloseReport} hasOverlay>

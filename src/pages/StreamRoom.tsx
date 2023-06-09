@@ -20,6 +20,9 @@ import { Modal } from '../components/common/Modal';
 import { isOpenLeaveRoomAtom } from '../store/modalStore';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
+import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
+import { KickoutModal } from '../components/StreamRoom/KickoutModal';
+import { useModal } from '../hooks/useModal';
 
 export interface JwtPayload {
   auth: {
@@ -68,6 +71,7 @@ export const StreamRoom = () => {
   });
 
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
+  const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
 
   const getCookie = Cookies.get('accessKey');
   const params = useParams().id;
@@ -387,6 +391,10 @@ export const StreamRoom = () => {
         hasOverlay
       >
         <LeaveRoomModal />
+      </Modal>
+
+      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
+        <KickoutModal onClose={onCloseKickout} />
       </Modal>
     </div>
   );

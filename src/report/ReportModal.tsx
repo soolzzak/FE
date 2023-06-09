@@ -49,7 +49,7 @@ export const ReportModal = ({
   };
 
   return (
-    <div className="flex flex-col mt-32 w-[597.5px] h-[503.41px] bg-[#FFFFFF] rounded-[30px] p-8">
+    <div className="flex flex-col mt-32 md:w-[597.5px] md:h-[503.41px] w-[400px] h-[500px] bg-[#FFFFFF] rounded-[30px] p-8">
       <div className="font-semibold text-[24px] mb-3">신고하기</div>
 
       <div className="font-medium text-lg text-[#4D4D4D] mb-5">
@@ -58,7 +58,7 @@ export const ReportModal = ({
       </div>
 
       <select
-        className="w-[525px] h-[42px] border border-[#929292] rounded-lg text-base font-normal indent-2 mb-5"
+        className="md:w-[525px] h-[42px] w-[340px] border border-[#929292] rounded-lg text-base font-normal indent-2 mb-5"
         value={reportKind}
         onChange={selectHandler}
       >
@@ -85,7 +85,7 @@ export const ReportModal = ({
       <button
         type="button"
         onClick={reportHandler}
-        className="w-[525px] h-12 bg-[#179638] rounded-[18px] text-[#FFFFFF] font-bold text-[22px] hover:bg-opacity-80"
+        className="md:w-[525px] h-12 w-[340px] bg-[#F82D2D] rounded-[18px] text-[#FFFFFF] font-bold text-[22px] hover:bg-opacity-80"
       >
         신고하기
       </button>
