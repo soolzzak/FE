@@ -30,7 +30,7 @@ export const Router = () => {
           <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Home />} />
           <Route path="/mypage" element={<Mypage />} />
-          <Route path="/room/:id" element={<StreamRoom />} />
+          {/* <Route path="/room/:id" element={<StreamRoom />} /> */}
           <Route path="/pwchange" element={<ChangePassword />} />
           <Route path="/kakao/callback" element={<KakaoCallback />} />
           <Route path="/signup" element={<Signup />} />

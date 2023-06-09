@@ -85,7 +85,7 @@ export const ReportModal = ({
       <button
         type="button"
         onClick={reportHandler}
-        className="w-[525px] h-12 bg-[#179638] rounded-[18px] text-[#FFFFFF] font-bold text-[22px] hover:bg-opacity-80"
+        className="w-[525px] h-12 bg-[#F82D2D] rounded-[18px] text-[#FFFFFF] font-bold text-[22px] hover:bg-opacity-80"
       >
         신고하기
       </button>

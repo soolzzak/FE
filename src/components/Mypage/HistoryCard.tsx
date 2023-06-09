@@ -25,7 +25,7 @@ export const HistoryCard = ({ item }: { item: TabUserList }) => {
         onClick={() => setIsOpenDetailUser(true)}
       >
         <img
-          className="min-w-[80px] h-20 m-2 rounded-full bg-[#9A9A9A] mr-4 object-cover"
+          className="min-w-[80px] h-20 m-2 rounded-full border border-[#B6ECC4] bg-[#B6ECC4] mr-4 object-cover"
           src={item.userImage}
           alt=""
         />

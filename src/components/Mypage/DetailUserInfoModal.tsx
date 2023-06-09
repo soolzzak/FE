@@ -29,21 +29,9 @@ export const DetailUserInfoModal = ({
     }
   );
 
-  // const { data: thumbup } = useQuery(
-  //   'thumbup',
-  //   () => ThumbUpHandler(item.userId),
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-
   const queryClient = useQueryClient();
 
   const [userinfo, setUserinfo] = useState<DetailUserProfile | undefined>();
-
-  // const [currentFollow, setCurrentFollow] = useState<boolean>(
-  //   userinfo?.follow || false
-  // );
 
   console.log('얘', userinfo);
 
@@ -62,28 +50,26 @@ export const DetailUserInfoModal = ({
   };
 
   const handleThumbupClick = async () => {
-    try {
-      const response = await ThumbUpHandler(userinfo?.userId);
-      if (response.status === 200) {
-        await queryClient.invalidateQueries('detailUserInfo');
+    if (!userinfo?.alcoholDown) {
+      try {
+        const response = await ThumbUpHandler(userinfo?.userId);
+        if (response.status === 200) {
+          await queryClient.invalidateQueries('detailUserInfo');
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 
   const handleThumbdownClick = async () => {
-    const response = await ThumbDownHandler(userinfo?.userId);
-    if (response.status === 200) {
-      await queryClient.invalidateQueries('detailUserInfo');
+    if (!userinfo?.alcoholUp) {
+      const response = await ThumbDownHandler(userinfo?.userId);
+      if (response.status === 200) {
+        await queryClient.invalidateQueries('detailUserInfo');
+      }
     }
   };
-
-  const upBackgroundColor = () =>
-    userinfo?.alcoholUp ? 'bg-[#E5F9EA]' : 'bg-slate-300';
-
-  const downBackgroundColor = () =>
-    userinfo?.alcoholUp ? 'bg-[#E5F9EA]' : 'bg-slate-300';
 
   return (
     <div className="justify-center items-center">
@@ -91,7 +77,7 @@ export const DetailUserInfoModal = ({
         <div className="flex flex-col justify-center items-center gap-2">
           <img
             alt=""
-            className="min-w-[97px] h-[97px] rounded-full bg-[#9A9A9A] object-cover"
+            className="min-w-[97px] h-[97px] rounded-full border bg-[#9A9A9A] object-cover"
             src={userinfo?.userImage}
           />
 
