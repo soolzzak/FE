@@ -26,15 +26,19 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
   }, []);
 
   const handleCardClick = () => {
+    if (Object.keys(userToken as object).length === 0) {
+      toast.error('로그인을 해주세요!');
+      return;
+    }
     if (
       chatRoom.genderSetting !== 'ANY' &&
       userToken?.auth.gender !== chatRoom.genderSetting
     ) {
       toast.error(`${genderSetting} 들어오세요`);
-    } else {
-      setChatRoomInfo(chatRoom as MainpageRooms);
-      setIsOpenJoinRoom(true);
+      return;
     }
+    setChatRoomInfo(chatRoom as MainpageRooms);
+    setIsOpenJoinRoom(true);
   };
   return (
     <motion.div
