@@ -154,6 +154,7 @@ export const BlockHandler = async (
     const response: AxiosResponse<ApiResponse1> = await axiosInstance.put(
       `/blockList/${targetId}`
     );
+    console.log(response.data);
     return response.data as ApiResponse1; // PUT 요청의 응답 데이터 처리
   } catch (error) {
     console.error(error);

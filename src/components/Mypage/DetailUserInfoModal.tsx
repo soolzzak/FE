@@ -77,14 +77,14 @@ export const DetailUserInfoModal = ({
         <div className="flex flex-col justify-center items-center gap-2 mt-7 md:mt-0">
           <img
             alt=""
-            className="md:min-w-[97px] md:w-[97px] md:h-[97px] w-[170px] h-[170px] rounded-full shadow bg-[#9A9A9A] object-cover"
+            className="md:min-w-[97px] md:w-[97px] md:h-[97px] w-[170px] h-[170px] rounded-full shadow bg-[#B6ECC4] object-cover"
             src={userinfo?.userImage}
           />
 
           <button
             type="button"
             onClick={handleFollowClick}
-            className={`w-[68px] h-[33px] border rounded-2xl ${
+            className={`w-[68px] h-[33px] md:mt-0 mt-2 border rounded-2xl ${
               userinfo?.follow
                 ? 'bg-[#0BA332] border-[#0BA332] text-[#ffffff]'
                 : 'border-[#0BA332] bg-[#E5F9EA] text-[#0BA332]'

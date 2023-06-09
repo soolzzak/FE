@@ -1,4 +1,5 @@
 import { useQueryClient } from 'react-query';
+import { toast } from 'react-toastify';
 import { BlockHandler, DetailUserProfile } from '../../api/mypage';
 import { CancelButton } from '../common/CancelButton';
 
@@ -14,6 +15,7 @@ export const BlockModal = ({
   const handleBlockClick = async () => {
     try {
       const response = await BlockHandler(userinfo?.userId);
+      toast.success(response?.message);
       if (response.status === 200) {
         await queryClient.invalidateQueries('mypageInfo');
       }
