@@ -3,17 +3,18 @@ import { useAtom } from 'jotai';
 import { useState } from 'react';
 import {
   handleDisplayedTabChangeAtom,
-  handleTabChangeAtom,
+  tabAtom,
 } from '../../store/mainpageStore';
 import { selections, tabList } from '../../utils/switchSelections';
 
 export const CategoryTab = () => {
   const [activeTab, setActiveTab] = useState('전체');
-  const [, setTabAtom] = useAtom(handleTabChangeAtom);
+  const [currentTab, setCurrentTab] = useAtom(tabAtom);
+
   const [, setDisplayedTabAtom] = useAtom(handleDisplayedTabChangeAtom);
 
   const handleTabChange = (tab: string, index: number) => {
-    setTabAtom(selections[index]);
+    setCurrentTab(selections[index]);
     setDisplayedTabAtom(tab);
     setActiveTab(tab);
     window.scrollTo({
@@ -24,7 +25,10 @@ export const CategoryTab = () => {
 
   return (
     <nav className="w-full border-t">
-      <div className="f-jic bg-white grid grid-cols-4 lg:grid-cols-7 min-w-[660px] gap-4 xl:px-32 ">
+      <div
+        className={`f-jic bg-white grid grid-cols-4 lg:grid-cols-7 min-w-[660px] gap-4 xl:px-32 
+        ${currentTab === 'SEARCH' ? 'hidden' : ''}`}
+      >
         {tabList.map((tab, index) => (
           <motion.div
             whileHover={{ scale: 1.02 }}

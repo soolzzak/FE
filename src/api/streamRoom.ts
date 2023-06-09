@@ -10,7 +10,7 @@ interface ApiResponse {
 
 export type Room = {
   roomId: number;
-  userId: number;
+  hostId: number;
   title: string;
   username: string;
   category: string;
@@ -19,23 +19,22 @@ export type Room = {
   roomPassword: string;
   createdAt: string;
   alcohol: number;
-  imgurl: string;
-  imageUrl: string;
+  userImage: string;
+  roomImage: string;
 };
 
 export const getRoom = async (
   params: string
 ): Promise<ApiResponse | undefined> => {
   try {
-    const token = Cookies.get('accessKey');
-    const headers = { ACCESS_KEY: `${token}` };
-
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/room/${params}`,
-      { headers }
+      `/room/${params}`
     );
+    console.log('getroom data api ', response);
     return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) throw error;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data.message;
+    }
   }
 };
