@@ -73,11 +73,11 @@ export const DetailUserInfoModal = ({
 
   return (
     <div className="justify-center items-center">
-      <div className="w-[542px] h-[230px] rounded-2xl bg-white flex flex-row px-6">
-        <div className="flex flex-col justify-center items-center gap-2">
+      <div className="md:w-[542px] md:h-[230px] w-[400px] h-[500px] rounded-2xl bg-white flex md:flex-row flex-col px-6">
+        <div className="flex flex-col justify-center items-center gap-2 mt-7 md:mt-0">
           <img
             alt=""
-            className="min-w-[97px] h-[97px] rounded-full border bg-[#9A9A9A] object-cover"
+            className="md:min-w-[97px] md:w-[97px] md:h-[97px] w-[170px] h-[170px] rounded-full shadow bg-[#9A9A9A] object-cover"
             src={userinfo?.userImage}
           />
 
@@ -94,7 +94,7 @@ export const DetailUserInfoModal = ({
           </button>
         </div>
 
-        <div className="flex flex-col w-full ml-6 mr-6">
+        <div className="flex flex-col w-full md:ml-6 md:mr-6">
           <div className="flex flex-row justify-end mt-3">
             <DetailDropdown userinfo={userinfo} />
             <CancelButton onClose={onClose} />

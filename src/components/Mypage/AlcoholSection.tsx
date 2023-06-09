@@ -1,7 +1,7 @@
 import { Soju } from '../../assets/svgs/Soju';
 
 export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
-  <div className="basis-1/2 bg-[#ffffff] rounded-3xl flex flex-col gap-y-2">
+  <div className="basis-1/2 bg-[#ffffff] rounded-3xl flex flex-col gap-y-2 shadow">
     <div className="p-8">
       <p className="font-bold">도수 레벨</p>
       <p>다양한 사람들과 교류하고 도수레벨을 올려보세요!</p>

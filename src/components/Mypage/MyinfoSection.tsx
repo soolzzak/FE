@@ -85,7 +85,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   };
 
   return (
-    <div className="bg-[#ffffff] basis-2/5 h-[700px] rounded-3xl flex flex-col gap-y-6 pb-10">
+    <div className="bg-[#ffffff] basis-2/5 h-[700px] rounded-3xl flex flex-col gap-y-6 pb-10 shadow">
       <div className="relative">
         <div className="absolute top-4 right-4 ">
           {editMode ? (
@@ -108,7 +108,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
               editMode ? 'group hover:opacity-70' : ''
             }  transition-opacity duration-300 ease-in-out 
             lg:w-80 lg:h-80 lg:mt-10 md:w-60 md:h-60 sm:w-40 sm:h-40 w-[84px] h-[84px] ml-5 mr-5 rounded-full 
-            bg-[#B6ECC4] mt-5 flex justify-center items-center relative`}
+            bg-[#B6ECC4] mt-5 flex justify-center items-center relative shadow`}
           >
             {editMode ? (
               <label
@@ -137,18 +137,18 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
               <img
                 src={view}
                 alt=""
-                className="w-full h-full rounded-full object-cover shadow "
+                className="w-full h-full rounded-full object-cover"
               />
             ) : (
               ''
             )}
           </div>
         </div>
-        <div className="md:flex-row flex-col">
-          <div className="flex justify-center items-center mb:flex items-start">
+        <div className="md:flex-row flex-col md:block f-jc">
+          <div className="flex md:justify-center md:mb-10 items-center md:flex md:items-start">
             {editMode ? (
               <input
-                className="w-[211px] h-[42px] rounded-lg border border-[#FF6700]"
+                className="w-[211px] h-[32px] rounded-lg border border-[#FF6700]"
                 type="text"
                 onChange={modifyUserNameHandler}
                 value={modifyUserName}
@@ -161,7 +161,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
 
-          <div className="flex flex-col ml-20">
+          <div className="flex flex-col md:ml-20">
             <p className="font-bold text-lg text-[#7C7C7C] hidden sm:block">
               이메일
             </p>
