@@ -4,6 +4,8 @@ import { Search } from '../../assets/svgs/Search';
 import {
   handleDisplayedTabChangeAtom,
   handleSearchwordAtom,
+  handleSearchwordTriggerAtom,
+  searchwordTriggerAtom,
   tabAtom,
   usernameAtom,
 } from '../../store/mainpageStore';
@@ -14,12 +16,15 @@ export const SearchField = () => {
   const [, setTab] = useAtom(tabAtom);
   const [, setDisplayedTab] = useAtom(handleDisplayedTabChangeAtom);
   const [, setSearchWord] = useAtom(handleSearchwordAtom);
+  const [prev, setSearchWordTrigger] = useAtom(searchwordTriggerAtom);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setTab('SEARCH');
-      setDisplayedTab(`'${searchValue}'에 대한 검색결과`);
+      setDisplayedTab(`'${searchValue || ' '}'에 대한 검색결과`);
       setSearchWord(searchValue);
       setSearchValue('');
+      setSearchWordTrigger(!prev);
       window.scrollTo({
         top: 410,
         behavior: 'smooth',

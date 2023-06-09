@@ -147,7 +147,21 @@ export const StreamRoom = () => {
         remoteVideoRef.current.srcObject = stream;
       }
     };
-
+    peerConnection.oniceconnectionstatechange = () => {
+      if (
+        peerConnection.iceConnectionState === 'disconnected' ||
+        peerConnection.iceConnectionState === 'closed'
+      ) {
+        console.log('Opposing peer disconnected');
+        if (remoteVideoRef.current) {
+          if (remoteVideoRef.current.srcObject) {
+            const stream = remoteVideoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach((track) => track.stop());
+          }
+          remoteVideoRef.current.srcObject = null;
+        }
+      }
+    };
     console.log('adding media stream to track', mediaStream);
     mediaStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
@@ -210,13 +224,13 @@ export const StreamRoom = () => {
             break;
           case 'join':
             console.log('received join message');
-          
-              message.data = await getRoom(params as string);
-           
+
+            message.data = await getRoom(params as string);
+
             await startLocalStream();
             await createPeerConnection();
             // console.log(message.data.data.hostId);
-            if (message.data?.data.hostId !== userId) {
+            if (message.data?.hostId !== userId) {
               console.log('starting call');
               await startCall();
             }
@@ -282,7 +296,7 @@ export const StreamRoom = () => {
                 className="bg-red-300 w-full h-5/6 object-cover rounded-xl"
               />
               <div className="h-1/6 flex items-center justify-center gap-6">
-                <Mic micOff={micOff} setMicOff={setMicOff}/>
+                <Mic micOff={micOff} setMicOff={setMicOff} />
                 <Monitor />
                 <Setting />
                 <Exit />

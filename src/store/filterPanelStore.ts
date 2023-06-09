@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
 
-export const genderFilterAtom = atom('');
+export const genderFilterAtom = atom('ANY');
 export const handleTokenChangeAtom = atom(null, (get, set, update: string) => {
   set(genderFilterAtom, () => update);
 });
-export const isEmptyFilterAtom = atom('ALL');
-export const handleTabChangeAtom = atom(null, (get, set, update: string) => {
+export const isEmptyFilterAtom = atom(false);
+export const handleTabChangeAtom = atom(null, (get, set, update: boolean) => {
   set(isEmptyFilterAtom, () => update);
 });

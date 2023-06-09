@@ -40,7 +40,7 @@ export const HeroSection = () => {
         <AnimatePresence initial={false}>
           <motion.div
             key={currentImageIndex}
-            className="absolute w-full h-full bg-cover"
+            className="absolute w-full h-full bg-cover max-w-[100]"
             style={{
               backgroundImage: `url('${images[currentImageIndex]}')`,
             }}

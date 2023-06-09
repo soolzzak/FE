@@ -9,6 +9,7 @@ import {
   categorySelection,
   genderSelection,
 } from '../../utils/switchSelections';
+import { getRoom } from '../../api/streamRoom';
 
 type ChatroomCardProps = {
   chatRoom: MainpageRooms;
@@ -24,10 +25,13 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
     setCategory(categorySelection(chatRoom.category) as string);
     setGenderSetting(genderSelection(chatRoom.genderSetting) as string);
   }, []);
-
-  const handleCardClick = () => {
+  const handleCardClick = async () => {
     if (Object.keys(userToken as object).length === 0) {
       toast.error('로그인을 해주세요!');
+      return;
+    }
+    if (chatRoom.roomCapacity >= 2) {
+      toast.error('방이 찼습니다!');
       return;
     }
     if (
@@ -36,6 +40,11 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
     ) {
       toast.error(`${genderSetting} 들어오세요`);
       return;
+    }
+    try {
+      await getRoom(chatRoom.roomId.toString());
+    } catch (error) {
+      return toast.error('방이 이미 찼습니다!');
     }
     setChatRoomInfo(chatRoom as MainpageRooms);
     setIsOpenJoinRoom(true);
@@ -71,7 +80,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
               : 'text-green-600 bg-secondary-50'
           }`}
         >
-          {chatRoom.roomCapacity === 2 ? '2/2' : '1/2'}
+          {chatRoom.roomCapacity >= 2 ? '2/2' : '1/2'}
         </span>
       </div>
       <div className="self-start mt-1 text-md text-left overflow-hidden">
@@ -84,7 +93,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
           <img
             alt="Profile Pic"
             src={chatRoom.userImageUrl}
-            className="w-10 h-10 rounded-full shadow-sm"
+            className="w-10 h-10 rounded-full shadow"
           />
         ) : (
           <div className="w-10 h-10 rounded-full bg-gray-300 shadow-sm" />

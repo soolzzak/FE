@@ -66,6 +66,9 @@ body {
   }
 }
 
+body {
+  overflow: overlay !important;
+}
 *::-webkit-scrollbar {
   display: block;
   width: 16px;
@@ -81,10 +84,6 @@ body {
 
 *::-webkit-scrollbar-track-piece {
   background-color: #00000000;
-}
-
-body {
-  overflow: overlay;
 }
 
 *::-webkit-scrollbar-thumb {
