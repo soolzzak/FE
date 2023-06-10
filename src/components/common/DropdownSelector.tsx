@@ -67,7 +67,7 @@ export const DropdownSelector = () => {
                 ${index === 0 ? 'rounded-t-lg' : ''}
                 ${index === 6 ? 'rounded-b-lg' : ''}
                 `}
-                onClick={() => handleOptionSelect(option, tabList[index])}
+                onClick={() => handleOptionSelect(option, tabList[index + 1])}
               >
                 {dropdownDisplayedSelection[index]}
               </div>

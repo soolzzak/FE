@@ -195,6 +195,7 @@ export const StreamRoom = () => {
           remoteVideoRef.current.srcObject = null;
         }
         setRemoteMonitorOn(false);
+        setGuestProfile(undefined);
       }
     };
 
@@ -377,7 +378,7 @@ export const StreamRoom = () => {
                 ref={remoteVideoRef}
                 autoPlay
                 muted
-                className={`bg-black w-full h-full object-cover rounded-xl ${
+                className={`w-full h-full object-cover rounded-xl ${
                   remoteMonitorOn ? 'visible' : 'invisible'
                 }`}
               />
