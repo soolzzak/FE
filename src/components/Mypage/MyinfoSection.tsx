@@ -84,13 +84,10 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
     }
   };
 
-  console.log('뷰', view);
-
   return (
-    <div className="bg-[#ffffff] basis-2/5 h-[700px] rounded-3xl flex flex-col gap-y-6 pb-10">
+    <div className="bg-[#ffffff] basis-2/5 h-[700px] rounded-3xl flex flex-col gap-y-6 pb-10 shadow">
       <div className="relative">
         <div className="absolute top-4 right-4 ">
-          {/* <Modify onClick={} /> */}
           {editMode ? (
             <button
               className="w-[83px] h-[29px] border-2 bg-primary-50 text-primary-200 border-primary-200 rounded-2xl"
@@ -104,60 +101,77 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           )}
         </div>
       </div>
-      <div className="flex flex-col justify-center items-center gap-y-6">
-        <div className="transition-opacity duration-300 ease-in-out hover:opacity-70 group w-80 h-80 rounded-full bg-[#9A9A9A] mt-10 flex justify-center items-center relative">
-          {editMode ? (
-            <label
-              htmlFor="imageInput"
-              className="cursor-pointer f-jic rounded-full object-cover shadow bg-[#9A9A9A]"
-              title="Upload Image"
-            >
-              <div className="invisible group-hover:visible absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <Modify />
-              </div>
+      <div className="flex md:flex-col flex-row gap-y-6">
+        <div className="flex justify-center items-center">
+          <div
+            className={`${
+              editMode ? 'group hover:opacity-70' : ''
+            }  transition-opacity duration-300 ease-in-out 
+            lg:w-80 lg:h-80 lg:mt-10 md:w-60 md:h-60 sm:w-40 sm:h-40 w-[84px] h-[84px] ml-5 mr-5 rounded-full 
+            bg-[#B6ECC4] mt-5 flex justify-center items-center relative shadow`}
+          >
+            {editMode ? (
+              <label
+                htmlFor="imageInput"
+                className="  cursor-pointer f-jic rounded-full object-cover shadow bg-[#B6ECC4]"
+                title="Upload Image"
+              >
+                <div className="invisible group-hover:visible absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <Modify />
+                </div>
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                id="imageInput"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  id="imageInput"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </label>
+            ) : (
+              ''
+            )}
+
+            {view ? (
+              <img
+                src={view}
+                alt=""
+                className="w-full h-full rounded-full object-cover"
               />
-            </label>
-          ) : (
-            ''
-          )}
-
-          {view ? (
-            <img
-              src={view}
-              alt=""
-              className="w-full h-full rounded-full object-cover shadow "
-            />
-          ) : (
-            ''
-          )}
+            ) : (
+              ''
+            )}
+          </div>
         </div>
+        <div className="md:flex-row flex-col md:block f-jc">
+          <div className="flex md:justify-center md:mb-10 items-center md:flex md:items-start">
+            {editMode ? (
+              <input
+                className="w-[211px] h-[32px] rounded-lg border border-[#FF6700]"
+                type="text"
+                onChange={modifyUserNameHandler}
+                value={modifyUserName}
+                placeholder={myinfo?.username}
+              />
+            ) : (
+              <p className="text-xl font-bold">
+                {modifyUserName || myinfo?.username}
+              </p>
+            )}
+          </div>
 
-        {editMode ? (
-          <input
-            className="w-[211px] h-[42px] rounded-lg border border-[#FF6700]"
-            type="text"
-            onChange={modifyUserNameHandler}
-            value={modifyUserName}
-            placeholder={myinfo?.username}
-          />
-        ) : (
-          <p className="text-xl">{modifyUserName || myinfo?.username}</p>
-        )}
+          <div className="flex flex-col md:ml-20">
+            <p className="font-bold text-lg text-[#7C7C7C] hidden sm:block">
+              이메일
+            </p>
+            <p className="font-normal">{myinfo?.email}</p>
+          </div>
+        </div>
       </div>
-      <div className="ml-20 mt-5">
-        <p className="font-bold text-lg">이메일</p>
-        <p>{myinfo?.email}</p>
-      </div>
-      <div className="ml-20">
-        <p className="font-bold text-lg">연결된 소셜계정</p>
+      <div className="md:ml-20 ml-5">
+        <p className="font-bold text-lg text-[#7C7C7C]">연결된 소셜계정</p>
+
         <p>카카오톡 계정으로 연결되었습니다</p>
       </div>
     </div>

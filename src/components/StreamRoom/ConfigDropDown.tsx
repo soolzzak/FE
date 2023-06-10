@@ -1,15 +1,11 @@
 import React, {
   Dispatch,
   SetStateAction,
-  useState,
   useEffect,
   useRef,
-  MouseEvent,
+  useState,
 } from 'react';
-import { useModal } from '../../hooks/useModal';
-import { Modal } from '../common/Modal';
-import { KickoutModal } from './KickoutModal';
-import { Setting } from '../../assets/svgs/Setting';
+import { AiOutlineSetting } from 'react-icons/ai';
 
 export const ConfigDropDown = ({
   setIsOpenKickout,
@@ -64,10 +60,14 @@ export const ConfigDropDown = ({
         onClick={onToggle}
         onKeyDown={handleKeyDown}
         tabIndex={0}
-        className="rounded-full bg-[#959595] w-20 h-20 flex justify-center items-center hover:cursor-pointer"
+        className="iconStyle bg-[#727272]"
       >
-        <Setting />
+        <AiOutlineSetting className="text-5xl text-white hover:animate-spin" />
       </div>
+
+      {/* <div className="iconStyle bg-[#727272]">
+                  <AiOutlineSetting className="text-5xl text-white hover:animate-spin" />
+                </div> */}
 
       <div className="relative mt-3 font-semibold">
         {isOpen && (
@@ -88,7 +88,7 @@ export const ConfigDropDown = ({
               role="button"
               tabIndex={0}
             >
-              강퇴하기
+              강퇴퇴하기
             </div>
           </div>
         )}

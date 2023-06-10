@@ -29,21 +29,9 @@ export const DetailUserInfoModal = ({
     }
   );
 
-  // const { data: thumbup } = useQuery(
-  //   'thumbup',
-  //   () => ThumbUpHandler(item.userId),
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-
   const queryClient = useQueryClient();
 
   const [userinfo, setUserinfo] = useState<DetailUserProfile | undefined>();
-
-  // const [currentFollow, setCurrentFollow] = useState<boolean>(
-  //   userinfo?.follow || false
-  // );
 
   console.log('얘', userinfo);
 
@@ -62,43 +50,41 @@ export const DetailUserInfoModal = ({
   };
 
   const handleThumbupClick = async () => {
-    try {
-      const response = await ThumbUpHandler(userinfo?.userId);
-      if (response.status === 200) {
-        await queryClient.invalidateQueries('detailUserInfo');
+    if (!userinfo?.alcoholDown) {
+      try {
+        const response = await ThumbUpHandler(userinfo?.userId);
+        if (response.status === 200) {
+          await queryClient.invalidateQueries('detailUserInfo');
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 
   const handleThumbdownClick = async () => {
-    const response = await ThumbDownHandler(userinfo?.userId);
-    if (response.status === 200) {
-      await queryClient.invalidateQueries('detailUserInfo');
+    if (!userinfo?.alcoholUp) {
+      const response = await ThumbDownHandler(userinfo?.userId);
+      if (response.status === 200) {
+        await queryClient.invalidateQueries('detailUserInfo');
+      }
     }
   };
 
-  const upBackgroundColor = () =>
-    userinfo?.alcoholUp ? 'bg-[#E5F9EA]' : 'bg-slate-300';
-
-  const downBackgroundColor = () =>
-    userinfo?.alcoholUp ? 'bg-[#E5F9EA]' : 'bg-slate-300';
-
   return (
     <div className="justify-center items-center">
-      <div className="w-[542px] h-[230px] rounded-2xl bg-white flex flex-row px-6">
-        <div className="flex flex-col justify-center items-center gap-2">
+      <div className="md:w-[542px] md:h-[230px] w-[400px] h-[500px] rounded-2xl bg-white flex md:flex-row flex-col px-6">
+        <div className="flex flex-col justify-center items-center gap-2 mt-7 md:mt-0">
           <img
             alt=""
-            className="min-w-[97px] h-[97px] rounded-full bg-[#9A9A9A] object-cover"
+            className="md:min-w-[97px] md:w-[97px] md:h-[97px] w-[170px] h-[170px] rounded-full shadow bg-[#B6ECC4] object-cover"
             src={userinfo?.userImage}
           />
 
           <button
             type="button"
             onClick={handleFollowClick}
-            className={`w-[68px] h-[33px] border rounded-2xl ${
+            className={`w-[68px] h-[33px] md:mt-0 mt-2 border rounded-2xl ${
               userinfo?.follow
                 ? 'bg-[#0BA332] border-[#0BA332] text-[#ffffff]'
                 : 'border-[#0BA332] bg-[#E5F9EA] text-[#0BA332]'
@@ -108,7 +94,7 @@ export const DetailUserInfoModal = ({
           </button>
         </div>
 
-        <div className="flex flex-col w-full ml-6 mr-6">
+        <div className="flex flex-col w-full md:ml-6 md:mr-6">
           <div className="flex flex-row justify-end mt-3">
             <DetailDropdown userinfo={userinfo} />
             <CancelButton onClose={onClose} />

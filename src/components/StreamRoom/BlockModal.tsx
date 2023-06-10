@@ -1,4 +1,5 @@
 import { useQueryClient } from 'react-query';
+import { toast } from 'react-toastify';
 import { BlockHandler, DetailUserProfile } from '../../api/mypage';
 import { CancelButton } from '../common/CancelButton';
 
@@ -7,13 +8,14 @@ export const BlockModal = ({
   userinfo,
 }: {
   onClose: () => void;
-  userinfo?: DetailUserProfile;
+  userinfo: DetailUserProfile;
 }) => {
   const queryClient = useQueryClient();
 
   const handleBlockClick = async () => {
     try {
       const response = await BlockHandler(userinfo?.userId);
+      toast.success(response?.message);
       if (response.status === 200) {
         await queryClient.invalidateQueries('mypageInfo');
       }
@@ -33,14 +35,14 @@ export const BlockModal = ({
           <button
             onClick={onClose}
             type="button"
-            className="border rounded-lg w-[139px] h-[44px] text-[16px] text-[#827676] "
+            className="border rounded-lg w-[139px] h-[44px] text-[16px]  text-[#827676] "
           >
             취소
           </button>
           <button
             onClick={handleBlockClick}
             type="button"
-            className="border rounded-lg w-[139px] h-[44px] text-[16px] text-[#827676] "
+            className="border border-[#179638] bg-[#E0F5E6] rounded-lg w-[139px] h-[44px] text-[16px] text-[#179638] "
           >
             {userinfo?.block ? '차단 해제' : '차단'}
           </button>
