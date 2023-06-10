@@ -71,12 +71,18 @@ body {
 
 body {
   overflow: overlay !important;
+  overflow-x: hidden;
 }
 *::-webkit-scrollbar {
   display: block;
+  height: 0px;
   width: 16px;
 }
-
+@media (max-width: 640px) {
+  *::-webkit-scrollbar {
+    height: 16px;
+  }
+}
 *::-webkit-scrollbar-button {
   display: none;
 }

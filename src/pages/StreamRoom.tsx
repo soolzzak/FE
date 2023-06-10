@@ -57,6 +57,7 @@ export const StreamRoom = () => {
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
+  const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -166,6 +167,7 @@ export const StreamRoom = () => {
     };
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
+      setRemoteMonitorOn(true);
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
       if (remoteVideoRef.current) {
@@ -175,6 +177,7 @@ export const StreamRoom = () => {
       console.log('remote ref', remoteVideoRef.current);
     };
     peerConnection.oniceconnectionstatechange = () => {
+      console.log('opposing user disconnect event');
       if (
         peerConnection.iceConnectionState === 'disconnected' ||
         peerConnection.iceConnectionState === 'closed'
@@ -187,6 +190,7 @@ export const StreamRoom = () => {
           }
           remoteVideoRef.current.srcObject = null;
         }
+        setRemoteMonitorOn(false);
       }
     };
 
@@ -369,7 +373,9 @@ export const StreamRoom = () => {
                 ref={remoteVideoRef}
                 autoPlay
                 muted
-                className="bg-black w-full h-full object-cover rounded-xl"
+                className={`bg-black w-full h-full object-cover rounded-xl ${
+                  remoteMonitorOn ? 'visible' : 'invisible'
+                }`}
               />
             </div>
             <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">

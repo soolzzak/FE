@@ -33,7 +33,28 @@ export const HeroSection = () => {
       x: '-100%',
     },
   };
+  const textVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
+  };
+  const staggerVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
+  const letterVariants = {
+    hidden: {
+      opacity: 0,
+      y: 0,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  };
   return (
     <div className="w-full">
       <section className="relative w-full h-[480px] min-w-[660px]">
@@ -55,20 +76,59 @@ export const HeroSection = () => {
         </AnimatePresence>
         <div className="absolute bg-black w-full h-full opacity-30 z-10" />
         <div className="f-jic-col text-[#494949] min-w-[660px]">
-          <h1 className="font-bold text-3xl  mt-48 text-white z-20">
+          <motion.h1
+            className="font-bold text-3xl  mt-48 text-white z-20"
+            initial="hidden"
+            animate="visible"
+            variants={textVariants}
+            transition={{ duration: 1 }}
+          >
             심심한 혼술 이제 그만,
-          </h1>
-          <h1 className="font-bold text-3xl text-white mt-2 z-20">
+          </motion.h1>
+          <motion.h1
+            className="font-bold text-3xl text-white mt-2 z-20"
+            initial="hidden"
+            animate="visible"
+            variants={textVariants}
+            transition={{ duration: 1, delay: 0.2 }}
+          >
             함께 편하게 술 한잔!
-          </h1>
+          </motion.h1>
         </div>
         <div className="f-jic-col mt-9  text-[#5F5F5F] min-w-[660px]">
-          <span className="text-xl text-white z-20">
-            술이 술술풀리는 우리의 공간,
-          </span>
-          <span className="text-xl text-white z-20">
-            혼술짝으로 가볍고 편하게 술 한잔해요
-          </span>
+          <motion.span
+            className="text-xl text-white z-20"
+            initial="hidden"
+            animate="visible"
+            variants={staggerVariants}
+          >
+            술이 <motion.span variants={letterVariants}>술</motion.span>
+            <motion.span variants={letterVariants}>술풀</motion.span>
+            <motion.span variants={letterVariants}>리</motion.span>
+            <motion.span variants={letterVariants}>는</motion.span>{' '}
+            <motion.span variants={letterVariants}>우</motion.span>
+            <motion.span variants={letterVariants}>리</motion.span>
+            <motion.span variants={letterVariants}>의</motion.span>{' '}
+            <motion.span variants={letterVariants}>공</motion.span>
+            <motion.span variants={letterVariants}>간</motion.span>,
+          </motion.span>
+          <motion.span
+            className="text-xl text-white z-20"
+            initial="hidden"
+            animate="visible"
+            variants={staggerVariants}
+          >
+            혼술짝으로 <motion.span variants={letterVariants}>가</motion.span>
+            <motion.span variants={letterVariants}>볍</motion.span>
+            <motion.span variants={letterVariants}>고</motion.span>{' '}
+            <motion.span variants={letterVariants}>편</motion.span>
+            <motion.span variants={letterVariants}>하</motion.span>
+            <motion.span variants={letterVariants}>게</motion.span>{' '}
+            <motion.span variants={letterVariants}>술</motion.span>{' '}
+            <motion.span variants={letterVariants}>한</motion.span>
+            <motion.span variants={letterVariants}>잔</motion.span>
+            <motion.span variants={letterVariants}>해요</motion.span>
+          </motion.span>
         </div>
       </section>
     </div>
