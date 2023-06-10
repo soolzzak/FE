@@ -41,7 +41,7 @@ export const CategoryTab = () => {
                 ? 'border-b-[3px] border-primary-300 text-primary-200'
                 : ''
             }
-            transition-colors duration-200 ease-in-out hover:text-primary-200
+            transition-colors duration-200 ease-in-out hover:text-primary-200 
           `}
             key={tab}
             onClick={() => handleTabChange(tab, index)}

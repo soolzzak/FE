@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
 import { useEffect } from 'react';
@@ -33,20 +33,22 @@ export const HeaderRightSection = () => {
       className={`f-ic justify-end mr-4 md:min-w-[200px]
       ${user ? 'min-w-[490px]' : 'min-w-[180px]'}`}
     >
-      <Modal
-        isOpen={isOpenAuth}
-        hasOverlay
-        onClose={() => setIsOpenAuth(false)}
-      >
-        <AuthModal />
-      </Modal>
-      <Modal
-        isOpen={isOpenLogin}
-        hasOverlay
-        onClose={() => setIsOpenLogin(false)}
-      >
-        <LoginModal />
-      </Modal>
+      <AnimatePresence>
+        <Modal
+          isOpen={isOpenAuth}
+          hasOverlay
+          onClose={() => setIsOpenAuth(false)}
+        >
+          <AuthModal />
+        </Modal>
+        <Modal
+          isOpen={isOpenLogin}
+          hasOverlay
+          onClose={() => setIsOpenLogin(false)}
+        >
+          <LoginModal />
+        </Modal>
+      </AnimatePresence>
       <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
         <AddRoom onClose={onCloseRoomCreate} />
       </Modal>

@@ -9,17 +9,26 @@ import {
   displayedTabAtom,
   roomListAtom,
   searchwordAtom,
+  searchwordTriggerAtom,
   tabAtom,
 } from '../../store/mainpageStore';
 import { ChatroomCard } from './ChatroomCard';
 import { FilterPanel } from './FilterPanel';
+import {
+  genderFilterAtom,
+  isEmptyFilterAtom,
+} from '../../store/filterPanelStore';
 
 export const HomeBodySection = () => {
   const [tab] = useAtom(tabAtom);
+  const [genderFilter] = useAtom(genderFilterAtom);
+  const [emptyRoomFilter] = useAtom(isEmptyFilterAtom);
   const [displayedTab] = useAtom(displayedTabAtom);
   const [searchword] = useAtom(searchwordAtom);
-  const [pageNum, setPageNum] = useState(0);
+  const [newSearchwordTrigger] = useAtom(searchwordTriggerAtom);
   const [chatList, setChatList] = useAtom(roomListAtom);
+
+  const [pageNum, setPageNum] = useState(0);
   const [pageableDetail, setPageableDetail] = useState<number[]>([]);
   const chatListMutation = useMutation(getMainpageRooms, {
     onSuccess: (data) => {
@@ -55,8 +64,8 @@ export const HomeBodySection = () => {
       } else {
         chatListMutation.mutate(
           tab === 'ALL'
-            ? `/main?page=${pageNum}`
-            : `/rooms?category=${tab}&page=${pageNum}`
+            ? `/main?genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
+            : `/rooms?category=${tab}&genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
         );
       }
   }, [pageNum]);
@@ -76,12 +85,12 @@ export const HomeBodySection = () => {
       } else {
         chatListMutation.mutate(
           tab === 'ALL'
-            ? `/main?page=${pageNum}`
-            : `/rooms?category=${tab}&page=${pageNum}`
+            ? `/main?genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
+            : `/rooms?category=${tab}&genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
         );
       }
     }
-  }, [tab, searchword]);
+  }, [tab, newSearchwordTrigger, genderFilter, emptyRoomFilter]);
 
   return (
     <motion.section className="flex-grow w-full min-h-[100vh]">

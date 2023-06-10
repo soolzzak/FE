@@ -44,6 +44,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
   });
 
   const onSubmit = () => {
+    if (!title) return toast.error('제목을 입력해주세요!');
     const data = {
       title,
       category,

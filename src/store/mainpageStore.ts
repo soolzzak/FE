@@ -48,3 +48,10 @@ export const searchwordAtom = atom('');
 export const handleSearchwordAtom = atom(null, (get, set, update: string) => {
   set(searchwordAtom, () => update);
 });
+export const searchwordTriggerAtom = atom(false);
+export const handleSearchwordTriggerAtom = atom(
+  null,
+  (get, set, update: boolean) => {
+    set(searchwordTriggerAtom, () => update);
+  }
+);

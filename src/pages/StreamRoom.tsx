@@ -60,6 +60,7 @@ export const StreamRoom = () => {
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
+  const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -170,6 +171,7 @@ export const StreamRoom = () => {
     };
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
+      setRemoteMonitorOn(true);
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
       if (remoteVideoRef.current) {
@@ -177,6 +179,23 @@ export const StreamRoom = () => {
         remoteVideoRef.current.srcObject = stream;
       }
       console.log('remote ref', remoteVideoRef.current);
+    };
+    peerConnection.oniceconnectionstatechange = () => {
+      console.log('opposing user disconnect event');
+      if (
+        peerConnection.iceConnectionState === 'disconnected' ||
+        peerConnection.iceConnectionState === 'closed'
+      ) {
+        console.log('Opposing peer disconnected');
+        if (remoteVideoRef.current) {
+          if (remoteVideoRef.current.srcObject) {
+            const stream = remoteVideoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach((track) => track.stop());
+          }
+          remoteVideoRef.current.srcObject = null;
+        }
+        setRemoteMonitorOn(false);
+      }
     };
 
     console.log('adding media stream to track', mediaStream);
@@ -193,7 +212,6 @@ export const StreamRoom = () => {
       });
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = mediaStream;
-      
       }
 
       console.log('this media stream', mediaStream);
@@ -231,7 +249,7 @@ export const StreamRoom = () => {
         switch (message.type) {
           case 'offer':
             console.log('received offer message', message);
-            
+
             await handleOfferMessage(message);
             break;
           case 'answer':
@@ -288,7 +306,7 @@ export const StreamRoom = () => {
   const videoToggleHandler = () => {
     const video = localVideoRef.current;
     if (video) {
-      const videoTrack = mediaStream.getVideoTracks()[0]
+      const videoTrack = mediaStream.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
       setMonitorOn((prev) => !prev);
     }
@@ -359,7 +377,9 @@ export const StreamRoom = () => {
                 ref={remoteVideoRef}
                 autoPlay
                 muted
-                className="bg-black w-full h-full object-cover rounded-xl"
+                className={`bg-black w-full h-full object-cover rounded-xl ${
+                  remoteMonitorOn ? 'visible' : 'invisible'
+                }`}
               />
             </div>
             <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">

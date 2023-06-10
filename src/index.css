@@ -41,7 +41,7 @@ body {
     @apply px-4 py-2 text-black hover:bg-primary-100 cursor-pointer;
   }
   .iconStyle {
-    @apply f-jic w-20 h-20 rounded-full cursor-pointer bg-opacity-50
+    @apply f-jic w-20 h-20 rounded-full cursor-pointer bg-opacity-50;
   }
 }
 
@@ -69,11 +69,20 @@ body {
   }
 }
 
+body {
+  overflow: overlay !important;
+  overflow-x: hidden;
+}
 *::-webkit-scrollbar {
   display: block;
+  height: 0px;
   width: 16px;
 }
-
+@media (max-width: 640px) {
+  *::-webkit-scrollbar {
+    height: 16px;
+  }
+}
 *::-webkit-scrollbar-button {
   display: none;
 }
@@ -84,10 +93,6 @@ body {
 
 *::-webkit-scrollbar-track-piece {
   background-color: #00000000;
-}
-
-body {
-  overflow: overlay;
 }
 
 *::-webkit-scrollbar-thumb {
