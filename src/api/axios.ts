@@ -34,7 +34,8 @@ instance.interceptors.response.use(
   async (error) => {
     const originRequest = error.config;
 
-    if (error.response.status === 401 || error.response.status === 403) {
+    // status 403 삭제
+    if (error.response.status === 401) {
       const response = await refreshinstance.post('/getAccessToken');
 
       if (response.data.status === 200) {
