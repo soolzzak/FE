@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { atom, useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { ToastContent, toast } from 'react-toastify';
 import { MainpageRooms } from '../../api/main';
 import { userTokenAtom } from '../../store/mainpageStore';
 import { isOpenJoinRoomAtom } from '../../store/modalStore';
@@ -9,7 +9,7 @@ import {
   categorySelection,
   genderSelection,
 } from '../../utils/switchSelections';
-import { getRoom } from '../../api/streamRoom';
+import { checkIfRoomIsEmpty, getRoom } from '../../api/streamRoom';
 
 type ChatroomCardProps = {
   chatRoom: MainpageRooms;
@@ -42,9 +42,10 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
       return;
     }
     try {
-      await getRoom(chatRoom.roomId.toString());
+      await checkIfRoomIsEmpty(chatRoom.roomId.toString());
     } catch (error) {
-      return toast.error('방이 이미 찼습니다!');
+      console.log(error);
+      return toast.error(error as ToastContent);
     }
     setChatRoomInfo(chatRoom as MainpageRooms);
     setIsOpenJoinRoom(true);
