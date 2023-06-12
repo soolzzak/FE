@@ -23,6 +23,7 @@ import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
 import { KickoutModal } from '../components/StreamRoom/KickoutModal';
 import { useModal } from '../hooks/useModal';
+import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 
 export interface JwtPayload {
   auth: {
@@ -61,6 +62,7 @@ export const StreamRoom = () => {
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
+  const [guestIn, setGuestIn] = useState<boolean>(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -172,6 +174,7 @@ export const StreamRoom = () => {
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
       setRemoteMonitorOn(true);
+      
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
       if (remoteVideoRef.current) {
@@ -195,6 +198,7 @@ export const StreamRoom = () => {
           remoteVideoRef.current.srcObject = null;
         }
         setRemoteMonitorOn(false);
+        setGuestIn(false);
         setGuestProfile(undefined);
       }
     };
@@ -250,7 +254,7 @@ export const StreamRoom = () => {
         switch (message.type) {
           case 'offer':
             console.log('received offer message', message);
-
+            setGuestIn(true);
             await handleOfferMessage(message);
             break;
           case 'answer':
@@ -299,7 +303,8 @@ export const StreamRoom = () => {
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
     if (audio) {
-      audio.muted = !audio.muted;
+      const audioTrack = mediaStream.getAudioTracks()[0];
+      audioTrack.enabled = !audioTrack.enabled;
       setMicOn((prev) => !prev);
     }
   };
@@ -335,6 +340,7 @@ export const StreamRoom = () => {
               <video
                 ref={localVideoRef}
                 autoPlay
+                muted
                 className="bg-black w-full h-5/6 object-cover rounded-xl"
               />
               <div className="bg-slate-200 h-1/6 flex items-center justify-center gap-6 rounded-xl">
@@ -366,7 +372,7 @@ export const StreamRoom = () => {
                 </div>
 
                 <div className="iconStyle bg-[#727272]">
-                  <AiOutlineSetting className="text-5xl text-white hover:animate-spin" />
+                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
                 </div>
 
                 <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
@@ -374,7 +380,8 @@ export const StreamRoom = () => {
             </div>
 
             <div className="w-full h-full col-span-3 row-span-4 rounded-xl">
-              <video
+              {guestIn? (
+                <video
                 ref={remoteVideoRef}
                 autoPlay
                 muted
@@ -382,6 +389,8 @@ export const StreamRoom = () => {
                   remoteMonitorOn ? 'visible' : 'invisible'
                 }`}
               />
+              ) : <WaitingGuestRef />}
+              
             </div>
             <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
               <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">

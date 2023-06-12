@@ -1,132 +1,138 @@
 import { useAtom } from 'jotai';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { EmailSignupConfirm, SignupApi, SignupInfo } from '../../api/auth';
 import { Checkbox } from '../../assets/svgs/Checkbox';
-import { Logo } from '../../assets/svgs/Logo';
+import { useError } from '../../hooks/useError';
 import { useInput } from '../../hooks/useInput';
 import { isOpenLoginModalAtom } from '../../store/modalStore';
+import { SignupInputForm } from './SignupInputForm';
+
+type BirthdayTypes = {
+  year: number | undefined;
+  month: number | undefined;
+  day: number | undefined;
+};
 
 export const SignupInput = () => {
   const navigate = useNavigate();
-  const [,setIsOpenLogin] = useAtom(isOpenLoginModalAtom)
-  const [
-    email,
-    emailErrorMsg,
-    onEmailChangeHandler,
-    ,
-    emailTypeCheckHandler,
-    ,
-  ] = useInput();
-  const emailType = /^[a-zA-Z0-9+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-  const emailMsg = 'example@example.com 형식으로 작성하세요';
+  const [, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
 
-  const [
-    password,
-    passwordErrorMsg,
-    onPasswordChangeHandler,
-    ,
-    passwordTypeCheckHandler,
-    ,
-  ] = useInput();
-  const passwordType =
-    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,16}$/;
-  const passwordMsg = '8~16자 영문, 숫자, 특수문자를 사용하세요';
-
-  const [pwcheck, pwcheckErrorMsg, onPwcheckChangeHandler, , , pwcheckHandler] =
-    useInput();
-
-  const [
-    username,
-    usernameErrorMsg,
-    usernameChangeHandler,
-    usernameCheckHandler,
-    ,
-    ,
-  ] = useInput();
-
-  const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-  type BirthdayTypes = {
-    year: number | undefined;
-    month: number | undefined;
-    day: number | undefined;
-  };
+  const [email, emailHandler] = useInput();
+  const [emailNumber, setEmailNumber] = useState<string | undefined>();
+  const [password, passwordHandler] = useInput();
+  const [pwcheck, pwcheckHandler] = useInput();
+  const [username, usernameHandler] = useInput();
   const [birthday, setBirthday] = useState<BirthdayTypes>({
     year: undefined,
     month: undefined,
     day: undefined,
   });
+  const [gender, setGender] = useState<string | undefined>();
+  const [admin, setAdmin] = useState(false);
+  const [adminkey, setAdminkey] = useState<string | null>(null);
+
+  const [emailErrMsg, setEmailErrMsg] = useState<string | undefined>();
+  const [emailNumberErr, setEmailNumberErr] = useState<string | undefined>();
+  const [passwordErrMsg, setPasswordErrMsg] = useState<string | undefined>();
+  const [pwcheckErrMsg, setPwcheckErrMsg] = useState<string | undefined>();
+  const [usernameErr, usernameErrHandler] = useError();
+  const [birthdayErrMsg, setBirthdayErrMsg] = useState<string | undefined>();
+  const [genderErr, genderErrHandler] = useError();
+  const [adminkeyErr, setAdminkeyErrMsg] = useState<string | undefined>();
+
+  const emailType =
+    /^[a-zA-Z0-9+-]+([._][a-zA-Z0-9+-]+)*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  const emailTypeHandler = (input: string | undefined) => {
+    if (!input) {
+      setEmailErrMsg('필수정보 입니다');
+    } else if (!!input && !emailType.test(input)) {
+      setEmailErrMsg('올바른 이메일 형식을 입력하세요');
+    } else {
+      setEmailErrMsg('');
+    }
+  };
+
+  const passwordType =
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,16}$/;
+  const passwordTypeHandler = (input: string | undefined) => {
+    if (!input) {
+      setPasswordErrMsg('필수정보 입니다');
+    } else if (!!input && !passwordType.test(input)) {
+      setPasswordErrMsg('8~16자 영문, 숫자, 특수문자를 사용하세요');
+    } else {
+      setPasswordErrMsg('');
+    }
+  };
+
+  const pwCheckHandler = (input: string | undefined) => {
+    if (!input) {
+      setPwcheckErrMsg('필수정보 입니다');
+    } else if (input !== password) {
+      setPwcheckErrMsg('비밀번호가 일치하지 않습니다');
+    } else {
+      setPwcheckErrMsg('');
+    }
+  };
+
+  const birthdayHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBirthday({
+      ...birthday,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const today = new Date();
   const calcBirthday = new Date(
     Number(birthday.year),
     Number(birthday.month),
     Number(birthday.day)
   );
-  const [birthdayErrMsg, setBirthdayErrMsg] = useState<string | undefined>();
-  let age = today.getFullYear() - calcBirthday.getFullYear();
-  const getM = today.getMonth() - calcBirthday.getMonth();
+  let ageDiff = today.getFullYear() - calcBirthday.getFullYear();
 
-  const birthdayHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBirthday({
-      ...birthday,
-      [event.target.name]: event.target.value,
-    });
-  };
   const birthdayCheckHandler = () => {
-    if (!(birthday.year && birthday.month && birthday.day)) {
+    if (!birthday.year || !birthday.month || !birthday.day) {
       setBirthdayErrMsg('필수정보 입니다');
-    } else if (
-      getM < 0 ||
-      (getM === 0 && today.getDate() < calcBirthday.getDate())
-    ) {
-      age -= 1;
-      if (age < 19) {
+    } else {
+      const monthDiff = today.getMonth() - calcBirthday.getMonth();
+      const dayDiff = today.getDate() - calcBirthday.getDate();
+
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        ageDiff -= 1;
+      }
+
+      if (ageDiff < 19) {
         setBirthdayErrMsg('미성년자는 서비스 이용이 제한됩니다');
       } else {
         setBirthdayErrMsg('');
       }
-    } else {
-      setBirthdayErrMsg('');
-    }
-  };
-  const birthdayselectHandler = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setBirthday({
-      ...birthday,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const [gender, setGender] = useState<string | undefined>();
-  const [genderErrMsg, setGenderMsg] = useState<string | undefined>();
-  const genderHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGender(event.target.value);
-  };
-  const genderCheckHandler = () => {
-    if (!gender) {
-      setGenderMsg('필수정보 입니다');
-    } else {
-      setGenderMsg('');
     }
   };
 
-  const [admin, setAdmin] = useState(false);
-  const [adminkey, setAdminkey] = useState<string | null>(null);
-  const [adminkeyErrMsg, setAdminkeyErrMsg] = useState<string | undefined>();
-  const adminKeyHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setAdminkey(event.target.value);
-  const adminKeyCheckHandler = () => {
-    if (!adminkey) {
+  const genderHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setGender(e.target.value);
+  };
+
+  const adminkeyHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAdminkey(e.target.value);
+  };
+
+  const adminkeyCheckHandler = (input: string | null) => {
+    if (!input) {
       setAdminkeyErrMsg('필수정보 입니다');
     } else {
       setAdminkeyErrMsg('');
     }
   };
 
-  const EmailMutation = useMutation(EmailSignupConfirm);
+  const EmailMutation = useMutation(EmailSignupConfirm, {
+    onError: (error) => {
+      toast.error('이미 가입된 이메일 입니다');
+    },
+  });
+
   const confirmEmailHandler = async () => {
     if (!email) {
       return;
@@ -135,17 +141,13 @@ export const SignupInput = () => {
       email,
     };
     await EmailMutation.mutate(emailInput);
-    if (EmailMutation.data === '이미 가입된 이메일입니다.') {
-      alert('이미 가입된 이메일입니다.');
-    }
   };
 
-  const [emailNumber, setEmailNumber] = useState<string | undefined>();
-  const [emailNumberErr, setEmailNumberErr] = useState<string | undefined>();
-  const emailNumberHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailNumber(event.target.value);
+  const emailNumberHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailNumber(e.target.value);
   };
-  const emailNumberBlurHandler = () => {
+
+  const emailNumberCheckHandler = () => {
     if (emailNumber !== EmailMutation.data) {
       setEmailNumberErr('일치하지 않는 인증번호 입니다');
     } else {
@@ -155,15 +157,17 @@ export const SignupInput = () => {
 
   const signupMutation = useMutation(SignupApi, {
     onSuccess: (response) => {
-      alert('혼술짝 회원이 되신것을 환영합니다')
-      setIsOpenLogin(true)
+      toast.success('혼술짝 회원이 되신것을 환영합니다');
+      navigate('/');
+      setIsOpenLogin(true);
     },
     onError: (error) => {
-      console.log(error)
-    }
+      toast.error('회원가입에 실패하였습니다');
+    },
   });
-  const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
+
+  const submitHandler = async (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (admin && !adminkey) {
       return;
     }
@@ -176,8 +180,8 @@ export const SignupInput = () => {
       !passwordType.test(password) ||
       !pwcheck ||
       !username ||
-      !(birthday.year && birthday.month && birthday.day) ||
-      age < 19 ||
+      !birthday ||
+      ageDiff < 19 ||
       !gender
     ) {
       return;
@@ -192,147 +196,120 @@ export const SignupInput = () => {
       adminkey,
     };
     await signupMutation.mutate(userInfo);
-    if (signupMutation.data === '이미 가입되어있는 이메일입니다.') {
-      alert('이미 가입된 이메일입니다.');
-    }
   };
 
   return (
     <div>
       <form onSubmit={submitHandler}>
-        <p className="font-bold text-lg mb-2">이메일</p>
         <div className="relative">
-          <input
-            type="text"
-            value={email || ''}
-            onChange={onEmailChangeHandler}
-            onBlur={() => emailTypeCheckHandler(emailType, emailMsg)}
-            className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] placeholder:align-middle"
-            placeholder="example@naver.com"
+          <p className="signupInputTitle">이메일</p>
+          <SignupInputForm
+            inputValue={email || ''}
+            inputType="text"
+            className="signupInput"
+            placeholderText="example@naver.com"
+            handleInputChange={emailHandler}
+            handleValidation={() => emailTypeHandler(email)}
           />
           <button
             type="button"
-            className="absolute w-[65px] h-[31px] top-[8.5px] right-2 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
+            className="absolute w-16 h-7 top-11 right-3 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
             onClick={confirmEmailHandler}
           >
             인증하기
           </button>
         </div>
-        <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-          {emailErrorMsg}
-        </div>
+        <div className="signupError">{emailErrMsg}</div>
 
         {EmailMutation.data?.length === 6 ? (
           <>
-            <p className="font-bold text-lg mb-2">인증번호</p>
+            <p className="signupInputTitle">인증번호</p>
             <input
-              type="text"
-              placeholder="인증번호 6자리를 입력해주세요"
               value={emailNumber || ''}
+              type="password"
+              className="signupInput"
+              placeholder="인증번호를 입력해주세요"
               onChange={emailNumberHandler}
-              onBlur={emailNumberBlurHandler}
-              className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px]"
+              onBlur={emailNumberCheckHandler}
             />
-            <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-              {emailNumberErr}
-            </div>
+            <div className="signupError">{emailNumberErr}</div>
           </>
         ) : null}
 
-        <p className="font-bold text-lg mb-2">비밀번호</p>
-        <input
-          type="password"
-          value={password || ''}
-          onChange={onPasswordChangeHandler}
-          onBlur={() => passwordTypeCheckHandler(passwordType, passwordMsg)}
-          className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px]"
-          placeholder="비밀번호"
+        <p className="signupInputTitle">비밀번호</p>
+        <SignupInputForm
+          inputValue={password || ''}
+          inputType="password"
+          className="signupInput"
+          placeholderText="비밀번호를 입력해주세요"
+          handleInputChange={passwordHandler}
+          handleValidation={() => passwordTypeHandler(password)}
         />
-        <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-          {passwordErrorMsg}
-        </div>
+        <div className="signupError">{passwordErrMsg}</div>
 
-        <p className="font-bold text-lg mb-2">비밀번호 확인</p>
-        <input
-          type="password"
-          value={pwcheck || ''}
-          onChange={onPwcheckChangeHandler}
-          onBlur={() => pwcheckHandler(password)}
-          className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] indent-2"
+        <p className="signupInputTitle">비밀번호 확인</p>
+        <SignupInputForm
+          inputValue={pwcheck || ''}
+          inputType="password"
+          className="signupInput"
+          placeholderText=""
+          handleInputChange={pwcheckHandler}
+          handleValidation={() => pwCheckHandler(pwcheck)}
         />
-        <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-          {pwcheckErrorMsg}
-        </div>
+        <div className="signupError">{pwcheckErrMsg}</div>
 
-        <p className="font-bold text-lg mb-2">닉네임</p>
-        <div className="relative">
-          <input
-            type="text"
-            value={username || ''}
-            onChange={usernameChangeHandler}
-            onBlur={usernameCheckHandler}
-            className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] indent-2"
-          />
-          {/* <span className="absolute w-[65px] h-[31px] top-[8.5px] right-2 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80">
-            중복확인
-          </span> */}
-        </div>
-        <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-          {usernameErrorMsg}
-        </div>
+        <p className="signupInputTitle">닉네임</p>
+        <SignupInputForm
+          inputValue={username || ''}
+          inputType="text"
+          className="signupInput"
+          placeholderText=""
+          handleInputChange={usernameHandler}
+          handleValidation={() => usernameErrHandler(username)}
+        />
+        <div className="signupError">{usernameErr}</div>
 
-        <p className="font-bold text-lg mb-2">생년월일</p>
+        <p className="signupInputTitle">생년월일</p>
         <div className="flex justify-between">
           <input
             type="text"
             name="year"
-            className="box-border w-[125px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
+            className="signupInput w-28"
             value={birthday.year || ''}
-            minLength={4}
             maxLength={4}
             onChange={birthdayHandler}
             onBlur={birthdayCheckHandler}
-            placeholder="년(4자)"
+            placeholder="년"
           />
-
-          <select
+          <input
+            type="text"
             name="month"
-            className="box-border w-[125px] h-[50px] rounded-lg border border-[#929292] indent-2 text-[16px]"
-            onChange={birthdayselectHandler}
+            className="signupInput w-28"
             value={birthday.month || ''}
+            maxLength={2}
+            onChange={birthdayHandler}
             onBlur={birthdayCheckHandler}
-          >
-            <option value="default" hidden>
-              월
-            </option>
-            {monthList.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            placeholder="월"
+          />
           <input
             type="text"
             name="day"
+            className="signupInput w-28"
             value={birthday.day || ''}
-            min="1"
-            max="31"
-            className="box-border w-[125px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px] text-[16px]"
+            maxLength={2}
             onChange={birthdayHandler}
             onBlur={birthdayCheckHandler}
             placeholder="일"
           />
         </div>
-        <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-          {birthdayErrMsg}
-        </div>
+        <div className="signupError">{birthdayErrMsg}</div>
 
-        <p className="font-bold text-lg mb-2">성별</p>
+        <p className="signupInputTitle">성별</p>
         <select
-          onChange={genderHandler}
-          onBlur={genderCheckHandler}
           value={gender || ''}
-          className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] indent-2 text-[16px]"
+          onChange={genderHandler}
+          onBlur={() => genderErrHandler(gender)}
+          className="signupInput"
         >
           <option value="gender" hidden>
             성별
@@ -340,9 +317,7 @@ export const SignupInput = () => {
           <option value="MALE">남성</option>
           <option value="FEMALE">여성</option>
         </select>
-        <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-          {genderErrMsg}
-        </div>
+        <div className="signupError">{genderErr}</div>
 
         <div className="flex flex-col">
           <div className="flex">
@@ -354,32 +329,24 @@ export const SignupInput = () => {
 
           {admin ? (
             <input
-              type="password"
-              onChange={adminKeyHandler}
-              onBlur={adminKeyCheckHandler}
               value={adminkey || ''}
-              maxLength={4}
+              type="password"
+              className="signupInput"
               placeholder="관리자 비밀번호를 입력해주세요"
-              className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] mt-2"
+              onChange={adminkeyHandler}
+              onBlur={() => adminkeyCheckHandler(adminkey)}
             />
           ) : null}
+          <div className="signupError">{adminkeyErr}</div>
         </div>
-        {admin ? (
-          <div className="text-base text-red-600 mt-1 mb-4 pl-1">
-            {adminkeyErrMsg}
-          </div>
-        ) : null}
 
         <button
           type="submit"
-          className="w-[400px] h-[50px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-primary-300 mt-5 hover:bg-[#FF5500]"
+          className="w-96 h-11 rounded-lg font-bold text-white text-lg bg-primary-300 mt-5 hover:bg-primary-400"
         >
           회원가입하기
         </button>
       </form>
-      <div className='absolute right-10 bottom-10'>
-        <Logo logoSize='150'/>
-      </div>
     </div>
   );
 };

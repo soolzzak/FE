@@ -21,7 +21,7 @@ export const AuthModal = () => {
       </div>
       <button
         type="button"
-        className="mb-2 mt-10 h-11 w-full bg-primary-300 rounded-lg text-white text-lg font-bold hover:bg-[#FF5500]"
+        className="mb-2 mt-10 h-11 w-full bg-primary-300 rounded-lg text-white text-lg font-bold hover:bg-primary-400"
         onClick={() => {
           setIsOpenAuth(false);
           setIsOpenLogin(true);
