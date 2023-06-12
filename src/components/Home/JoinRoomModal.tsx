@@ -7,7 +7,7 @@ import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../../store/modalStore';
 import {
   genderSelection,
   selections,
-  tabList
+  tabList,
 } from '../../utils/switchSelections';
 import { chatRoomInfoAtom } from './ChatroomCard';
 
@@ -20,7 +20,6 @@ export const JoinRoomModal = () => {
   const [, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom);
   const [chatRoomInfo] = useAtom(chatRoomInfoAtom);
   const { data } = useQuery('userProfile', getMypageProfile);
-  console.log(data?.data)
 
   useEffect(() => {
     if (chatRoomInfo) {
@@ -69,7 +68,11 @@ export const JoinRoomModal = () => {
         <div className="w-[100%] h-[10%]" />
         <div className="flex items-center justify-center self-end h-[15%] gap-4 rounded-2xl bg-[#E0F5E6] px-2">
           <div>
-            <img alt="userImg" src={data?.data.userImageUrl} className="w-14 min-w-[56px] h-14 rounded-full" />
+            <img
+              alt="userImg"
+              src={data?.data.userImage}
+              className="w-14 min-w-[56px] h-14 rounded-full"
+            />
           </div>
 
           <div>
@@ -78,20 +81,17 @@ export const JoinRoomModal = () => {
           </div>
         </div>
         <div className="w-[100%] h-[75%] flex flex-col justify-between ">
-          <div className='mt-20'>
+          <div className="mt-20">
             <p className="text-[#454545] font-semibold text-base mb-1">
               카테고리
             </p>
-            <div className="w-[120px] h-9 bg-secondary-100 text-secondary-300 rounded-md font-bold flex justify-center items-center mb-5">
+            <div className="join-room-modal-tag">
               {selections.map((tab, index) =>
                 tab === category ? tabList[index] : null
               )}
             </div>
             <p className="text-[#454545] font-semibold text-base mb-1">성별</p>
-            <div className="w-[120px] h-9 bg-secondary-100 text-secondary-300 rounded-md font-bold flex justify-center items-center mb-5">
-              {gender}
-            </div>
-
+            <div className="join-room-modal-tag">{gender}</div>
             {chatRoomInfo?.isPrivate ? (
               <>
                 <p className="text-[#454545] font-semibold text-base mb-1">
@@ -102,7 +102,7 @@ export const JoinRoomModal = () => {
                   className="border border-secondary-300 rounded-md h-9"
                 />
               </>
-            ): null}
+            ) : null}
           </div>
           <button
             type="button"

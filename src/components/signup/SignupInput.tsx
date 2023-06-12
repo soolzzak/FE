@@ -19,7 +19,6 @@ type BirthdayTypes = {
 export const SignupInput = () => {
   const navigate = useNavigate();
   const [, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
-
   const [email, emailHandler] = useInput();
   const [emailNumber, setEmailNumber] = useState<string | undefined>();
   const [password, passwordHandler] = useInput();

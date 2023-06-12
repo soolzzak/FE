@@ -31,7 +31,7 @@ export type MainpageRooms = {
   roomPassword: string | null;
   createdAt: string;
   alcohol: number;
-  userImageUrl: string | undefined;
+  userImage: string | undefined;
   roomImageUrl: string | undefined;
 };
 

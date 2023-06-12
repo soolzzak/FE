@@ -22,7 +22,7 @@ instance.interceptors.request.use(
     const token = Cookies.get('accessKey');
     if (token) {
       // eslint-disable-next-line no-param-reassign
-      config.headers.ACCESS_KEY = token;
+      config.headers.access_key = token;
     }
     return config;
   },
@@ -30,24 +30,22 @@ instance.interceptors.request.use(
 );
 
 instance.interceptors.response.use(
-    (response) => response,
-  
+  (response) => response,
+  async (error) => {
+    const originRequest = error.config;
 
-    async (error) => {
-      const originRequest = error.config;
+    if (error.response.status === 401 || error.response.status === 403) {
+      const response = await refreshinstance.post('/getAccessToken');
 
-      if (error.response.data.status === 401 || error.response.data.status === 403) {
-        const response = await refreshinstance.post('/getAccessToken');
-
-        if (response.data.status === 200) {
-          const newAccessKey = response.headers.access_key;
-          Cookies.set('accessKey', newAccessKey);
-          return axios(originRequest);
-        }
-        window.location.replace('/');
+      if (response.data.status === 200) {
+        const newAccessKey = response.headers.access_key;
+        Cookies.set('accessKey', newAccessKey);
+        return axios(originRequest);
       }
-      return Promise.reject(error);
+      window.location.replace('/');
     }
-  );
+    return Promise.reject(error);
+  }
+);
 
 export default instance;

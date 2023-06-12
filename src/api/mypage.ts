@@ -9,7 +9,7 @@ interface ApiResponse {
 }
 
 export interface MypageProfileRooms {
-  userImageUrl: string | undefined;
+  userImage: string | undefined;
   username: string;
   alcohol: number;
   socialProvider: string;
@@ -56,9 +56,7 @@ export const updateMypageProfile = async ({
     const response = await axiosInstance.put('/mypage', formData);
     return response;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response?.data.message;
-    }
+    throw error as Error;
   }
 };
 
