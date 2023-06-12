@@ -43,6 +43,15 @@ body {
   .iconStyle {
     @apply f-jic w-20 h-20 rounded-full cursor-pointer bg-opacity-50;
   }
+  .signupInput {
+    @apply box-border w-96 h-11 rounded-lg border border-[#929292] indent-2 placeholder:text-sm placeholder:align-middle
+  }
+  .signupInputTitle {
+    @apply font-bold text-lg mb-2
+  }
+  .signupError {
+    @apply text-base text-red-600 mt-1 mb-4 pl-1
+  }
 }
 
 .grad {

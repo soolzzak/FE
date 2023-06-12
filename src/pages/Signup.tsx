@@ -1,4 +1,4 @@
-import { SignupInput } from '../components/signup/SignupInput';
+import { SignupInput } from '../components/signup/SignupInput'
 
 export const Signup = () => (
   <div className="flex flex-col items-center">

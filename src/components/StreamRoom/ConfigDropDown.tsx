@@ -69,9 +69,9 @@ export const ConfigDropDown = ({
                   <AiOutlineSetting className="text-5xl text-white hover:animate-spin" />
                 </div> */}
 
-      <div className="relative mt-3 font-semibold">
+      <div className="relative font-semibold">
         {isOpen && (
-          <div className="bg-white rounded-lg w-28 h-24 flex flex-col justify-center items-center absolute z-10 bottom-28 ">
+          <div className="bg-white rounded-lg w-28 h-24 flex flex-col justify-center items-center absolute top-5">
             <div
               className="border-b-2 w-full basis-1/2 flex items-center justify-center relative z-20"
               onClick={handleModifyClick}
@@ -88,7 +88,7 @@ export const ConfigDropDown = ({
               role="button"
               tabIndex={0}
             >
-              강퇴퇴하기
+              강퇴하기
             </div>
           </div>
         )}

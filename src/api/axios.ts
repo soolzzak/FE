@@ -32,16 +32,13 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     (response) => response,
   
-    // 2.실패
+
     async (error) => {
       const originRequest = error.config;
-      console.log('토큰 만료 인터셉터 오류 형태: ', error);
-      console.log('status?',error.response.status)
-      // 토큰 만료 (메세지 확인)
-      if (error.response.data.status === 401) {
+
+      if (error.response.data.status === 401 || error.response.data.status === 403) {
         const response = await refreshinstance.post('/getAccessToken');
-        console.log('refresh??',response)
-        // 리프레시 토큰 요청 성공 (메세지 확인)
+
         if (response.data.status === 200) {
           const newAccessKey = response.headers.access_key;
           Cookies.set('accessKey', newAccessKey);
