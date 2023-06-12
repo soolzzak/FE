@@ -402,6 +402,9 @@ export const StreamRoom = () => {
                   유튜브 같이보기
                 </span>
               </div>
+              <button type="button" onClick={sendToastMessage}>
+                Toast
+              </button>
             </div>
           </div>
         </div>

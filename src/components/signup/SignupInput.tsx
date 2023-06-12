@@ -10,7 +10,7 @@ import { isOpenLoginModalAtom } from '../../store/modalStore';
 
 export const SignupInput = () => {
   const navigate = useNavigate();
-  const [,setIsOpenLogin] = useAtom(isOpenLoginModalAtom)
+  const [, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
   const [
     email,
     emailErrorMsg,
@@ -19,7 +19,9 @@ export const SignupInput = () => {
     emailTypeCheckHandler,
     ,
   ] = useInput();
-  const emailType = /^[a-zA-Z0-9+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  const emailType =
+    /^[a-zA-Z0-9+-]+([._][a-zA-Z0-9+-]+)*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
   const emailMsg = 'example@example.com 형식으로 작성하세요';
 
   const [
@@ -155,12 +157,12 @@ export const SignupInput = () => {
 
   const signupMutation = useMutation(SignupApi, {
     onSuccess: (response) => {
-      alert('혼술짝 회원이 되신것을 환영합니다')
-      setIsOpenLogin(true)
+      alert('혼술짝 회원이 되신것을 환영합니다');
+      setIsOpenLogin(true);
     },
     onError: (error) => {
-      console.log(error)
-    }
+      console.log(error);
+    },
   });
   const submitHandler = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -377,8 +379,8 @@ export const SignupInput = () => {
           회원가입하기
         </button>
       </form>
-      <div className='absolute right-10 bottom-10'>
-        <Logo logoSize='150'/>
+      <div className="absolute right-10 bottom-10">
+        <Logo logoSize="150" />
       </div>
     </div>
   );

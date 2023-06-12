@@ -89,10 +89,10 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
         </div>
       </div>
       <div className="absolute bottom-5 f-ic w-full px-3.5">
-        {chatRoom.userImageUrl ? (
+        {chatRoom.userImage ? (
           <img
             alt="Profile Pic"
-            src={chatRoom.userImageUrl}
+            src={chatRoom.userImage}
             className="w-10 h-10 rounded-full shadow"
           />
         ) : (
