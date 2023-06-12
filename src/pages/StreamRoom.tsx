@@ -313,6 +313,86 @@ export const StreamRoom = () => {
     }
   };
 
+  // 화면공유
+  // const [screenHandler, setScreenHandler] = useState<ScreenHandler | null>(
+  //   null
+  // );
+  // const [shareView, setShareView] = useState<MediaStream | null>(null);
+  // // let shareView = useState<MediaStream | null>(null);
+  // // let shareView: MediaStream | null = null;
+
+  // interface ScreenHandler {
+  //   start: () => Promise<MediaStream | null>;
+  //   end: (shareView: MediaStream | null) => void;
+  // }
+
+  // function createScreenHandler(): ScreenHandler {
+  //   const constraints = {
+  //     audio: true,
+  //     video: {
+  //       width: 1980,
+  //       height: 1080,
+  //       frameRate: 50,
+  //     },
+  //   };
+
+  //   function getCrossBrowserScreenCapture(): Promise<MediaStream | null> {
+  //     if (navigator.mediaDevices.getDisplayMedia) {
+  //       return navigator.mediaDevices.getDisplayMedia(constraints);
+  //     }
+  //     return Promise.resolve(null);
+  //   }
+
+  //   async function start(): Promise<MediaStream | null> {
+
+  //   }
+
+  //   function end(shareView: MediaStream | null): void {
+  //     if (shareView) {
+  //       shareView.getTracks().forEach((track) => {
+  //         track.stop();
+  //       });
+  //     }
+  //   }
+  //   return {
+  //     start,
+  //     end,
+  //   };
+  // }
+
+  // useEffect(() => {
+  //   const handler = createScreenHandler();
+  //   setScreenHandler(handler);
+  // }, []);
+
+  // async function startScreenShare() {
+  //   if (!screenHandler) return;
+
+  //   const capturedStream = await screenHandler.start();
+
+  //   if (capturedStream) {
+  //     setShareView(capturedStream);
+  //     peerConnection?.getSenders().forEach((sender: Sender) => {
+  //       sender.replaceTrack(capturedStream.getTracks()[0]);
+  //     });
+
+  //     capturedStream.getVideoTracks()[0].addEventListener('ended', () => {
+  //       peerConnection?.getSenders().forEach((sender: Sender) => {
+  //         sender.replaceTrack(localVideoRef?.current?.getTracks()[1]);
+  //       });
+  //     });
+  //   }
+  // }
+
+  // async function stopScreenShare() {
+  //   if (!screenHandler || !shareView) return;
+
+  //   screenHandler.end(shareView);
+  //   peerConnection?.getSenders().forEach((sender: Sender) => {
+  //     sender.replaceTrack(localVideoRef?.current?.getTracks()[1]);
+  //   });
+  // }
+
   return (
     <div className="flex flex-col rounded-3xl p-5">
       <div className="bg-white mt-20 mx-10 py-8 px-16 rounded-3xl">
