@@ -174,7 +174,7 @@ export const StreamRoom = () => {
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
       setRemoteMonitorOn(true);
-      
+
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
       if (remoteVideoRef.current) {
@@ -317,7 +317,15 @@ export const StreamRoom = () => {
       setMonitorOn((prev) => !prev);
     }
   };
-
+  // const sendToastMessage = () => {
+  //   const message = JSON.stringify({
+  //     from: userId,
+  //     type: 'toast',
+  //     data: roomNum,
+  //   });
+  //   console.log('toast sent', message);
+  //   socket.send(message);
+  // };
   return (
     <div className="flex flex-col rounded-3xl p-5">
       <div className="bg-white mt-20 mx-10 py-8 px-16 rounded-3xl">
@@ -380,17 +388,18 @@ export const StreamRoom = () => {
             </div>
 
             <div className="w-full h-full col-span-3 row-span-4 rounded-xl">
-              {guestIn? (
+              {guestIn ? (
                 <video
-                ref={remoteVideoRef}
-                autoPlay
-                muted
-                className={`w-full h-full object-cover rounded-xl ${
-                  remoteMonitorOn ? 'visible' : 'invisible'
-                }`}
-              />
-              ) : <WaitingGuestRef />}
-              
+                  ref={remoteVideoRef}
+                  autoPlay
+                  muted
+                  className={`w-full h-full object-cover rounded-xl ${
+                    remoteMonitorOn ? 'visible' : 'invisible'
+                  }`}
+                />
+              ) : (
+                <WaitingGuestRef />
+              )}
             </div>
             <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
               <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
@@ -411,9 +420,9 @@ export const StreamRoom = () => {
                   유튜브 같이보기
                 </span>
               </div>
-              <button type="button" onClick={sendToastMessage}>
+              {/* <button type="button" onClick={sendToastMessage}>
                 Toast
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
