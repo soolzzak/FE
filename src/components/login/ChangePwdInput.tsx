@@ -75,14 +75,14 @@ export const ChangePwdInput = () => {
           value={email || ''}
           onChange={emailChangeHandler}
           placeholder="example@naver.com"
-          className="box-border w-[400px] h-[45px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] placeholder:align-middle mb-3"
+          className="signupInput"
         />
         <button
           type="button"
           onClick={confirmEmailHandler}
-          className="absolute w-[100px] h-[31px] top-[8.5px] right-2 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
+          className="absolute w-16 h-7 top-2 right-2 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
         >
-          인증번호 받기
+          인증번호
         </button>
       </div>
 
@@ -94,7 +94,7 @@ export const ChangePwdInput = () => {
           onChange={authNumberChangeHandler}
           onBlur={authNumberCheckHandler}
           placeholder="인증번호 6자리를 입력해주세요"
-          className="box-border w-[400px] h-[45px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] placeholder:align-middle mb-3"
+          className="signupInput"
         />
       ) : null}
 
@@ -109,7 +109,7 @@ export const ChangePwdInput = () => {
           value={pwd || ''}
           onChange={pwdChangeHandler}
           onBlur={() => pwdTypeHandler(pwd)}
-          className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px]"
+          className="signupInput"
           placeholder="비밀번호"
         />
         <div className="text-base text-red-600 mt-1 mb-4 pl-1">
@@ -123,7 +123,7 @@ export const ChangePwdInput = () => {
           type="password"
           value={pwdCheck || ''}
           onChange={pwdCheckChangeHandler}
-          className="box-border w-[400px] h-[50px] rounded-lg border border-[#929292] indent-2 placeholder:text-[16px]"
+          className="signupInput"
         />
         <div className="text-base text-red-600 mt-1 mb-4 pl-1">
         {pwdCheck && pwd !== pwdCheck? '비밀번호가 일치하지 않습니다' : null}
@@ -132,7 +132,7 @@ export const ChangePwdInput = () => {
 
       <button
         type="submit"
-        className="w-[400px] h-[50px] rounded-lg font-bold text-[#FFFFFF] text-[18px] bg-primary-300 mt-5 hover:bg-[#FF5500]"
+        className="w-96 h-11 rounded-lg font-bold text-white text-lg bg-primary-300 mt-5 hover:bg-primary-400"
       >
         비밀번호 변경
       </button>

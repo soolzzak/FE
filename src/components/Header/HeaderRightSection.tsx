@@ -35,6 +35,7 @@ export const HeaderRightSection = () => {
     >
       <AnimatePresence>
         <Modal
+          key={1}
           isOpen={isOpenAuth}
           hasOverlay
           onClose={() => setIsOpenAuth(false)}
@@ -42,6 +43,7 @@ export const HeaderRightSection = () => {
           <AuthModal />
         </Modal>
         <Modal
+          key={2}
           isOpen={isOpenLogin}
           hasOverlay
           onClose={() => setIsOpenLogin(false)}

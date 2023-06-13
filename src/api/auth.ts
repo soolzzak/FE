@@ -51,20 +51,21 @@ export const EmailSignupConfirm = async (email: EmailInfo) => {
     const response = await axiosInstance.post('/signup/mailconfirm', email);
     return response.data.code;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response?.data.message;
-    }
+    // if (axios.isAxiosError(error)) {
+      // return error.response?.data.message;
+      throw error as Error
+    // }
   }
 };
 
 export const EmailLoginConfirm = async (email: EmailInfo) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     const response = await axiosInstance.post('/login/mailconfirm', email);
     return response.data.code;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response?.data.message;
-    }
+    console.log(error);
+    throw error as Error;
   }
 };
 

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
+import { toast } from 'react-toastify';
 import {
   MypageProfileRooms,
   UpdateMypageData,
@@ -10,11 +11,11 @@ import { Modify } from '../../assets/svgs/Modify';
 // 얘가 원래꺼
 export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const [image, setImage] = useState<File | undefined>();
-
-  console.log(myinfo.userImageUrl);
+  const queryClient = useQueryClient();
+  console.log(myinfo.userImage);
 
   // const [view, setView] = useState<string | undefined>();
-  const [view, setView] = useState<string | undefined>(myinfo.userImageUrl);
+  const [view, setView] = useState<string | undefined>(myinfo.userImage);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [editMode, setEditMode] = useState(false);
 
@@ -25,7 +26,15 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
     setmodifyUserName(event.target.value);
 
   // 수정 ,,,
-  const updateMyProfileMutation = useMutation(updateMypageProfile);
+  const updateMyProfileMutation = useMutation(updateMypageProfile, {
+    onSuccess: () => {
+      toast.success('업데이트 성공');
+      queryClient.invalidateQueries('profile');
+    },
+    onError: (error) => {
+      toast.error('업데이트 실패');
+    },
+  });
 
   const submitHandler = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
