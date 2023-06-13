@@ -36,7 +36,7 @@ export const FollowSection = ({
           {tabList.map((tab) => (
             <div
               role="none"
-              className={`f-jic cursor-pointer font-semibold 
+              className={`f-jic cursor-pointer font-semibold py-1.5
           ${
             activeTab === tab
               ? 'border-b-[3px] border-[#0BA332] text-[#0BA332]'

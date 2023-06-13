@@ -26,7 +26,7 @@ export const BlockModal = ({
 
   return (
     <div className="grid grid-cols-1  justify-center items-center">
-      <div className="w-[409px] h-[202px] relative  rounded-2xl bg-white flex flex-col justify-center items-center">
+      <div className="md:w-[409px] md:h-[202px] w-[380px] h-[202px] relative  rounded-2xl bg-white flex flex-col justify-center items-center">
         <p className="font-semibold text-[24px]">
           {userinfo?.username}님을{' '}
           {userinfo?.block ? '차단 해제하시겠어요?' : '차단하시겠어요?'}

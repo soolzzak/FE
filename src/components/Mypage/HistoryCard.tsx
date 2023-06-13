@@ -21,12 +21,12 @@ export const HistoryCard = ({ item }: { item: TabUserList }) => {
 
       <div
         role="none"
-        className="flex flex-row mt-4 items-center rounded-lg bg-[#F8F8F8] shadow-sm"
+        className="flex flex-row mt-4 items-center rounded-xl bg-[#F8F8F8] shadow-sm"
         onClick={() => setIsOpenDetailUser(true)}
       >
         <div>
           <img
-            className="min-w-[80px] w-20 h-20 m-2 rounded-full  bg-[#B6ECC4] mr-4 object-cover shadow"
+            className="min-w-[64px] h-[64px] m-2 rounded-full  bg-[#B6ECC4] mr-4 object-cover shadow"
             src={item.userImage}
             alt=""
           />
