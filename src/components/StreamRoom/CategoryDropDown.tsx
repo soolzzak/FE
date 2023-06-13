@@ -51,18 +51,19 @@ export const CategoryDropDown = ({
   };
 
   return (
-    <div>
+    <div className='f-jic'>
       <div
         onClick={onToggle}
         onKeyDown={handleKeyDown}
         role="button"
         tabIndex={0}
         aria-label="Profile picture"
+        className='f-jic'
       >
         <img
           alt="guestImg"
           src={guestProfile?.userImage}
-          className="f-jic object-cover w-16 h-16 min-w-[64px] rounded-full mr-2"
+          className="f-jic object-cover w-16 h-16 min-w-[64px] rounded-full mr-4"
         />
       </div>
 

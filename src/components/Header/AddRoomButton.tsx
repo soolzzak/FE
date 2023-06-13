@@ -58,7 +58,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
     <CommonButton
       buttonText="혼술짝 방만들기"
       clickHandler={onSubmit}
-      dimensions="mt-7 mb-3 w-full h-14 self-center"
+      dimensions="text-xl py-6 mt-7 mb-[34px] w-2/3 self-center"
     />
   );
 };
