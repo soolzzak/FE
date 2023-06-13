@@ -18,7 +18,7 @@ export const CategoryTab = () => {
     setDisplayedTabAtom(tab);
     setActiveTab(tab);
     window.scrollTo({
-      top: 410,
+      top: 510,
       behavior: 'smooth',
     });
   };
@@ -35,7 +35,7 @@ export const CategoryTab = () => {
             transition={{ duration: 0.1 }}
             role="none"
             className={`
-            f-jic cursor-pointer py-4 text-lg min-w-[120px] font-semibold text-[#454545] 
+            f-jic cursor-pointer py-4 text-[20px] min-w-[120px] font-semibold text-[#454545] 
             ${
               activeTab === tab
                 ? 'border-b-[3px] border-primary-300 text-primary-200'

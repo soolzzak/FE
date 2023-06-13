@@ -18,14 +18,14 @@ export const HorizontalSelector = ({
     handleOptionClick(option);
   };
   return (
-    <section className="f-col mt-3">
-      <p className="text-lg font-bold mb-2 text-[#454545]">{title}</p>
+    <section className="f-col mt-3 w-full">
+      <p className="text-xl font-bold mb-2 text-[#454545]">{title}</p>
       <div className="f-ic w-full justify-between gap-3">
         {selections.map((option, index) => (
           <div
             role="none"
             key={option}
-            className={`text-sm text-center w-full border-2 px-3 py-1 border-[#929292] rounded-lg cursor-pointer ${
+            className={`text-lg text-center w-full border-2 px-3 py-1.5 border-[#929292] rounded-xl cursor-pointer ${
               selectedOption === option
                 ? 'bg-primary-50 text-primary-200 border-primary-200'
                 : ''
@@ -33,7 +33,7 @@ export const HorizontalSelector = ({
             onClick={() => {
               onOptionSelect(option);
               window.scrollTo({
-                top: 410,
+                top: 510,
                 behavior: 'smooth',
               });
             }}

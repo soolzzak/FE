@@ -9,7 +9,7 @@ const instance: AxiosInstance = axios.create({
 });
 
 const refreshinstance: AxiosInstance = axios.create({
-  baseURL: 'https://api.honsoolzzak.com/api',
+  baseURL: API_URL,
   withCredentials: true,
   headers: {
     refresh_key: Cookies.get('refreshKey'),

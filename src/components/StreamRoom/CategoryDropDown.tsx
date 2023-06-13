@@ -51,14 +51,14 @@ export const CategoryDropDown = ({
   };
 
   return (
-    <div className='f-jic'>
+    <div className="f-jic">
       <div
         onClick={onToggle}
         onKeyDown={handleKeyDown}
         role="button"
         tabIndex={0}
         aria-label="Profile picture"
-        className='f-jic'
+        className="f-jic"
       >
         <img
           alt="guestImg"
@@ -77,33 +77,25 @@ export const CategoryDropDown = ({
 
       <div className="relative mt-3 font-semibold">
         {isOpen && (
-          <div className="bg-white rounded-lg w-[135px] h-[117px] border flex flex-col justify-center items-center absolute z-10">
+          <div className="bg-white rounded-lg w-[130px] h-[100px] border flex flex-col justify-center items-center absolute -right-14 top-8">
             <div
-              className="border-b-2 w-full basis-1/3  flex items-center justify-center relative z-20"
+              className="border-b-2 w-full basis-1/2 flex items-center justify-center relative z-20"
               // onClick={handleFollowClick}
               onKeyDown={handleKeyDown}
               role="button"
               tabIndex={0}
             >
-              {guestProfile.follow ? '팔로우 취소' : '팔로우 하기'}
+              {guestProfile.follow ? '팔로우취소' : '팔로우 하기'}
             </div>
+
             <div
-              className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20 text-[#F81C1C]"
-              onClick={handleBlockClick}
-              onKeyDown={handleKeyDown}
-              role="button"
-              tabIndex={0}
-            >
-              차단하기
-            </div>
-            <div
-              className=" basis-1/3 flex items-center justify-center relative z-20 text-[#F81C1C]"
+              className=" basis-1/2 flex items-center justify-center relative z-20 text-[#F81C1C]"
               onClick={handleReportClick}
               onKeyDown={handleKeyDown}
               role="button"
               tabIndex={0}
             >
-              신고하기
+              신고
             </div>
           </div>
         )}
