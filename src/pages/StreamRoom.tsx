@@ -425,6 +425,53 @@ export const StreamRoom = () => {
   };
 
   return (
+    // <div className="w-full">
+    //   <div className="flex flex-col">
+    //     <div className="bg-white rounded-3xl flex flex-col w-full mt-32 max-w-[1200px] mx-auto">
+    //       <div className="flex w-full justify-between">
+    //         <div>
+    //           {guestProfile && (
+    //             <RemoteUserSection
+    //             guestProfile={guestProfile}
+    //             guestProfileMutation={guestProfileMutation}
+    //             />
+    //           )}
+    //         </div>
+
+    //         <div>
+    //           {roomInfo?.title}
+    //         </div>
+    //       </div>
+
+    //       <div className="flex flex-row justify-between">
+    //           <div className=''>
+    //             {guestIn? (
+    //               <video
+    //               ref={remoteVideoRef}
+    //               autoPlay
+    //               muted
+    //               className='bg-black object-cover'
+    //               />
+    //             ) : (
+    //               <WaitingGuestRef />
+    //             )}
+    //           </div>
+    //         <div>
+    //           <div>
+    //             <video
+    //             ref={localVideoRef}
+    //             autoPlay
+    //             muted
+    //             className='object-cover rounded-3xl bg-black'
+    //             />
+    //           </div>
+    //           <div>여기 버튼들</div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+
     <div className="flex flex-col rounded-3xl p-5">
       <div className="bg-white mx-10 py-8 px-16 rounded-3xl">
         <div className="flex justify-center">

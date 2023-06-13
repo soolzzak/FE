@@ -42,7 +42,7 @@ export const checkIfRoomIsEmpty = async (
 ): Promise<ApiResponse | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/api/room/${params}/check`
+      `/room/${params}/check`
     );
     console.log('check if room is empty ', response.data);
     return response.data;

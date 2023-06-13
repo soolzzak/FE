@@ -26,7 +26,7 @@ export const SearchField = () => {
       setSearchValue('');
       setSearchWordTrigger(!prev);
       window.scrollTo({
-        top: 410,
+        top: 510,
         behavior: 'smooth',
       });
     }
