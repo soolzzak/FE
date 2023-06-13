@@ -374,77 +374,55 @@ export const StreamRoom = () => {
   //   socket.send(message);
 
   // 화면공유
+  const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
 
-  //   interface ScreenHandler {
-  //     start: () => Promise<MediaStream | undefined>;
-  //     end: () => void;
-  //   }
+  useEffect(() => {
+    // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
+    if (shareView && remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = shareView;
+    }
+  }, [shareView]);
 
-  //   const constraints = {
-  //     audio: true,
-  //     video: {
-  //       width: 1980, // 최대 너비
-  //       height: 1080, // 최대 높이
-  //       frameRate: 50, // 최대 프레임
-  //     }
-  //   };
+  const constraints = {
+    video: {
+      width: { ideal: 1980 },
+      height: { ideal: 1080 },
+      frameRate: 50,
+      displaySurface: 'monitor', // 'monitor'를 지정하여 모니터 화면 공유 가능
+    },
+    audio: true,
+  };
 
-  //   const [screenHandler, setScreenHandler] = useState<ScreenHandler | null>(
-  //     null
-  //   );
-  //   // const [shareView, setShareView] = useState<MediaStream | null>(null);
-  //   let shareView: MediaStream | PromiseLike<MediaStream | undefined> | null | undefined = null;
+  // 화면 공유를 시작
+  const startScreenShare = async () => {
+    try {
+      if (!navigator.mediaDevices.getDisplayMedia) {
+        throw new Error('Screen sharing is not supported.');
+      }
 
-  //   const getCrossBrowserScreenCapture = () => {
-  //     if (navigator.mediaDevices.getDisplayMedia) {
-  //       return navigator.mediaDevices.getDisplayMedia(constraints)
-  //     }
-  //   }
+      // 화면 공유 스트림 가져오기
+      const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+      setShareView(stream); // 화면 공유 스트림 상태 업데이트
 
-  // useEffect(() => {
-  //   const screenHandlerInstance: ScreenHandler = {
-  //     start: async () => {
-  //       try {
-  //         shareView = await getCrossBrowserScreenCapture();
+      // 화면 공유 스트림으로 트랙 교체
+      peerConnection.getSenders().forEach((sender) => {
+        if (sender.track?.kind === 'video') {
+          sender.replaceTrack(stream.getVideoTracks()[0]);
+        }
+      });
 
-  //       } catch (err) {
-  //         console.log("Error getDisplayMedia", err);
-  //         return shareView;
-  //       }
-  //     },
-  //     end: () => {
-  //       if (shareView) {
-  //         shareView.getTracks().forEach((track) => {
-  //           track.stop();
-  //         });
-  //       }
-  //     },
-  //   };
-
-  //   setScreenHandler(screenHandlerInstance);
-
-  //   // const myPeerConnection = new RTCPeerConnection();
-  //   // setMyPeerConnection(myPeerConnection);
-  // }, []);
-
-  // const startScreenShare = async () => {
-  //   if (!screenHandler || !peerConnection) return;
-
-  //   const view = await screenHandler.start();
-  //   if (!view) return;
-
-  //   peerConnection.getSenders().forEach((sender) => {
-  //     sender.replaceTrack(view.getVideoTracks()[0]);
-  //   });
-
-  //   view.getVideoTracks()[0].addEventListener("ended", () => {
-  //     if (mediaStream) {
-  //       peerConnection.getSenders().forEach((sender) => {
-  //         sender.replaceTrack(mediaStream.getVideoTracks()[0]);
-  //       });
-  //     }
-  //   });
-  // };
+      // 화면 공유 스트림 종료
+      stream.getVideoTracks()[0].addEventListener('ended', () => {
+        peerConnection.getSenders().forEach((sender) => {
+          if (sender.track?.kind === 'video') {
+            sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error starting screen share:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col rounded-3xl p-5">
@@ -540,6 +518,9 @@ export const StreamRoom = () => {
               </div>
               <button type="button" onClick={sendToastMessage}>
                 Toast
+              </button>
+              <button type="button" onClick={startScreenShare}>
+                화면공유
               </button>
             </div>
           </div>
