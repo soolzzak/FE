@@ -85,7 +85,7 @@ export const CategoryDropDown = ({
               role="button"
               tabIndex={0}
             >
-              팔로우하기
+              {guestProfile.follow ? '팔로우 취소' : '팔로우 하기'}
             </div>
             <div
               className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20 text-[#F81C1C]"

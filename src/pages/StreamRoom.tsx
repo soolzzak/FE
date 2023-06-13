@@ -4,7 +4,13 @@ import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { LuMic, LuMicOff, LuMonitor, LuMonitorOff } from 'react-icons/lu';
+import {
+  LuMic,
+  LuMicOff,
+  LuMonitor,
+  LuMonitorOff,
+  LuTrophy,
+} from 'react-icons/lu';
 import { AiOutlineSetting } from 'react-icons/ai';
 import { useMutation } from 'react-query';
 import { ToastContent, toast } from 'react-toastify';
@@ -357,6 +363,88 @@ export const StreamRoom = () => {
       }
     };
   }, [socketIsOnline]);
+
+  // const sendToastMessage = () => {
+  //   const message = JSON.stringify({
+  //     from: userId,
+  //     type: 'toast',
+  //     data: roomNum,
+  //   });
+  //   console.log('toast sent', message);
+  //   socket.send(message);
+
+  // 화면공유
+
+  //   interface ScreenHandler {
+  //     start: () => Promise<MediaStream | undefined>;
+  //     end: () => void;
+  //   }
+
+  //   const constraints = {
+  //     audio: true,
+  //     video: {
+  //       width: 1980, // 최대 너비
+  //       height: 1080, // 최대 높이
+  //       frameRate: 50, // 최대 프레임
+  //     }
+  //   };
+
+  //   const [screenHandler, setScreenHandler] = useState<ScreenHandler | null>(
+  //     null
+  //   );
+  //   // const [shareView, setShareView] = useState<MediaStream | null>(null);
+  //   let shareView: MediaStream | PromiseLike<MediaStream | undefined> | null | undefined = null;
+
+  //   const getCrossBrowserScreenCapture = () => {
+  //     if (navigator.mediaDevices.getDisplayMedia) {
+  //       return navigator.mediaDevices.getDisplayMedia(constraints)
+  //     }
+  //   }
+
+  // useEffect(() => {
+  //   const screenHandlerInstance: ScreenHandler = {
+  //     start: async () => {
+  //       try {
+  //         shareView = await getCrossBrowserScreenCapture();
+
+  //       } catch (err) {
+  //         console.log("Error getDisplayMedia", err);
+  //         return shareView;
+  //       }
+  //     },
+  //     end: () => {
+  //       if (shareView) {
+  //         shareView.getTracks().forEach((track) => {
+  //           track.stop();
+  //         });
+  //       }
+  //     },
+  //   };
+
+  //   setScreenHandler(screenHandlerInstance);
+
+  //   // const myPeerConnection = new RTCPeerConnection();
+  //   // setMyPeerConnection(myPeerConnection);
+  // }, []);
+
+  // const startScreenShare = async () => {
+  //   if (!screenHandler || !peerConnection) return;
+
+  //   const view = await screenHandler.start();
+  //   if (!view) return;
+
+  //   peerConnection.getSenders().forEach((sender) => {
+  //     sender.replaceTrack(view.getVideoTracks()[0]);
+  //   });
+
+  //   view.getVideoTracks()[0].addEventListener("ended", () => {
+  //     if (mediaStream) {
+  //       peerConnection.getSenders().forEach((sender) => {
+  //         sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+  //       });
+  //     }
+  //   });
+  // };
 
   return (
     <div className="flex flex-col rounded-3xl p-5">
