@@ -38,7 +38,7 @@ export const SearchField = () => {
 
   return (
     <div
-      className={`f-ic w-[300px] ml-8 py-3.5 pl-4 h-12 bg-[#F4F4F4] rounded-2xl md:flex
+      className={`f-ic w-[450px] ml-8 py-3.5 pl-4 h-12 bg-[#F4F4F4] rounded-2xl md:flex
         ${userToken ? 'hidden' : ''} 
         `}
     >
@@ -48,7 +48,7 @@ export const SearchField = () => {
         value={searchValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className="px-3 bg-transparent outline-none text-lg font-medium text-[#323232] placeholder-[#9A9A9A]"
+        className="xl:w-full px-3 bg-transparent outline-none text-lg font-medium text-[#323232] placeholder-[#9A9A9A]"
         placeholder="혼술짝 방 검색하기"
       />
     </div>

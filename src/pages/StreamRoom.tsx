@@ -82,10 +82,11 @@ export const StreamRoom = () => {
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
 
-  const getCookie = Cookies.get('accessKey');
+  const getCookie = Cookies.get('refreshKey');
   const params = useParams().id;
 
   const userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
+  console.log('ddd', jwtDecode<JwtPayload>(getCookie as string));
   const roomNum = params;
 
   let socket: WebSocket;
@@ -94,6 +95,7 @@ export const StreamRoom = () => {
   const handleOfferMessage = async (message: RTCSessionMessage) => {
     console.log('accepting offer', message);
     const answerSDP = new RTCSessionDescription(message.sdp);
+    setGuestIn(true);
     try {
       console.log('setRemoteDescription', message.sdp);
       await peerConnection.setRemoteDescription(answerSDP);
@@ -408,7 +410,7 @@ export const StreamRoom = () => {
 
   return (
     <div className="flex flex-col rounded-3xl p-5">
-      <div className="bg-white mt-20 mx-10 py-8 px-16 rounded-3xl">
+      <div className="bg-white mx-10 py-8 px-16 rounded-3xl">
         <div className="flex justify-center">
           <div className="flex flex-row w-full justify-between mb-5">
             {guestProfile && (
@@ -417,7 +419,7 @@ export const StreamRoom = () => {
                 guestProfileMutation={guestProfileMutation}
               />
             )}
-            <div className="flex items-center xl:text-3xl font-semibold">
+            <div className="flex items-center text-xl xl:text-[32px] font-semibold">
               {roomInfo?.title}
             </div>
           </div>
@@ -425,41 +427,45 @@ export const StreamRoom = () => {
         <div className="flex justify-center">
           <div className="gap-5 grid grid-cols-9 grid-rows-6 h-[80vh] w-full">
             <div className="col-span-6 row-span-6 flex flex-col justify-between gap-5">
-              <video
-                ref={localVideoRef}
-                autoPlay
-                muted
-                className="bg-black w-full h-5/6 object-cover rounded-xl"
-              />
-              <div className="bg-slate-200 h-1/6 flex items-center justify-center gap-6 rounded-xl">
+              {guestIn ? (
+                <video
+                  ref={remoteVideoRef}
+                  autoPlay
+                  muted
+                  className="bg-black w-full h-[90%] object-cover rounded-3xl"
+                />
+              ) : (
+                <WaitingGuestRef />
+              )}
+              <div className="h-[10%] flex items-center justify-center gap-4 rounded-xl">
                 <div
                   role="none"
                   onClick={micToggleHandler}
                   className={`iconStyle ${
-                    micOn ? 'bg-[#727272]' : 'bg-[#525252]'
+                    micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
                   } `}
                 >
                   {micOn ? (
-                    <LuMic className="text-4xl text-white" />
+                    <LuMic className="text-3xl text-white" />
                   ) : (
-                    <LuMicOff className="text-4xl text-white" />
+                    <LuMicOff className="text-3xl text-white" />
                   )}
                 </div>
                 <div
                   role="none"
                   onClick={videoToggleHandler}
                   className={`iconStyle ${
-                    monitorOn ? 'bg-[#727272]' : 'bg-[#525252]'
+                    monitorOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
                   } `}
                 >
                   {monitorOn ? (
-                    <LuMonitor className="text-4xl text-white" />
+                    <LuMonitor className="text-3xl text-white" />
                   ) : (
-                    <LuMonitorOff className="text-4xl text-white" />
+                    <LuMonitorOff className="text-3xl text-white" />
                   )}
                 </div>
 
-                <div className="iconStyle bg-[#727272]">
+                <div className="iconStyle bg-[#C0C0C0]">
                   <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
                 </div>
 
@@ -468,34 +474,28 @@ export const StreamRoom = () => {
             </div>
 
             <div className="w-full h-full col-span-3 row-span-4 rounded-xl">
-              {guestIn ? (
-                <video
-                  ref={remoteVideoRef}
-                  autoPlay
-                  muted
-                  className={`w-full h-full object-cover rounded-xl ${
-                    remoteMonitorOn ? 'visible' : 'invisible'
-                  }`}
-                />
-              ) : (
-                <WaitingGuestRef />
-              )}
+              <video
+                ref={localVideoRef}
+                autoPlay
+                muted
+                className="w-full h-full object-cover rounded-3xl"
+              />
             </div>
             <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
               <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <div className="h-full flex items-center xl:text-3xl font-semibold gap-4">
+                <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
                   <Camera />
                   함께 사진찍기
-                </div>
+                </span>
               </div>
               <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="h-full flex items-center xl:text-3xl font-semibold gap-4 ">
+                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4 ">
                   <Game />
                   게임하기
                 </span>
               </div>
               <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="h-full flex items-center xl:text-3xl font-semibold gap-4">
+                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4">
                   <Youtube />
                   유튜브 같이보기
                 </span>

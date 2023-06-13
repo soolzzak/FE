@@ -34,12 +34,13 @@ instance.interceptors.response.use(
   async (error) => {
     const originRequest = error.config;
 
-    if (error.response.status === 401) {
+    if (error.response.status === 403) {
       const response = await refreshinstance.post('/getAccessToken');
 
       if (response.data.status === 200) {
         const newAccessKey = response.headers.access_key;
         Cookies.set('accessKey', newAccessKey);
+        originRequest.headers.access_key = newAccessKey;
         return axios(originRequest);
       }
       window.location.replace('/');
