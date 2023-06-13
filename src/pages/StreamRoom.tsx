@@ -184,15 +184,17 @@ export const StreamRoom = () => {
     };
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
-      setRemoteMonitorOn(true);
+      setRemoteMonitorOn(() => true);
 
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
       if (remoteVideoRef.current) {
         console.log('adding remote stream to video element');
         remoteVideoRef.current.srcObject = stream;
+        console.log('stream?', stream)
       }
       console.log('remote ref', remoteVideoRef.current);
+      console.log('remoteVideoRef.current.srcObject',remoteVideoRef.current?.srcObject)
     };
     peerConnection.oniceconnectionstatechange = () => {
       console.log('opposing user disconnect event');
@@ -204,13 +206,15 @@ export const StreamRoom = () => {
         if (remoteVideoRef.current) {
           if (remoteVideoRef.current.srcObject) {
             const stream = remoteVideoRef.current.srcObject as MediaStream;
-            stream.getTracks().forEach((track) => track.stop());
+            // stream.getTracks().forEach((track) => track.stop());
           }
           remoteVideoRef.current.srcObject = null;
         }
-        setRemoteMonitorOn(false);
-        setGuestIn(false);
-        setGuestProfile(undefined);
+        console.log('remoteVideoRef.current.srcObject',remoteVideoRef.current?.srcObject)
+        setRemoteMonitorOn(() => false);
+        setGuestIn(() => false);
+        setGuestProfile(() => undefined);
+        console.log('peerConnection', peerConnection);
       }
     };
 
@@ -262,11 +266,12 @@ export const StreamRoom = () => {
         switch (message.type) {
           case 'offer':
             console.log('received offer message', message);
-            setGuestIn(true);
+            
             await handleOfferMessage(message);
             break;
           case 'answer':
             console.log('received answer message', message);
+            setGuestIn(() => true)
             await handleAnswerMessage(message);
             break;
           case 'toast':
@@ -284,7 +289,7 @@ export const StreamRoom = () => {
             message.data = await getRoom(params as string);
             setRoomInfo(message.data);
             console.log('get room? ', message.data);
-
+            // setGuestIn(prev => true);
             await startLocalStream();
             await createPeerConnection();
             // console.log(message.data.data.hostId);
@@ -363,6 +368,11 @@ export const StreamRoom = () => {
       }
     };
   }, [socketIsOnline]);
+
+  useEffect(() => {
+    if(guestIn)
+      console.log('remote ref2', remoteVideoRef)
+  },[guestIn])
 
   // const sendToastMessage = () => {
   //   const message = JSON.stringify({
@@ -447,57 +457,10 @@ export const StreamRoom = () => {
   // };
 
   return (
-    // <div className="w-full">
-    //   <div className="flex flex-col">
-    //     <div className="bg-white rounded-3xl flex flex-col w-full mt-32 max-w-[1200px] mx-auto">
-    //       <div className="flex w-full justify-between">
-    //         <div>
-    //           {guestProfile && (
-    //             <RemoteUserSection
-    //             guestProfile={guestProfile}
-    //             guestProfileMutation={guestProfileMutation}
-    //             />
-    //           )}
-    //         </div>
-
-    //         <div>
-    //           {roomInfo?.title}
-    //         </div>
-    //       </div>
-
-    //       <div className="flex flex-row justify-between">
-    //           <div className=''>
-    //             {guestIn? (
-    //               <video
-    //               ref={remoteVideoRef}
-    //               autoPlay
-    //               muted
-    //               className='bg-black object-cover'
-    //               />
-    //             ) : (
-    //               <WaitingGuestRef />
-    //             )}
-    //           </div>
-    //         <div>
-    //           <div>
-    //             <video
-    //             ref={localVideoRef}
-    //             autoPlay
-    //             muted
-    //             className='object-cover rounded-3xl bg-black'
-    //             />
-    //           </div>
-    //           <div>여기 버튼들</div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-
-    <div className="flex flex-col rounded-3xl p-5">
-      <div className="bg-white mx-10 py-8 px-16 rounded-3xl">
-        <div className="flex justify-center">
-          <div className="flex flex-row w-full justify-between mb-5">
+    <div className="w-full">
+      <div className="flex flex-col">
+        <div className="bg-white border rounded-2xl flex flex-col w-full mt-32 max-w-[1400px] h-[60vh] mx-auto py-5 px-7">
+          <div className="flex w-full justify-between mb-5">
             {guestProfile && (
               <RemoteUserSection
                 guestProfile={guestProfile}
@@ -508,21 +471,19 @@ export const StreamRoom = () => {
               {roomInfo?.title}
             </div>
           </div>
-        </div>
-        <div className="flex justify-center">
-          <div className="gap-5 grid grid-cols-9 grid-rows-6 h-[80vh] w-full">
-            <div className="col-span-6 row-span-6 flex flex-col justify-between gap-5">
+          <div className="flex xl:flex-row flex-col justify-between gap-4 h-full">
+            <div className="flex flex-col justify-between w-full">
               {guestIn ? (
                 <video
                   ref={remoteVideoRef}
                   autoPlay
                   muted
-                  className="bg-black w-full h-[90%] object-cover rounded-3xl"
+                  className="bg-black w-full h-full object-cover rounded-2xl"
                 />
-              ) : (
+               ) : (
                 <WaitingGuestRef />
               )}
-              <div className="h-[10%] flex items-center justify-center gap-4 rounded-xl">
+              <div className="flex items-center justify-center gap-3 mt-4 border py-2 rounded-2xl">
                 <div
                   role="none"
                   onClick={micToggleHandler}
@@ -558,40 +519,43 @@ export const StreamRoom = () => {
               </div>
             </div>
 
-            <div className="w-full h-full col-span-3 row-span-4 rounded-xl">
-              <video
-                ref={localVideoRef}
-                autoPlay
-                muted
-                className="w-full h-full object-cover rounded-3xl"
-              />
-            </div>
-            <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
-                  <Camera />
-                  함께 사진찍기
-                </span>
+            <div className="flex flex-col justify-between gap-4">
+              <div className="rounded-2xl">
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  muted
+                  className="w-full object-cover rounded-2xl"
+                />
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4 ">
-                  <Game />
-                  게임하기
-                </span>
+              <div className="h-full rounded-2xl flex flex-col justify-between">
+                <div className="border h-full border-[#D9D9D9] rounded-2xl flex justify-center mb-2">
+                  <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-2">
+                    <Camera />
+                    함께 사진찍기
+                  </span>
+                </div>
+                <div className="border h-full border-[#D9D9D9] rounded-2xl flex justify-center mb-2">
+                  <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-2">
+                    <Game />
+                    게임하기
+                  </span>
+                </div>
+                <div className="border h-full border-[#D9D9D9] rounded-2xl flex justify-center mb-2">
+                  <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-2">
+                    <Youtube />
+                    유튜브 같이보기
+                  </span>
+                </div>
+                <button type="button" onClick={sendToastMessage}>
+                  Toast
+                </button>
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4">
-                  <Youtube />
-                  유튜브 같이보기
-                </span>
-              </div>
-              <button type="button" onClick={sendToastMessage}>
-                Toast
-              </button>
             </div>
           </div>
         </div>
       </div>
+
       <Modal
         isOpen={isOpenLeaveRoom}
         onClose={() => setIsOpenLeaveRoom(false)}
