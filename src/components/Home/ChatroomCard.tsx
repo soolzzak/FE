@@ -52,7 +52,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
   };
   return (
     <motion.div
-      whileHover={{ scale: 1.04 }}
+      whileHover={{ scale: 1.03 }}
       role="none"
       className="cursor-pointer w-full f-ic-col rounded-3xl bg-white h-[366px] py-5 px-3.5 relative shadow-sm"
       onClick={handleCardClick}
