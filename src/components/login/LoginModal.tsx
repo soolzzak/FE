@@ -12,7 +12,7 @@ import { CancelButton } from '../common/CancelButton';
 export const KakaoLoginBtn = () => {
   const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
   const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
-  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=http://localhost:3000/api/login&response_type=code`
+  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
   window.location.href = KAKAO_AUTH_URI;
 };
 
@@ -59,7 +59,7 @@ export const LoginModal = () => {
       </div>
       <Logo logoSize="200" />
       <form onSubmit={submitHandler}>
-        <div className="text-2xl font-bold mt-8 mb-4">
+        <div className="text-2xl font-bold mt-6 mb-6">
           따로 또 같이, 함께하는 혼술!
         </div>
 
@@ -84,7 +84,7 @@ export const LoginModal = () => {
           type="submit"
           className="emailLoginButton w-full mt-5"
         >
-          이메일로 로그인
+          로그인
         </button>
       </form>
       <button
