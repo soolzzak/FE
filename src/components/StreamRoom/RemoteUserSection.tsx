@@ -49,11 +49,6 @@ export const RemoteUserSection = ({
 
   return (
     <section className="flex flex-row justify-center items-center">
-      {/* <img
-        alt="guestImg"
-        src={guestProfile?.userImage}
-        className="f-jic object-cover w-16 h-16 min-w-[64px] rounded-full mr-2"
-      /> */}
       <CategoryDropDown guestProfile={guestProfile} />
       <div className="flex flex-col gap-2">
         <div className="xl:text-3xl font-semibold mr-4">

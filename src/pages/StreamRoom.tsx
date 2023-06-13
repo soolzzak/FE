@@ -1,35 +1,30 @@
+/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable jsx-a11y/media-has-caption */
 import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  LuMic,
-  LuMicOff,
-  LuMonitor,
-  LuMonitorOff,
-  LuTrophy,
-} from 'react-icons/lu';
-import { AiOutlineSetting } from 'react-icons/ai';
+import { LuMic, LuMicOff, LuMonitor, LuMonitorOff } from 'react-icons/lu';
 import { useMutation } from 'react-query';
+import { useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
+import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { Room, getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
 import { Exit } from '../assets/svgs/Exit';
 import { Game } from '../assets/svgs/Game';
-import { Setting } from '../assets/svgs/Setting';
+import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { Youtube } from '../assets/svgs/Youtube';
-import { CategoryDropDown } from '../components/StreamRoom/CategoryDropDown';
-import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
-import { Modal } from '../components/common/Modal';
-import { isOpenLeaveRoomAtom } from '../store/modalStore';
-import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
-import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
 import { KickoutModal } from '../components/StreamRoom/KickoutModal';
-import { useModal } from '../hooks/useModal';
+import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
+import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
+import { Modal } from '../components/common/Modal';
+import { useModal } from '../hooks/useModal';
+import { isOpenLeaveRoomAtom } from '../store/modalStore';
+import { MonitorOn } from '../assets/svgs/MonitorOn';
+import { MonitorOff } from '../assets/svgs/MonitorOff';
 
 export interface JwtPayload {
   auth: {
@@ -89,8 +84,11 @@ export const StreamRoom = () => {
   const getCookie = Cookies.get('refreshKey');
   const params = useParams().id;
 
-  const userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
-  console.log('ddd', jwtDecode<JwtPayload>(getCookie as string));
+  let userId: string
+  if (getCookie) {
+    userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
+  }
+  
   const roomNum = params;
 
   let peerConnection: RTCPeerConnection;
@@ -191,10 +189,13 @@ export const StreamRoom = () => {
       if (remoteVideoRef.current) {
         console.log('adding remote stream to video element');
         remoteVideoRef.current.srcObject = stream;
-        console.log('stream?', stream)
+        console.log('stream?', stream);
       }
       console.log('remote ref', remoteVideoRef.current);
-      console.log('remoteVideoRef.current.srcObject',remoteVideoRef.current?.srcObject)
+      console.log(
+        'remoteVideoRef.current.srcObject',
+        remoteVideoRef.current?.srcObject
+      );
     };
     peerConnection.oniceconnectionstatechange = () => {
       console.log('opposing user disconnect event');
@@ -210,7 +211,10 @@ export const StreamRoom = () => {
           }
           remoteVideoRef.current.srcObject = null;
         }
-        console.log('remoteVideoRef.current.srcObject',remoteVideoRef.current?.srcObject)
+        console.log(
+          'remoteVideoRef.current.srcObject',
+          remoteVideoRef.current?.srcObject
+        );
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
         setGuestProfile(() => undefined);
@@ -266,12 +270,12 @@ export const StreamRoom = () => {
         switch (message.type) {
           case 'offer':
             console.log('received offer message', message);
-            
+
             await handleOfferMessage(message);
             break;
           case 'answer':
             console.log('received answer message', message);
-            setGuestIn(() => true)
+            setGuestIn(() => true);
             await handleAnswerMessage(message);
             break;
           case 'toast':
@@ -370,9 +374,8 @@ export const StreamRoom = () => {
   }, [socketIsOnline]);
 
   useEffect(() => {
-    if(guestIn)
-      console.log('remote ref2', remoteVideoRef)
-  },[guestIn])
+    if (guestIn) console.log('remote ref2', remoteVideoRef);
+  }, [guestIn]);
 
   // const sendToastMessage = () => {
   //   const message = JSON.stringify({
@@ -434,23 +437,26 @@ export const StreamRoom = () => {
     }
   };
 
+  const [state, setState] = useState(false);
+
   return (
-    <div className="w-full">
-      <div className="flex flex-col">
-        <div className="bg-white border rounded-2xl flex flex-col w-full mt-32 max-w-[1400px] h-[60vh] mx-auto py-5 px-7">
-          <div className="flex w-full justify-between mb-5">
+    <div className="w-full h-full">
+      <div className="f-col h-[85vh]">
+        <div className="bg-red-200 border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
+          <div className="flex flex-row-reverse w-full mb-5">
+            <div className="flex items-center text-xl xl:text-[32px] font-semibold">
+              {roomInfo?.title}
+            </div>
             {guestProfile && (
               <RemoteUserSection
                 guestProfile={guestProfile}
                 guestProfileMutation={guestProfileMutation}
               />
             )}
-            <div className="flex items-center text-xl xl:text-[32px] font-semibold">
-              {roomInfo?.title}
-            </div>
           </div>
-          <div className="flex xl:flex-row flex-col justify-between gap-4 h-full">
-            <div className="flex flex-col justify-between w-full">
+
+          <div className="grid sm:grid-cols-6 grid-cols-1 grid-rows-4 gap-4 w-full h-full">
+            <div className="bg-red-300 col-span-4 row-span-3 h-full rounded-2xl">
               {guestIn ? (
                 <video
                   ref={remoteVideoRef}
@@ -458,46 +464,16 @@ export const StreamRoom = () => {
                   muted
                   className="bg-black w-full h-full object-cover rounded-2xl"
                 />
-               ) : (
+              ) : (
                 <WaitingGuestRef />
               )}
-              <div className="flex items-center justify-center gap-3 mt-4 border py-2 rounded-2xl">
-                <div
-                  role="none"
-                  onClick={micToggleHandler}
-                  className={`iconStyle ${
-                    micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
-                  } `}
-                >
-                  {micOn ? (
-                    <LuMic className="text-3xl text-white" />
-                  ) : (
-                    <LuMicOff className="text-3xl text-white" />
-                  )}
-                </div>
-                <div
-                  role="none"
-                  onClick={videoToggleHandler}
-                  className={`iconStyle ${
-                    monitorOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
-                  } `}
-                >
-                  {monitorOn ? (
-                    <LuMonitor className="text-3xl text-white" />
-                  ) : (
-                    <LuMonitorOff className="text-3xl text-white" />
-                  )}
-                </div>
-
-                <div className="iconStyle bg-[#C0C0C0]">
-                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
-                </div>
-
-                <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
-              </div>
             </div>
 
-            <div className="w-full h-full col-span-3 row-span-4 rounded-xl">
+            <div className="bg-red-300 col-span-4 row-start-4">
+              여기 버튼 4개
+            </div>
+
+            <div className="bg-red-300 col-span-2 row-span-2 h-full rounded-2xl">
               <video
                 ref={localVideoRef}
                 autoPlay
@@ -505,46 +481,132 @@ export const StreamRoom = () => {
                 className="w-full h-full object-cover rounded-3xl"
               />
             </div>
-            <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
-                  <Camera />
-                  함께 사진찍기
-                </span>
-              </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4 ">
-                  <Game />
-                  게임하기
-                </span>
-              </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4">
-                  <Youtube />
-                  유튜브 같이보기
-                </span>
-              </div>
-              <button type="button" onClick={sendToastMessage}>
-                Toast
-              </button>
-              <button type="button" onClick={startScreenShare}>
-                화면공유
-              </button>
+
+            <div className="bg-red-300 col-span-2 row-span-2">
+              여기 추가기능 버튼
             </div>
           </div>
         </div>
       </div>
-      <Modal
-        isOpen={isOpenLeaveRoom}
-        onClose={() => setIsOpenLeaveRoom(false)}
-        hasOverlay
-      >
-        <LeaveRoomModal />
-      </Modal>
-
-      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
-        <KickoutModal onClose={onCloseKickout} />
-      </Modal>
     </div>
+    // <div className="w-full">
+    //   <div className="flex flex-col">
+    //     <div className="bg-white border rounded-2xl flex flex-col w-full mt-32 max-w-[1400px] h-full mx-auto py-5 px-7">
+    //       <div className="flex flex-row-reverse w-full justify-between mb-5">
+    //         <div className="flex items-center text-xl xl:text-[32px] font-semibold">
+    //           {roomInfo?.title}
+    //         </div>
+    //         {guestProfile && (
+    //           <RemoteUserSection
+    //             guestProfile={guestProfile}
+    //             guestProfileMutation={guestProfileMutation}
+    //           />
+    //         )}
+    //       </div>
+    //       <div className="flex lg:flex-row flex-col justify-between gap-4 h-full">
+    //         <div className="relative flex flex-col h-full justify-between w-full">
+    //           {guestIn ? (
+    //             <video
+    //               ref={remoteVideoRef}
+    //               autoPlay
+    //               muted
+    //               className="bg-black w-full h-full object-cover rounded-2xl"
+    //             />
+    //           ) : (
+    //             <WaitingGuestRef />
+    //           )}
+    //           <div className="absolute top-5 right-5 w-14 h-14 rounded-full bg-primary-200 f-jic">
+    //             <ToastIcon />
+    //           </div>
+    //           <div className="flex items-center justify-center gap-3 mt-4 py-2 rounded-2xl">
+    //             <div
+    //               role="none"
+    //               onClick={micToggleHandler}
+    //               className={`iconStyle ${
+    //                 micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
+    //               } `}
+    //             >
+    //               {micOn ? (
+    //                 <LuMic className="text-3xl text-white" />
+    //               ) : (
+    //                 <LuMicOff className="text-3xl text-white" />
+    //               )}
+    //             </div>
+    //             <div
+    //               role="none"
+    //               onClick={videoToggleHandler}
+    //               onMouseOver={() => setState(true)}
+    //               onMouseOut={() => setState(false)}
+    //               className={`iconStyle ${
+    //                 monitorOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
+    //               } relative`}
+    //             >
+    //               {monitorOn ? <MonitorOn /> : <MonitorOff />}
+    //               {state ? (
+    //                 <div className="absolute -top-10 bg-[#00000080] rounded-md text-white px-3 py-1 z-auto">
+    //                   Camera
+    //                 </div>
+    //               ) : null}
+    //             </div>
+
+    //             <div className="iconStyle bg-[#C0C0C0]">
+    //               <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
+    //             </div>
+
+    //             <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
+    //           </div>
+    //         </div>
+
+    //         <div className="flex flex-col gap-4">
+    //           <div className="w-full h-full rounded-3xl">
+    //             <video
+    //               ref={localVideoRef}
+    //               autoPlay
+    //               muted
+    //               className="w-full h-full object-cover rounded-3xl"
+    //             />
+    //           </div>
+    //           <div className="rounded-xl flex flex-col justify-between gap-4 h-4/6">
+    //             <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
+    //               <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
+    //                 <Camera />
+    //                 함께 사진찍기
+    //               </span>
+    //             </div>
+    //             <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
+    //               <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4 ">
+    //                 <Game />
+    //                 게임하기
+    //               </span>
+    //             </div>
+    //             <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
+    //               <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
+    //                 <Youtube />
+    //                 유튜브 같이보기
+    //               </span>
+    //             </div>
+    //             <button type="button" onClick={startScreenShare}>
+    //               화면공유
+    //             </button>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <Modal
+    //     isOpen={isOpenLeaveRoom}
+    //     onClose={() => setIsOpenLeaveRoom(false)}
+    //     hasOverlay
+    //   >
+    //     <LeaveRoomModal />
+    //   </Modal>
+
+    //   <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
+    //     <KickoutModal onClose={onCloseKickout} />
+    //   </Modal>
+    //   <button type="button" onClick={sendToastMessage}>
+    //     Toast
+    //   </button>
+    // </div>
   );
 };

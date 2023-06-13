@@ -14,7 +14,7 @@ export const WaitingGuestRef = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full object-cover rounded-3xl bg-black text-white text-3xl">
+    <div className="f-jic-col text-white xl:text-3xl w-full rounded-2xl h-full bg-black py-5">
       <div className="flex gap-5 mb-5">
         <div
           className={`w-3 h-3 rounded-full ${
