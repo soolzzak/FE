@@ -26,9 +26,9 @@ export const Mypage = () => {
     }
   }, [data]);
   return (
-    <div className="flex-grow w-full gap-10 min-h-[100vh]">
+    <div className="flex-grow w-full gap-10">
       <div className="f-ic-col min-w-[80px]">
-        <div className="flex md:flex-row flex-col px-8 w-full mt-32 max-w-[1400px] mx-auto gap-10">
+        <div className="flex md:flex-row flex-col px-8 w-full mt-32 max-w-[1200px] mx-auto gap-10">
           {myinfo && <MyinfoSection myinfo={myinfo} />}
 
           <div className="flex flex-col basis-3/5 gap-y-6">
@@ -43,32 +43,3 @@ export const Mypage = () => {
     </div>
   );
 };
-
-// return (
-//   <div className="flex-grow w-full gap-10 min-h-[100vh]">
-//     <div className="f-ic-col min-w-[80px]">
-//       <div className="flex flex-col sm:flex-row mt-32 max-w-[1400px] mx-auto gap-10">
-//         {myinfo && (
-//           <>
-//             <MyinfoSection myinfo={myinfo} />
-//             {window.innerWidth >= 767 ? (
-//               <div className="flex flex-col basis-3/5 gap-y-6">
-//                 <AlcoholSection alcohol={myinfo.alcohol} />
-//                 <FollowSection myinfo={myinfo} />
-//               </div>
-//             ) : (
-//               <div className="flex flex-col gap-y-6">
-//                 <AlcoholSection alcohol={myinfo.alcohol} />
-//                 <FollowSection myinfo={myinfo} />
-//               </div>
-//             )}
-//           </>
-//         )}
-//       </div>
-//       <div className="flex flex-row mt-10 gap-x-10">
-//         <BadgeSection />
-//       </div>
-//     </div>
-//   </div>
-// );
-// };

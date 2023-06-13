@@ -37,10 +37,15 @@ export const RemoteUserSection = ({
   });
 
   const thumbsDownMutation = useMutation(ThumbDownHandler, {
+    onSuccess: () => {
+      guestProfileMutation.mutate(guestProfile.userId);
+    },
     onError: () => {
       toast.error('네트워크 에러로 싫어요를 실패했습니다');
     },
   });
+
+  console.log('얘', guestProfile);
 
   return (
     <section className="flex flex-row justify-center items-center">

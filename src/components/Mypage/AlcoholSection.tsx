@@ -1,9 +1,9 @@
-import { Soju } from '../../assets/svgs/Soju';
+import { AlcoholWater } from '../../assets/svgs/AlcoholWater';
 
 export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
   <div className="basis-1/2 bg-[#ffffff] rounded-3xl flex flex-col gap-y-2 shadow">
     <div className="p-8">
-      <p className="font-bold">도수 레벨</p>
+      <p className="font-bold mb-2">도수 레벨</p>
       <p>다양한 사람들과 교류하고 도수레벨을 올려보세요!</p>
     </div>
     <div className="px-8 ">
@@ -11,7 +11,8 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
         <p className="place-items-end font-bold text-4xl mr-5 text-[#179638]">
           {alcohol}%
         </p>
-        <Soju />
+        {/* <Soju /> */}
+        <AlcoholWater />
       </div>
       <div className="w-full bg-[#B6ECC4] rounded-full h-2.5 dark:bg-gray-700 ">
         <div

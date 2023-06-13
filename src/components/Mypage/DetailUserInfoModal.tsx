@@ -73,7 +73,7 @@ export const DetailUserInfoModal = ({
 
   return (
     <div className="justify-center items-center">
-      <div className="md:w-[542px] md:h-[230px] w-[400px] h-[500px] rounded-2xl bg-white flex md:flex-row flex-col px-6">
+      <div className="md:w-[542px] md:h-[230px] w-[320px] h-[500px] rounded-2xl bg-white flex md:flex-row flex-col px-6">
         <div className="flex flex-col justify-center items-center gap-2 mt-7 md:mt-0">
           <img
             alt=""
@@ -90,7 +90,7 @@ export const DetailUserInfoModal = ({
                 : 'border-[#0BA332] bg-[#E5F9EA] text-[#0BA332]'
             }`}
           >
-            팔로우
+            {userinfo?.follow ? '팔로우' : '팔로잉'}
           </button>
         </div>
 
