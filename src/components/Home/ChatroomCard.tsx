@@ -54,7 +54,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
     <motion.div
       whileHover={{ scale: 1.04 }}
       role="none"
-      className="cursor-pointer f-ic-col rounded-3xl bg-white min-w-[221px] w-[221px] h-[306px] py-5 px-3.5 relative shadow"
+      className="cursor-pointer f-ic-col rounded-3xl bg-white sm:min-w-[221px] sm:w-[221px] h-[306px] py-5 px-3.5 relative shadow"
       onClick={handleCardClick}
     >
       {/* image */}

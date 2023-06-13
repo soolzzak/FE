@@ -56,13 +56,17 @@ let mediaStream: MediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-
+  const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomInfo, setRoomInfo] = useState<Room>();
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
+  const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
+  const [socket, setSocket] = useState<WebSocket>(
+    new WebSocket(signalingServerUrl)
+  );
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -76,13 +80,12 @@ export const StreamRoom = () => {
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
 
-  const getCookie = Cookies.get('accessKey');
+  const getCookie = Cookies.get('refreshKey');
   const params = useParams().id;
 
   const userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
   const roomNum = params;
 
-  let socket: WebSocket;
   let peerConnection: RTCPeerConnection;
 
   const handleOfferMessage = async (message: RTCSessionMessage) => {
@@ -226,9 +229,6 @@ export const StreamRoom = () => {
   };
 
   useEffect(() => {
-    const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
-    socket = new WebSocket(signalingServerUrl);
-
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
         const message = JSON.stringify({
@@ -261,6 +261,10 @@ export const StreamRoom = () => {
             console.log('received answer message', message);
             await handleAnswerMessage(message);
             break;
+          case 'toast':
+            console.log('received toast message', message);
+            await handleAnswerMessage(message);
+            break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
             console.log('received ice message', message);
@@ -268,7 +272,7 @@ export const StreamRoom = () => {
             break;
           case 'join':
             console.log('received join message');
-
+            setSocketIsOnline(true);
             message.data = await getRoom(params as string);
             setRoomInfo(message.data);
             console.log('get room? ', message.data);
@@ -317,15 +321,41 @@ export const StreamRoom = () => {
       setMonitorOn((prev) => !prev);
     }
   };
-  // const sendToastMessage = () => {
-  //   const message = JSON.stringify({
-  //     from: userId,
-  //     type: 'toast',
-  //     data: roomNum,
-  //   });
-  //   console.log('toast sent', message);
-  //   socket.send(message);
-  // };
+  const sendToastMessage = () => {
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'toast',
+        data: roomNum,
+      });
+      console.log('toast sent', message);
+      socket.send(message);
+    }
+  };
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (socket) {
+      console.log('timer started');
+      intervalId = setInterval(() => {
+        const message = JSON.stringify({
+          from: userId,
+          type: 'ping',
+          data: roomNum,
+        });
+        console.log('sending ping', message);
+        socket.send(message);
+      }, 30000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [socketIsOnline]);
+
   return (
     <div className="flex flex-col rounded-3xl p-5">
       <div className="bg-white mt-20 mx-10 py-8 px-16 rounded-3xl">
@@ -420,9 +450,9 @@ export const StreamRoom = () => {
                   유튜브 같이보기
                 </span>
               </div>
-              {/* <button type="button" onClick={sendToastMessage}>
+              <button type="button" onClick={sendToastMessage}>
                 Toast
-              </button> */}
+              </button>
             </div>
           </div>
         </div>
