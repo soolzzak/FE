@@ -65,9 +65,9 @@ export const ProfileMenu = ({ user }: { user: string }) => {
           transition={{ duration: 0.15 }}
           className="absolute border top-full right-3 z-10 mt-1 bg-white rounded-lg shadow-lg"
         >
-          <div className="rounded-t-md px-4 py-1  border-b border-green-200  text-black ">
+          <div className="rounded-t-md px-4 py-1 text-lg border-b border-green-200 text-black ">
             <div>Signed in as</div>
-            <div className="font-bold text-sm">{user}</div>
+            <div className="font-bold text-lg">{user}</div>
           </div>
           <div
             role="none"

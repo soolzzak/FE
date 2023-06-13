@@ -64,22 +64,22 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
     <motion.div
       whileHover={{ scale: 1.03 }}
       role="none"
-      className="cursor-pointer w-full f-ic-col rounded-3xl bg-white h-[366px] py-5 px-3.5 relative shadow-sm"
+      className="cursor-pointer w-full f-ic-col rounded-2xl bg-white h-[366px] py-5 px-3.5 relative shadow-sm"
       onClick={handleCardClick}
     >
       {/* image */}
       <img
         alt={chatRoom.title}
         src={chatRoom.roomImageUrl}
-        className="w-full h-48 bg-[#D9D9D9] rounded-lg"
+        className="w-full h-44 bg-[#D9D9D9] rounded-xl"
       />
       {/* body */}
-      <div className="flex self-start w-full relative">
+      <div className="flex mt-0.5 self-start w-full relative">
         <div className="flex self-start gap-2">
-          <span className="mt-2.5 text-sm text-left bg-gray-100 px-2 rounded">
+          <span className="mt-2.5 text-sm text-left bg-gray-100 px-2 py-0.5 rounded">
             {category}
           </span>
-          <span className="mt-2.5 text-sm text-left bg-gray-100 px-2  rounded">
+          <span className="mt-2.5 text-sm text-left bg-gray-100 px-2 py-0.5  rounded">
             {genderSetting}
           </span>
         </div>
@@ -94,12 +94,12 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
           {chatRoom.roomCapacity >= 2 ? '2/2' : '1/2'}
         </span>
       </div>
-      <div className="self-start mt-1 text-xl font-medium text-left overflow-hidden w-full">
-        <div className="h-[52px] overflow-ellipsis overflow-hidden w-full">
+      <div className="self-start mt-1 text-xl font-bold text-left overflow-hidden w-full">
+        <div className="h-[52px] mt-2 overflow-ellipsis overflow-hidden w-full text-[#1A1C20]">
           {chatRoom.title}
         </div>
       </div>
-      <div className="absolute bottom-5 f-ic w-full px-3.5">
+      <div className="absolute bottom-5 f-ic w-full px-3.5 pr-4">
         {chatRoom.userImage ? (
           <img
             alt="Profile Pic"
@@ -110,10 +110,10 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
           <div className="w-10 min-w-[40px] h-10 rounded-full bg-gray-300 shadow-sm" />
         )}
         <div className="f-col ml-3 w-5/6">
-          <div className="text-md">{chatRoom.username}</div>
+          <div className="text-md mb-1">{chatRoom.username}</div>
           <div className="h-2 rounded-lg bg-primary-100 z-0 shadow-sm">
             <div
-              className="h-2 rounded-full bg-primary-200 shadow"
+              className="h-2 rounded-full bg-primary-200"
               style={{ width: `${chatRoom.alcohol}%` }}
             />
           </div>

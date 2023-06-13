@@ -42,7 +42,7 @@ export const FilterPanel = () => {
           role="none"
           onClick={handleDropdownToggle}
           className="cursor-pointer f-ic gap-2 rounded-full bg-white px-5 py-2 text-primary-200 text-lg font-semibold
-              hover:bg-[#f0f0f0] transition-colors duration-300 ease-in-out"
+              hover:bg-[#fdfdfd] transition-colors duration-200 ease-in-out"
         >
           방 설정
           <ArrowDown />
@@ -52,7 +52,7 @@ export const FilterPanel = () => {
             initial={{ opacity: 0, scale: 0, y: -100, x: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, scale: 0, y: -100, x: 100 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.1 }}
             className="absolute w-[341px] top-full right-0 z-10 mt-2 p-4 pt-3 pb-6 bg-white rounded-xl shadow"
           >
             <HorizontalSelector
