@@ -7,11 +7,12 @@ import { Vector } from '../../assets/svgs/Vector';
 import { usernameAtom } from '../../store/mainpageStore';
 import { Logo } from '../../assets/svgs/Logo';
 import { isOpenLoginModalAtom } from '../../store/modalStore';
+import { CancelButton } from '../common/CancelButton';
 
 export const KakaoLoginBtn = () => {
   const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
   const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
-  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=http://localhost:3000/api/login&response_type=code`
   window.location.href = KAKAO_AUTH_URI;
 };
 
@@ -22,8 +23,6 @@ export const LoginModal = () => {
   const [password, setPassword] = useState<string | undefined>();
 
   const [, setUserToken] = useAtom(usernameAtom);
-
-  const [errMsg, setErrMsg] = useState<string | undefined>();
 
   const emailHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
@@ -54,16 +53,19 @@ export const LoginModal = () => {
   };
 
   return (
-    <div className="w-[470px] h-[625px] rounded-[20px] bg-[#FFFFFF] flex flex-col justify-center items-center text-center">
-      <Logo logoSize="150" />
+    <div className="relative f-ic-col px-9 py-14 w-[450px] bg-white rounded-3xl justify-center items-center text-center">
+      <div className="absolute right-2 top-2">
+        <CancelButton onClose={() => setIsOpenLogin(false)} />
+      </div>
+      <Logo logoSize="200" />
       <form onSubmit={submitHandler}>
-        <p className="font-bold text-[20px] mb-7">
+        <div className="text-2xl font-bold mt-8 mb-4">
           따로 또 같이, 함께하는 혼술!
-        </p>
+        </div>
 
         <div>
           <input
-            className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] placeholder:align-middle mb-3"
+            className="box-border w-full py-2 rounded-lg border border-[#929292] placeholder:text-base placeholder:align-middle placeholder:indent-2"
             type="text"
             value={email || ''}
             onChange={emailHandler}
@@ -71,24 +73,23 @@ export const LoginModal = () => {
           />
 
           <input
-            className="box-border w-[356px] h-[45px] rounded-lg border border-[#929292] pl-2 placeholder:text-[16px] placeholder:align-middle mb-3"
+            className="box-border w-full py-2 rounded-lg border border-[#929292] placeholder:text-base placeholder:align-middle placeholder:indent-2 mt-3"
             type="password"
             value={password || ''}
             onChange={passwordHandler}
             placeholder="비밀번호를 입력해주세요"
           />
         </div>
-        <div className="text-lg text-red-600 mt-1 mb-4 pl-1">{errMsg}</div>
         <button
           type="submit"
-          className="w-[356px] h-[45px] bg-primary-300 rounded-lg text-[18px] text-[#FFFFFF] font-bold mb-3 hover:bg-primary-400"
+          className="emailLoginButton w-full mt-5"
         >
           이메일로 로그인
         </button>
       </form>
       <button
         type="button"
-        className="w-[356px] h-[45px] bg-[#FEE500] rounded-lg text-[18px] text-[#242424] font-bold mb-3 hover:bg-opacity-80"
+        className="kakaoLoginButton w-full mt-2"
         onClick={KakaoLoginBtn}
       >
         카카오톡으로 로그인

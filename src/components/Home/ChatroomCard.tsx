@@ -54,7 +54,7 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
     <motion.div
       whileHover={{ scale: 1.04 }}
       role="none"
-      className="cursor-pointer f-ic-col rounded-3xl bg-white sm:min-w-[221px] sm:w-[221px] h-[306px] py-5 px-3.5 relative shadow"
+      className="cursor-pointer f-ic-col rounded-3xl bg-white min-w-[221px] w-[221px] h-[306px] py-5 px-3.5 relative shadow-sm"
       onClick={handleCardClick}
     >
       {/* image */}
@@ -101,9 +101,9 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
         )}
         <div className="f-col justify-between ml-3 h-full w-36">
           <div className="pb-1 text-sm">{chatRoom.username}</div>
-          <div className="h-2 rounded-lg bg-secondary-100 z-0 shadow-sm">
+          <div className="h-2 rounded-lg bg-primary-100 z-0 shadow-sm">
             <div
-              className="h-2 rounded-full bg-secondary-200 shadow"
+              className="h-2 rounded-full bg-primary-200 shadow"
               style={{ width: `${chatRoom.alcohol}%` }}
             />
           </div>
