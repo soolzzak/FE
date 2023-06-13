@@ -57,7 +57,7 @@ export const HeroSection = () => {
   };
   return (
     <div className="w-full">
-      <section className="relative w-full h-[480px] min-w-[660px]">
+      <section className="relative w-full h-[580px] min-w-[660px]">
         <AnimatePresence initial={false}>
           <motion.div
             key={currentImageIndex}
@@ -74,10 +74,10 @@ export const HeroSection = () => {
             }}
           />
         </AnimatePresence>
-        <div className="absolute bg-black w-full h-full opacity-30 z-10" />
+        <div className="absolute bg-black w-full h-full opacity-[0.4] z-10" />
         <div className="f-jic-col text-[#494949] min-w-[660px]">
           <motion.h1
-            className="font-bold text-3xl  mt-48 text-white z-20"
+            className="font-bold text-5xl  mt-52 text-white z-20"
             initial="hidden"
             animate="visible"
             variants={textVariants}
@@ -86,7 +86,7 @@ export const HeroSection = () => {
             심심한 혼술 이제 그만,
           </motion.h1>
           <motion.h1
-            className="font-bold text-3xl text-white mt-2 z-20"
+            className="font-bold text-5xl text-white mt-4 z-20"
             initial="hidden"
             animate="visible"
             variants={textVariants}
@@ -95,9 +95,9 @@ export const HeroSection = () => {
             함께 편하게 술 한잔!
           </motion.h1>
         </div>
-        <div className="f-jic-col mt-9  text-[#5F5F5F] min-w-[660px]">
+        <div className="f-jic-col mt-12  text-[#5F5F5F] min-w-[660px]">
           <motion.span
-            className="text-xl text-white z-20"
+            className="text-[28px] text-white z-20"
             initial="hidden"
             animate="visible"
             variants={staggerVariants}
@@ -113,7 +113,7 @@ export const HeroSection = () => {
             <motion.span variants={letterVariants}>간</motion.span>,
           </motion.span>
           <motion.span
-            className="text-xl text-white z-20"
+            className="text-[28px] text-white z-20"
             initial="hidden"
             animate="visible"
             variants={staggerVariants}

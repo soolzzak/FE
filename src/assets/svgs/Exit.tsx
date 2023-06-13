@@ -2,8 +2,8 @@ import { Dispatch, SetStateAction } from 'react';
 
 export const Exit = ({setIsOpenLeaveRoom}: {setIsOpenLeaveRoom: Dispatch<SetStateAction<boolean>>}) => (
   <svg
-    width="80"
-    height="80"
+    width="70"
+    height="70"
     viewBox="0 0 76 76"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

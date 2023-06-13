@@ -32,7 +32,7 @@ export const WaitingGuestRef = () => {
           }`}
         />
       </div>
-      <div>짝을 기다리고 있어요 👀</div>
+      <div className='font-bold'>짝을 기다리고 있어요 👀</div>
     </div>
   );
 };
