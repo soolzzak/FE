@@ -15,7 +15,8 @@ export const KakaoCallback = () => {
         const response: AxiosResponse<ApiResponse> = await axios.get(
           `https://api.honsoolzzak.com/api/login?code=${code}`
         );
-        const accessKey = response.headers.access_key;
+        // const accessKey = response.headers.access_key;
+        const accessKey = Cookies.get('Authorization') as string;
         // const refreshKey = response.headers.refresh_key;
         const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
         // const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
