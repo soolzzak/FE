@@ -26,7 +26,7 @@ export const HistoryCard = ({ item }: { item: TabUserList }) => {
       >
         <div>
           <img
-            className="min-w-[64px] h-[64px] m-2 rounded-full  bg-[#B6ECC4] mr-4 object-cover shadow"
+            className="w-[64px] h-[64px] m-2 rounded-full  bg-[#B6ECC4] mr-4 object-cover shadow"
             src={item.userImage}
             alt=""
           />
