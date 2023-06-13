@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import { ArrowDown } from '../../assets/svgs/ArrowDown';
 
@@ -60,14 +60,18 @@ export const FilterPanel = () => {
               selections={['ANY', 'FEMALE', 'MALE']}
               displayedSelections={['누구나', '여자만', '남자만']}
               selectedOption={genderOption}
-              handleOptionClick={setGenderOption}
+              handleOptionClick={
+                setGenderOption as Dispatch<SetStateAction<string | boolean>>
+              }
             />
             <HorizontalSelector
               title="방 정렬"
               selections={[false, true]}
               displayedSelections={['전체', '빈방']}
               selectedOption={allOrEmpty}
-              handleOptionClick={setAllOrEmpty}
+              handleOptionClick={
+                setAllOrEmpty as Dispatch<SetStateAction<string | boolean>>
+              }
             />
           </motion.div>
         )}

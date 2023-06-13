@@ -271,7 +271,6 @@ export const StreamRoom = () => {
             break;
           case 'toast':
             console.log('received toast message', message);
-            await handleAnswerMessage(message);
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);

@@ -12,7 +12,7 @@ import { CancelButton } from '../common/CancelButton';
 export const KakaoLoginBtn = () => {
   const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
   const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
-  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   window.location.href = KAKAO_AUTH_URI;
 };
 
@@ -80,10 +80,7 @@ export const LoginModal = () => {
             placeholder="비밀번호를 입력해주세요"
           />
         </div>
-        <button
-          type="submit"
-          className="emailLoginButton w-full mt-5"
-        >
+        <button type="submit" className="emailLoginButton w-full mt-5">
           로그인
         </button>
       </form>

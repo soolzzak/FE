@@ -2,10 +2,10 @@ import { Dispatch, SetStateAction } from 'react';
 
 interface SelectorProps {
   title: string;
-  selections: any[];
+  selections: string[] | boolean[];
   displayedSelections: string[];
-  selectedOption: any;
-  handleOptionClick: Dispatch<SetStateAction<any>>;
+  selectedOption: string | boolean;
+  handleOptionClick: Dispatch<SetStateAction<string | boolean>>;
 }
 export const HorizontalSelector = ({
   title,
@@ -24,7 +24,7 @@ export const HorizontalSelector = ({
         {selections.map((option, index) => (
           <div
             role="none"
-            key={option}
+            key={`${option}`}
             className={`text-lg text-center w-full border-2 px-3 py-1.5 border-[#929292] rounded-xl cursor-pointer ${
               selectedOption === option
                 ? 'bg-primary-50 text-primary-200 border-primary-200'

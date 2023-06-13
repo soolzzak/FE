@@ -1,33 +1,37 @@
 import { motion } from 'framer-motion';
 import { atom, useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { ToastContent, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { MainpageRooms } from '../../api/main';
 import { userTokenAtom } from '../../store/mainpageStore';
-import { isOpenJoinRoomAtom } from '../../store/modalStore';
+import {
+  isOpenAuthModalAtom,
+  isOpenJoinRoomAtom,
+} from '../../store/modalStore';
 import {
   categorySelection,
   genderSelection,
 } from '../../utils/switchSelections';
-import { checkIfRoomIsEmpty, getRoom } from '../../api/streamRoom';
+import { checkIfRoomIsEmpty } from '../../api/streamRoom';
+import { Modal } from '../common/Modal';
+import { AuthModal } from '../Header/AuthModal';
 
-type ChatroomCardProps = {
-  chatRoom: MainpageRooms;
-};
 export const chatRoomInfoAtom = atom<MainpageRooms | null>(null);
-export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
+export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
   const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
   const [, setChatRoomInfo] = useAtom(chatRoomInfoAtom);
   const [category, setCategory] = useState('');
   const [genderSetting, setGenderSetting] = useState('');
   const [userToken] = useAtom(userTokenAtom);
+  const [, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
+
   useEffect(() => {
     setCategory(categorySelection(chatRoom.category) as string);
     setGenderSetting(genderSelection(chatRoom.genderSetting) as string);
   }, []);
   const handleCardClick = async () => {
     if (Object.keys(userToken as object).length === 0) {
-      toast.error('로그인을 해주세요!');
+      setIsOpenAuth(true);
       return;
     }
     if (chatRoom.roomCapacity >= 2) {
@@ -41,15 +45,21 @@ export const ChatroomCard = ({ chatRoom }: ChatroomCardProps) => {
       toast.error(`${genderSetting} 들어오세요`);
       return;
     }
-    try {
-      await checkIfRoomIsEmpty(chatRoom.roomId.toString());
-    } catch (error) {
-      console.log(error);
-      return toast.error(error as ToastContent);
+
+    const response = await checkIfRoomIsEmpty(chatRoom.roomId.toString());
+    if (response?.response?.data.message === 'This user is blocked.') {
+      return toast.error('차단되었습니다');
+    }
+    if (
+      response?.response?.data.message ===
+      'Another user has already joined the room.'
+    ) {
+      return toast.error('방이 꽉 찼습니다');
     }
     setChatRoomInfo(chatRoom as MainpageRooms);
     setIsOpenJoinRoom(true);
   };
+
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
