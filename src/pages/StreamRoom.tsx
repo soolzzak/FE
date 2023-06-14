@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
 import { LuMic, LuMicOff } from 'react-icons/lu';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
@@ -23,7 +23,10 @@ import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
-import { isOpenLeaveRoomAtom } from '../store/modalStore';
+import { isOpenLeaveRoomAtom, isOpenModifyRoomAtom } from '../store/modalStore';
+import { ScreenShare } from '../assets/svgs/ScreenShare';
+import { ToastIcon } from '../assets/svgs/ToastIcon';
+import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 
 export interface JwtPayload {
   auth: {
@@ -51,9 +54,18 @@ const PeerConnectionConfig = {
   ],
 };
 
-let mediaStream: MediaStream;
+// let mediaStream: MediaStream;
 
 export const StreamRoom = () => {
+  const getlocalstream = async () => {
+    const localVideo = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+    return localVideo;
+  };
+  const { data: mediaStream } = useQuery('stream', getlocalstream);
+  console.log('mediaStream', mediaStream);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const contentVideoRef = useRef<HTMLVideoElement>(null);
@@ -71,7 +83,14 @@ export const StreamRoom = () => {
   const [socket, setSocket] = useState<WebSocket>(
     new WebSocket(signalingServerUrl)
   );
+
+  const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
+  const [screenHover, setScreenHover] = useState(false);
+  const [settingHover, setSettingHover] = useState(false);
+  const [closeHover, setCloseHover] = useState(false);
+  const [toastHover, setToastHover] = useState(false);
+  const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -225,37 +244,43 @@ export const StreamRoom = () => {
     };
 
     console.log('adding media stream to track', mediaStream);
-    mediaStream.getTracks().forEach((track) => {
+    mediaStream?.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
     });
   };
   const startLocalStream = async () => {
     try {
       // eslint-disable-next-line no-undef
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      if (localVideoRef.current) {
+
+      if (localVideoRef.current && mediaStream) {
         localVideoRef.current.srcObject = mediaStream;
       }
-
       console.log('this media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
     }
   };
 
+  const sendJoinMessage = async () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'join',
+      data: roomNum,
+    });
+    await socket.send(message);
+  };
+
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
-        const message = JSON.stringify({
-          from: userId,
-          type: 'join',
-          data: roomNum,
-        });
-        console.log('WebSocket connection opened', message);
-        socket.send(message);
+        console.log('WebSocket connection opened');
+        // const message = JSON.stringify({
+        //   from: userId,
+        //   type: 'join',
+        //   data: roomNum,
+        // });
+
+        // socket.send(message);
       };
 
       socket.onclose = () => {
@@ -272,7 +297,6 @@ export const StreamRoom = () => {
         switch (message.type) {
           case 'offer':
             console.log('received offer message', message);
-
             await handleOfferMessage(message);
             break;
           case 'answer':
@@ -312,6 +336,17 @@ export const StreamRoom = () => {
 
     // Establish a connection with the signaling server
     connectToSignalingServer();
+    if (mediaStream && socket) {
+      // const message = JSON.stringify({
+      //   from: userId,
+      //   type: 'join',
+      //   data: roomNum,
+      // });
+      // socket.send(message);
+      sendJoinMessage();
+    }
+
+    // Establish a connection with the signaling server
     return () => {
       if (peerConnection) {
         peerConnection.close();
@@ -320,12 +355,12 @@ export const StreamRoom = () => {
         socket.close();
       }
     };
-  }, []);
+  }, [mediaStream]);
 
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
-    if (audio) {
-      const audioTrack = mediaStream.getAudioTracks()[0];
+    if (audio && mediaStream) {
+      const audioTrack = mediaStream?.getAudioTracks()[0];
       audioTrack.enabled = !audioTrack.enabled;
       setMicOn((prev) => !prev);
     }
@@ -333,7 +368,7 @@ export const StreamRoom = () => {
 
   const videoToggleHandler = () => {
     const video = localVideoRef.current;
-    if (video) {
+    if (video && mediaStream) {
       const videoTrack = mediaStream.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
       setMonitorOn((prev) => !prev);
@@ -389,11 +424,19 @@ export const StreamRoom = () => {
 
   // 화면공유
   const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
+  console.log('shareView', shareView);
 
   useEffect(() => {
     // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
     if (shareView && localVideoRef.current) {
       localVideoRef.current.srcObject = shareView;
+    } else if (localVideoRef.current && mediaStream) {
+      localVideoRef.current.srcObject = mediaStream;
+    }
+    if (shareView) {
+      shareView.onremovetrack = () => {
+        console.log('removeTrack');
+      };
     }
   }, [shareView]);
 
@@ -404,7 +447,7 @@ export const StreamRoom = () => {
       frameRate: 50,
       displaySurface: 'monitor', // 'monitor'를 지정하여 모니터 화면 공유 가능
     },
-    audio: true,
+    audio: false,
   };
 
   // 화면 공유를 시작
@@ -431,17 +474,24 @@ export const StreamRoom = () => {
       console.log('트랙교체', peerConnection.getSenders());
 
       // 화면 공유 스트림 종료
-      stream.getVideoTracks()[0].addEventListener('ended', () => {
+      console.log('sender stream', stream);
+      stream.getVideoTracks()[0].onended = () => {
+        if (localVideoRef.current && mediaStream) {
+          localVideoRef.current.srcObject = mediaStream;
+        }
         peerConnection.getSenders().forEach((sender) => {
-          if (sender.track?.kind === 'video') {
+          if (sender.track?.kind === 'video' && mediaStream) {
             sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+            console.log('if mediaStream', mediaStream);
           }
         });
-      });
+      };
     } catch (error) {
       console.error('Error starting screen share:', error);
     }
   };
+
+  console.log('mediaStream', mediaStream);
 
   return (
     <div className="w-full h-full min-w-[660px]">
@@ -461,6 +511,18 @@ export const StreamRoom = () => {
 
           <div className="grid xl:grid-cols-6 grid-cols-1 xl:grid-rows-6 grid-rows-4 gap-4 w-full h-full">
             <div className="relative xl:col-span-4 xl:row-span-6 row-span-3 w-full h-full rounded-2xl">
+              <div
+                onMouseOver={() => setToastHover(true)}
+                onMouseOut={() => setToastHover(false)}
+                className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
+              >
+                <ToastIcon />
+                {toastHover ? (
+                  <div className="absolute w-48 h-10 top-16 xl:right-0 ml-36 bg-white text-lg font-semibold rounded-xl f-jic">
+                    건배할 때 눌러보세요!
+                  </div>
+                ) : null}
+              </div>
               <div className="w-full h-full rounded-2xl">
                 {guestIn ? (
                   <video
@@ -478,6 +540,8 @@ export const StreamRoom = () => {
                 <div
                   role="none"
                   onClick={micToggleHandler}
+                  onMouseOver={() => setMicHover(true)}
+                  onMouseOut={() => setMicHover(false)}
                   className={`iconStyle ${
                     micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
                   } `}
@@ -487,6 +551,11 @@ export const StreamRoom = () => {
                   ) : (
                     <LuMicOff className="text-3xl text-white" />
                   )}
+                  {micHover ? (
+                    <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Microphone
+                    </div>
+                  ) : null}
                 </div>
                 <div
                   role="none"
@@ -499,17 +568,51 @@ export const StreamRoom = () => {
                 >
                   {monitorOn ? <MonitorOn /> : <MonitorOff />}
                   {cameraHover ? (
-                    <div className="absolute -top-10 text-white px-3 py-1 z-auto">
+                    <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
                       Camera
                     </div>
                   ) : null}
                 </div>
 
-                <div className="iconStyle bg-[#C0C0C0]">
-                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
+                <div
+                  role="none"
+                  onClick={startScreenShare}
+                  onMouseOver={() => setScreenHover(true)}
+                  onMouseOut={() => setScreenHover(false)}
+                  className="iconStyle relative bg-[#C0C0C0]"
+                >
+                  <ScreenShare />
+                  {screenHover ? (
+                    <div className="w-32 absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Screen Share
+                    </div>
+                  ) : null}
                 </div>
 
-                <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
+                <div
+                  onMouseOver={() => setSettingHover(true)}
+                  onMouseOut={() => setSettingHover(false)}
+                  className="iconStyle bg-[#C0C0C0]"
+                >
+                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
+                  {settingHover ? (
+                    <div className="absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Setting
+                    </div>
+                  ) : null}
+                </div>
+
+                <div
+                  onMouseOver={() => setCloseHover(true)}
+                  onMouseOut={() => setCloseHover(false)}
+                >
+                  <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
+                  {closeHover ? (
+                    <div className="absolute -top-10 right-0 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Close
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
 
@@ -522,7 +625,7 @@ export const StreamRoom = () => {
               />
             </div>
 
-            <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4">
+            <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
               <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
                 <Camera />
                 함께 사진찍기
@@ -551,9 +654,13 @@ export const StreamRoom = () => {
         <KickoutModal onClose={onCloseKickout} />
       </Modal>
 
-      <button type="button" onClick={startScreenShare}>
-        화면공유
-      </button>
+      <Modal
+        isOpen={modifyRoomIsOpen}
+        onClose={() => setModiftRoomIsOpen(false)}
+        hasOverlay
+      >
+        <ModifyRoomModal />
+      </Modal>
 
       <video
         ref={contentVideoRef}
