@@ -445,7 +445,7 @@ export const StreamRoom = () => {
 
   return (
     <div className="w-full h-full min-w-[660px]">
-      <div className="f-col h-[85vh]">
+      <div className="f-col">
         <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
           <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
             <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
