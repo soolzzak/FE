@@ -1,7 +1,8 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Notifications } from '../../assets/svgs/Notifications';
 import { useModal } from '../../hooks/useModal';
 import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
@@ -27,7 +28,7 @@ export const HeaderRightSection = () => {
       setUserAtom(jwtDecode(user));
     }
   }, [user]);
-
+  const navigate = useNavigate();
   return (
     <motion.section
       className={`f-ic justify-end mr-4 md:min-w-[200px]
@@ -77,10 +78,17 @@ export const HeaderRightSection = () => {
           exit={{ x: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
+          <button
+            type="button"
+            className="text-primary-300 hover:text-primary-400 text-lg mr-7 font-semibold"
+            onClick={() => navigate('/signup')}
+          >
+            회원가입
+          </button>
           <CommonButton
             buttonText="로그인"
             clickHandler={() => setIsOpenAuth(true)}
-            dimensions="mr-7 min-w-[70px]"
+            dimensions="mr-7 text-lg min-w-[70px]"
           />
         </motion.div>
       )}
