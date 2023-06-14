@@ -71,13 +71,16 @@ export const StreamRoom = () => {
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
+  const [socket, setSocket] = useState<WebSocket>(
+    new WebSocket(signalingServerUrl)
+  );
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
-  let socket: WebSocket;
+
   let mediaStream: MediaStream;
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
   const [micHover, setMicHover] = useState(false);
@@ -282,7 +285,6 @@ export const StreamRoom = () => {
 
   useEffect(() => {
     const connectToSignalingServer = async () => {
-      socket = new WebSocket(signalingServerUrl);
       socket.onopen = () => {
         console.log('WebSocket connection opened');
       };
@@ -373,6 +375,7 @@ export const StreamRoom = () => {
     }
   };
   const sendToastMessage = () => {
+    console.log('click toast');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -506,8 +509,9 @@ export const StreamRoom = () => {
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
-      <div className="f-col">
-        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
+
+      <div className="f-col pt-20">
+        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5">
           <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
             <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
               {roomInfo?.title}
@@ -524,9 +528,9 @@ export const StreamRoom = () => {
             <div className="relative xl:col-span-4 xl:row-span-6 row-span-3 w-full h-full rounded-2xl">
               <div
                 role="none"
+                onClick={sendToastMessage}
                 onMouseOver={() => setToastHover(true)}
                 onMouseOut={() => setToastHover(false)}
-                onClick={sendToastMessage}
                 className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
               >
                 <ToastIcon />
@@ -586,6 +590,7 @@ export const StreamRoom = () => {
                     </div>
                   ) : null}
                 </div>
+
                 <div
                   role="none"
                   onClick={startScreenShare}
@@ -613,6 +618,7 @@ export const StreamRoom = () => {
                     </div>
                   ) : null}
                 </div>
+
                 <div
                   onMouseOver={() => setCloseHover(true)}
                   onMouseOut={() => setCloseHover(false)}
@@ -626,6 +632,7 @@ export const StreamRoom = () => {
                 </div>
               </div>
             </div>
+
             <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-[250px]">
               <video
                 ref={localVideoRef}
@@ -634,6 +641,7 @@ export const StreamRoom = () => {
                 className="xl:w-full xl:h-full object-fill rounded-2xl"
               />
             </div>
+
             <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
               <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
                 <Camera />
@@ -658,9 +666,11 @@ export const StreamRoom = () => {
       >
         <LeaveRoomModal />
       </Modal>
+
       <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
         <KickoutModal onClose={onCloseKickout} />
       </Modal>
+
       <Modal
         isOpen={modifyRoomIsOpen}
         onClose={() => setModiftRoomIsOpen(false)}
@@ -668,12 +678,13 @@ export const StreamRoom = () => {
       >
         <ModifyRoomModal />
       </Modal>
-      <video
+
+      {/* <video
         ref={contentVideoRef}
         autoPlay
         muted
         className="w-full h-full object-cover rounded-3xl"
-      />
+      /> */}
     </div>
   );
 };
