@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
-import { LuMic, LuMicOff, LuMonitor, LuMonitorOff } from 'react-icons/lu';
+import { LuMic, LuMicOff } from 'react-icons/lu';
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
@@ -13,7 +13,8 @@ import { Room, getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
 import { Exit } from '../assets/svgs/Exit';
 import { Game } from '../assets/svgs/Game';
-import { ToastIcon } from '../assets/svgs/ToastIcon';
+import { MonitorOff } from '../assets/svgs/MonitorOff';
+import { MonitorOn } from '../assets/svgs/MonitorOn';
 import { Youtube } from '../assets/svgs/Youtube';
 import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
 import { KickoutModal } from '../components/StreamRoom/KickoutModal';
@@ -23,8 +24,6 @@ import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
 import { isOpenLeaveRoomAtom } from '../store/modalStore';
-import { MonitorOn } from '../assets/svgs/MonitorOn';
-import { MonitorOff } from '../assets/svgs/MonitorOff';
 
 export interface JwtPayload {
   auth: {
