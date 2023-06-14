@@ -8,6 +8,7 @@ import { LuMic, LuMicOff } from 'react-icons/lu';
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
+import { Toast } from '../components/StreamRoom/Toast';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { Room, getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
@@ -23,7 +24,7 @@ import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
-import { isOpenLeaveRoomAtom } from '../store/modalStore';
+import { isOpenLeaveRoomAtom, toastAtom } from '../store/modalStore';
 
 export interface JwtPayload {
   auth: {
@@ -81,7 +82,14 @@ export const StreamRoom = () => {
       toast.error(error as ToastContent);
     },
   });
+  const [showToast, setShowToast] = useAtom(toastAtom);
 
+  const showToastHandler = async () => {
+    setShowToast(() => true);
+    setTimeout(() => {
+      setShowToast(() => false);
+    }, 3700);
+  };
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
 
@@ -282,6 +290,7 @@ export const StreamRoom = () => {
             break;
           case 'toast':
             console.log('received toast message', message);
+            showToastHandler();
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
@@ -347,6 +356,7 @@ export const StreamRoom = () => {
         data: roomNum,
       });
       console.log('toast sent', message);
+      showToastHandler();
       socket.send(message);
     }
   };
@@ -445,7 +455,8 @@ export const StreamRoom = () => {
 
   return (
     <div className="w-full h-full min-w-[660px]">
-      <div className="f-col h-[85vh]">
+      {showToast && <Toast />}
+      <div className="f-col">
         <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
           <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
             <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
@@ -553,6 +564,9 @@ export const StreamRoom = () => {
 
       <button type="button" onClick={startScreenShare}>
         화면공유
+      </button>
+      <button type="button" onClick={sendToastMessage}>
+        toast
       </button>
 
       <video
