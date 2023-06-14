@@ -73,7 +73,7 @@ export const StreamRoom = () => {
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
   let socket: WebSocket;
   let mediaStream: MediaStream;
-  // const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+  const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
   const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
   const [screenHover, setScreenHover] = useState(false);
@@ -247,6 +247,7 @@ export const StreamRoom = () => {
       });
       console.log('stream담기나?', stream);
       mediaStream = stream;
+      setMyMediaStream(() => stream);
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -414,7 +415,8 @@ export const StreamRoom = () => {
     if (shareView && localVideoRef.current) {
       localVideoRef.current.srcObject = shareView;
     } else if (localVideoRef.current) {
-      localVideoRef.current.srcObject = mediaStream;
+      localVideoRef.current.srcObject = myMediaStream;
+      console.log('다시주입되니', myMediaStream)
     }
     if (shareView) {
       shareView.onremovetrack = () => {
@@ -435,6 +437,7 @@ export const StreamRoom = () => {
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
+    console.log('mediaStream start', myMediaStream);
     console.log('히히', peerConnection.getSenders());
     try {
       if (!navigator.mediaDevices.getDisplayMedia) {
@@ -460,12 +463,16 @@ export const StreamRoom = () => {
       console.log('sender stream', stream);
       stream.getVideoTracks()[0].onended = () => {
         if (localVideoRef.current) {
-          localVideoRef.current.srcObject = mediaStream;
+          localVideoRef.current.srcObject = myMediaStream;
+          console.log('mediastream 바꾸자0', myMediaStream)
         }
+        console.log('mediastream 바꾸자1', myMediaStream)
         peerConnection.getSenders().forEach((sender) => {
-          if (sender.track?.kind === 'video' && mediaStream) {
-            sender.replaceTrack(mediaStream.getVideoTracks()[0]);
-            console.log('if mediaStream', mediaStream);
+          console.log('mediastream 바꾸자2', myMediaStream)
+          if (sender.track?.kind === 'video' && myMediaStream) {
+            console.log('mediastream 바꾸자3', myMediaStream)
+            sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
+            console.log('if mediaStream', myMediaStream);
           }
         });
       };
