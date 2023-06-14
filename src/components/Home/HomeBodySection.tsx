@@ -19,16 +19,19 @@ import {
   isEmptyFilterAtom,
 } from '../../store/filterPanelStore';
 import { NoRoom } from './NoRoom';
+import { BackToTop } from '../../assets/svgs/BackToTop';
 
 export const HomeBodySection = () => {
+  const [isVisible, setIsVisible] = useState<boolean>(false);
   const [tab] = useAtom(tabAtom);
+  const [displayedTab] = useAtom(displayedTabAtom);
   const [genderFilter] = useAtom(genderFilterAtom);
   const [emptyRoomFilter] = useAtom(isEmptyFilterAtom);
-  const [displayedTab] = useAtom(displayedTabAtom);
+
   const [searchword] = useAtom(searchwordAtom);
   const [newSearchwordTrigger] = useAtom(searchwordTriggerAtom);
-  const [chatList, setChatList] = useAtom(roomListAtom);
 
+  const [chatList, setChatList] = useAtom(roomListAtom);
   const [pageNum, setPageNum] = useState(0);
   const [pageableDetail, setPageableDetail] = useState<number[]>([]);
   const chatListMutation = useMutation(getMainpageRooms, {
@@ -46,6 +49,17 @@ export const HomeBodySection = () => {
       toast.error(error as ToastContent);
     },
   });
+  const handleScroll = () => {
+    const scrollTop = window.scrollY;
+    setIsVisible(scrollTop > 500);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const debouncedHandleScroll = debounce(() => {
     const scrollPosition = window.innerHeight + window.pageYOffset;
@@ -94,9 +108,9 @@ export const HomeBodySection = () => {
   }, [tab, newSearchwordTrigger, genderFilter, emptyRoomFilter]);
 
   return (
-    <motion.section className="flex-grow w-full min-h-[100vh]">
-      <div className="f-ic-col min-w-[660px]">
-        <div className="px-5 w-full max-w-[1400px]">
+    <section className="flex-grow w-full min-h-[100vh]">
+      <div className="f-ic-col min-w-[660px] relative">
+        <div className="px-5 w-full max-w-[1230px]">
           <div className="f-ic justify-between my-10 w-full xl:px-16">
             <p className="font-bold text-2xl">
               {displayedTab === '전체'
@@ -122,7 +136,10 @@ export const HomeBodySection = () => {
               ))}
           </div>
         </div>
+        <div className="fixed sm:right-14 md:right-20 lg:right-28 xl:right-36 bottom-12">
+          {isVisible && <BackToTop />}
+        </div>
       </div>
-    </motion.section>
+    </section>
   );
 };

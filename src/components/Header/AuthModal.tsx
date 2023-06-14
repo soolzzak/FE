@@ -6,7 +6,6 @@ import {
 } from '../../store/modalStore';
 import { Logo } from '../../assets/svgs/Logo';
 import { KakaoLoginBtn } from '../login/LoginModal';
-import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { CancelButton } from '../common/CancelButton';
 
 export const AuthModal = () => {
