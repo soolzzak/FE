@@ -4,7 +4,6 @@ import { Search } from '../../assets/svgs/Search';
 import {
   handleDisplayedTabChangeAtom,
   handleSearchwordAtom,
-  handleSearchwordTriggerAtom,
   searchwordTriggerAtom,
   tabAtom,
   usernameAtom,

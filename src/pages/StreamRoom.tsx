@@ -59,6 +59,9 @@ export const StreamRoom = () => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomInfo, setRoomInfo] = useState<Room>();
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
+    new RTCPeerConnection(PeerConnectionConfig)
+  );
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
@@ -84,14 +87,12 @@ export const StreamRoom = () => {
   const getCookie = Cookies.get('refreshKey');
   const params = useParams().id;
 
-  let userId: string
+  let userId: string;
   if (getCookie) {
     userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
   }
-  
-  const roomNum = params;
 
-  let peerConnection: RTCPeerConnection;
+  const roomNum = params;
 
   const handleOfferMessage = async (message: RTCSessionMessage) => {
     console.log('accepting offer', message);
@@ -164,7 +165,6 @@ export const StreamRoom = () => {
   };
 
   const createPeerConnection = async () => {
-    peerConnection = new RTCPeerConnection(PeerConnectionConfig);
     console.log('created peer connection: ', peerConnection);
 
     peerConnection.onicecandidate = (event) => {
@@ -280,7 +280,6 @@ export const StreamRoom = () => {
             break;
           case 'toast':
             console.log('received toast message', message);
-            await handleAnswerMessage(message);
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
