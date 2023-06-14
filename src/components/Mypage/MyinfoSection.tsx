@@ -180,7 +180,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
       </div>
       <div className="md:ml-10 ml-5">
         <p className="font-semibold text-lg text-[#7C7C7C]">연결된 소셜계정</p>
-        <div className="flex flex-row border rounded-2xl gap-[8px]  items-center">
+        <div className="flex flex-row border rounded-2xl  items-center">
           <Kakao />
           <p className="mt-2">카카오톡 계정으로 연결되었습니다</p>
         </div>
