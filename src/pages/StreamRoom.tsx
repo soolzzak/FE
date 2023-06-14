@@ -72,10 +72,7 @@ export const StreamRoom = () => {
   const [socket, setSocket] = useState<WebSocket>(
     new WebSocket(signalingServerUrl)
   );
-
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
-    new RTCPeerConnection(PeerConnectionConfig)
-  );
+  const [cameraHover, setCameraHover] = useState(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -447,14 +444,12 @@ export const StreamRoom = () => {
     }
   };
 
-  const [state, setState] = useState(false);
-
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full min-w-[660px]">
       <div className="f-col h-[85vh]">
-        <div className="bg-red-200 border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
-          <div className="flex flex-row-reverse w-full mb-5">
-            <div className="flex items-center text-xl xl:text-[32px] font-semibold">
+        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
+          <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
+            <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
               {roomInfo?.title}
             </div>
             {guestProfile && (
@@ -465,55 +460,82 @@ export const StreamRoom = () => {
             )}
           </div>
 
-          <div className="grid sm:grid-cols-6 grid-cols-1 grid-rows-4 gap-4 w-full h-full">
-            <div className="bg-red-300 col-span-4 row-span-3 h-full rounded-2xl">
-              {guestIn ? (
-                <video
-                  ref={remoteVideoRef}
-                  autoPlay
-                  muted
-                  className="bg-black w-full h-full object-cover rounded-2xl"
-                />
-              ) : (
-                <WaitingGuestRef />
-              )}
+          <div className="grid xl:grid-cols-6 grid-cols-1 xl:grid-rows-6 grid-rows-4 gap-4 w-full h-full">
+            <div className="relative xl:col-span-4 xl:row-span-6 row-span-3 w-full h-full rounded-2xl">
+              <div className="w-full h-full rounded-2xl">
+                {guestIn ? (
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    muted
+                    className="bg-black w-full h-full object-cover rounded-2xl"
+                  />
+                ) : (
+                  <WaitingGuestRef />
+                )}
+              </div>
+
+              <div className="flex gap-3 absolute left-1/2 -translate-x-1/2 bottom-5">
+                <div
+                  role="none"
+                  onClick={micToggleHandler}
+                  className={`iconStyle ${
+                    micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
+                  } `}
+                >
+                  {micOn ? (
+                    <LuMic className="text-3xl text-white" />
+                  ) : (
+                    <LuMicOff className="text-3xl text-white" />
+                  )}
+                </div>
+                <div
+                  role="none"
+                  onClick={videoToggleHandler}
+                  onMouseOver={() => setCameraHover(true)}
+                  onMouseOut={() => setCameraHover(false)}
+                  className={`iconStyle ${
+                    monitorOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
+                  } relative`}
+                >
+                  {monitorOn ? <MonitorOn /> : <MonitorOff />}
+                  {cameraHover ? (
+                    <div className="absolute -top-10 text-white px-3 py-1 z-auto">
+                      Camera
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="iconStyle bg-[#C0C0C0]">
+                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
+                </div>
+
+                <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
+              </div>
             </div>
 
-            <div className="bg-red-300 col-span-4 row-start-4">
-              여기 버튼 4개
-            </div>
-
-            <div className="bg-red-300 col-span-2 row-span-2 h-full rounded-2xl">
+            <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-[250px]">
               <video
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full object-cover rounded-3xl"
+                className="xl:w-full xl:h-full object-fill rounded-2xl"
               />
             </div>
 
-            <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
-                  <Camera />
-                  함께 사진찍기
-                </span>
+            <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4">
+              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
+                <Camera />
+                함께 사진찍기
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4 ">
-                  <Game />
-                  게임하기
-                </span>
+              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
+                <Game />
+                게임하기
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4">
-                  <Youtube />
-                  유튜브 같이보기
-                </span>
+              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
+                <Youtube />
+                유튜브 같이보기
               </div>
-              <button type="button" onClick={sendToastMessage}>
-                Toast
-              </button>
             </div>
           </div>
         </div>
@@ -541,124 +563,5 @@ export const StreamRoom = () => {
         className="w-full h-full object-cover rounded-3xl"
       />
     </div>
-    // <div className="w-full">
-    //   <div className="flex flex-col">
-    //     <div className="bg-white border rounded-2xl flex flex-col w-full mt-32 max-w-[1400px] h-full mx-auto py-5 px-7">
-    //       <div className="flex flex-row-reverse w-full justify-between mb-5">
-    //         <div className="flex items-center text-xl xl:text-[32px] font-semibold">
-    //           {roomInfo?.title}
-    //         </div>
-    //         {guestProfile && (
-    //           <RemoteUserSection
-    //             guestProfile={guestProfile}
-    //             guestProfileMutation={guestProfileMutation}
-    //           />
-    //         )}
-    //       </div>
-    //       <div className="flex lg:flex-row flex-col justify-between gap-4 h-full">
-    //         <div className="relative flex flex-col h-full justify-between w-full">
-    //           {guestIn ? (
-    //             <video
-    //               ref={remoteVideoRef}
-    //               autoPlay
-    //               muted
-    //               className="bg-black w-full h-full object-cover rounded-2xl"
-    //             />
-    //           ) : (
-    //             <WaitingGuestRef />
-    //           )}
-    //           <div className="absolute top-5 right-5 w-14 h-14 rounded-full bg-primary-200 f-jic">
-    //             <ToastIcon />
-    //           </div>
-    //           <div className="flex items-center justify-center gap-3 mt-4 py-2 rounded-2xl">
-    //             <div
-    //               role="none"
-    //               onClick={micToggleHandler}
-    //               className={`iconStyle ${
-    //                 micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
-    //               } `}
-    //             >
-    //               {micOn ? (
-    //                 <LuMic className="text-3xl text-white" />
-    //               ) : (
-    //                 <LuMicOff className="text-3xl text-white" />
-    //               )}
-    //             </div>
-    //             <div
-    //               role="none"
-    //               onClick={videoToggleHandler}
-    //               onMouseOver={() => setState(true)}
-    //               onMouseOut={() => setState(false)}
-    //               className={`iconStyle ${
-    //                 monitorOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
-    //               } relative`}
-    //             >
-    //               {monitorOn ? <MonitorOn /> : <MonitorOff />}
-    //               {state ? (
-    //                 <div className="absolute -top-10 bg-[#00000080] rounded-md text-white px-3 py-1 z-auto">
-    //                   Camera
-    //                 </div>
-    //               ) : null}
-    //             </div>
-
-    //             <div className="iconStyle bg-[#C0C0C0]">
-    //               <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
-    //             </div>
-
-    //             <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
-    //           </div>
-    //         </div>
-
-    //         <div className="flex flex-col gap-4">
-    //           <div className="w-full h-full rounded-3xl">
-    //             <video
-    //               ref={localVideoRef}
-    //               autoPlay
-    //               muted
-    //               className="w-full h-full object-cover rounded-3xl"
-    //             />
-    //           </div>
-    //           <div className="rounded-xl flex flex-col justify-between gap-4 h-4/6">
-    //             <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-    //               <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
-    //                 <Camera />
-    //                 함께 사진찍기
-    //               </span>
-    //             </div>
-    //             <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-    //               <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4 ">
-    //                 <Game />
-    //                 게임하기
-    //               </span>
-    //             </div>
-    //             <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
-    //               <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
-    //                 <Youtube />
-    //                 유튜브 같이보기
-    //               </span>
-    //             </div>
-    //             <button type="button" onClick={startScreenShare}>
-    //               화면공유
-    //             </button>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <Modal
-    //     isOpen={isOpenLeaveRoom}
-    //     onClose={() => setIsOpenLeaveRoom(false)}
-    //     hasOverlay
-    //   >
-    //     <LeaveRoomModal />
-    //   </Modal>
-
-    //   <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
-    //     <KickoutModal onClose={onCloseKickout} />
-    //   </Modal>
-    //   <button type="button" onClick={sendToastMessage}>
-    //     Toast
-    //   </button>
-    // </div>
   );
 };
