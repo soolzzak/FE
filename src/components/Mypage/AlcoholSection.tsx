@@ -17,7 +17,7 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
       <p>다양한 사람들과 교류하고 도수레벨을 올려보세요!</p>
     </div>
     <div className="px-8 ">
-      <div className="flex flex-row items-end justify-end mr-5 mb-5">
+      <div className="flex flex-row items-end justify-end mr-5 mb-2">
         <p className="place-items-end font-bold text-4xl mr-2 text-[#179638]">
           {alcohol}%
         </p>
@@ -66,6 +66,9 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
         <p>
           당신은 지금{' '}
           {(() => {
+            if (alcohol === 0) {
+              return '물';
+            }
             if (alcohol >= 1 && alcohol <= 6) {
               return '맥주';
             }

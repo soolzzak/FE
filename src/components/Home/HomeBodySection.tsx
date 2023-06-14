@@ -18,6 +18,7 @@ import {
   genderFilterAtom,
   isEmptyFilterAtom,
 } from '../../store/filterPanelStore';
+import { NoRoom } from './NoRoom';
 import { BackToTop } from '../../assets/svgs/BackToTop';
 
 export const HomeBodySection = () => {
@@ -118,8 +119,15 @@ export const HomeBodySection = () => {
             </p>
             <FilterPanel />
           </div>
-          {!chatList?.length && <div className="f-jic"> 방이 없습니다.</div>}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12 h-full mb-14 mx-14 md:mx-0 xl:px-16">
+
+          {!chatList?.length && (
+            <div className="f-jic">
+              {' '}
+              <NoRoom />
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 h-full mb-14 mx-14 md:mx-0 xl:px-16">
             {chatList &&
               chatList.map((chatRoom) => (
                 <div className="flex justify-center" key={chatRoom.roomId}>

@@ -57,6 +57,7 @@ let mediaStream: MediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const contentVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomInfo, setRoomInfo] = useState<Room>();
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
@@ -70,6 +71,10 @@ export const StreamRoom = () => {
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
   const [socket, setSocket] = useState<WebSocket>(
     new WebSocket(signalingServerUrl)
+  );
+
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
+    new RTCPeerConnection(PeerConnectionConfig)
   );
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
@@ -183,6 +188,7 @@ export const StreamRoom = () => {
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
       setRemoteMonitorOn(() => true);
+      console.log('응', peerConnection.getSenders());
 
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
@@ -390,8 +396,8 @@ export const StreamRoom = () => {
 
   useEffect(() => {
     // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
-    if (shareView && remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = shareView;
+    if (shareView && localVideoRef.current) {
+      localVideoRef.current.srcObject = shareView;
     }
   }, [shareView]);
 
@@ -407,6 +413,7 @@ export const StreamRoom = () => {
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
+    console.log('히히', peerConnection.getSenders());
     try {
       if (!navigator.mediaDevices.getDisplayMedia) {
         throw new Error('Screen sharing is not supported.');
@@ -419,9 +426,13 @@ export const StreamRoom = () => {
       // 화면 공유 스트림으로 트랙 교체
       peerConnection.getSenders().forEach((sender) => {
         if (sender.track?.kind === 'video') {
+          console.log('화면공유스트림', stream);
           sender.replaceTrack(stream.getVideoTracks()[0]);
+          console.log('겟비디오', stream.getVideoTracks());
         }
       });
+
+      console.log('트랙교체', peerConnection.getSenders());
 
       // 화면 공유 스트림 종료
       stream.getVideoTracks()[0].addEventListener('ended', () => {
@@ -481,12 +492,54 @@ export const StreamRoom = () => {
               />
             </div>
 
-            <div className="bg-red-300 col-span-2 row-span-2">
-              여기 추가기능 버튼
+            <div className="col-span-3 row-span-2 rounded-xl flex flex-col justify-between gap-4">
+              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
+                <span className="w-48 h-full flex items-center xl:text-xl font-semibold gap-4">
+                  <Camera />
+                  함께 사진찍기
+                </span>
+              </div>
+              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
+                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4 ">
+                  <Game />
+                  게임하기
+                </span>
+              </div>
+              <div className="border border-[#D9D9D9] h-1/3 rounded-xl flex justify-center">
+                <span className="w-48 h-full flex items-center xl:text-xl  font-semibold gap-4">
+                  <Youtube />
+                  유튜브 같이보기
+                </span>
+              </div>
+              <button type="button" onClick={sendToastMessage}>
+                Toast
+              </button>
             </div>
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpenLeaveRoom}
+        onClose={() => setIsOpenLeaveRoom(false)}
+        hasOverlay
+      >
+        <LeaveRoomModal />
+      </Modal>
+
+      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
+        <KickoutModal onClose={onCloseKickout} />
+      </Modal>
+
+      <button type="button" onClick={startScreenShare}>
+        화면공유
+      </button>
+
+      <video
+        ref={contentVideoRef}
+        autoPlay
+        muted
+        className="w-full h-full object-cover rounded-3xl"
+      />
     </div>
     // <div className="w-full">
     //   <div className="flex flex-col">
