@@ -57,8 +57,12 @@ let mediaStream: MediaStream;
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const contentVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomInfo, setRoomInfo] = useState<Room>();
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
+    new RTCPeerConnection(PeerConnectionConfig)
+  );
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
@@ -69,6 +73,10 @@ export const StreamRoom = () => {
     new WebSocket(signalingServerUrl)
   );
   const [cameraHover, setCameraHover] = useState(false);
+
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
+    new RTCPeerConnection(PeerConnectionConfig)
+  );
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -91,8 +99,6 @@ export const StreamRoom = () => {
   }
 
   const roomNum = params;
-
-  let peerConnection: RTCPeerConnection;
 
   const handleOfferMessage = async (message: RTCSessionMessage) => {
     console.log('accepting offer', message);
@@ -165,7 +171,6 @@ export const StreamRoom = () => {
   };
 
   const createPeerConnection = async () => {
-    peerConnection = new RTCPeerConnection(PeerConnectionConfig);
     console.log('created peer connection: ', peerConnection);
 
     peerConnection.onicecandidate = (event) => {
@@ -184,6 +189,7 @@ export const StreamRoom = () => {
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
       setRemoteMonitorOn(() => true);
+      console.log('응', peerConnection.getSenders());
 
       console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
@@ -281,7 +287,6 @@ export const StreamRoom = () => {
             break;
           case 'toast':
             console.log('received toast message', message);
-            await handleAnswerMessage(message);
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
@@ -392,8 +397,8 @@ export const StreamRoom = () => {
 
   useEffect(() => {
     // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
-    if (shareView && remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = shareView;
+    if (shareView && localVideoRef.current) {
+      localVideoRef.current.srcObject = shareView;
     }
   }, [shareView]);
 
@@ -409,6 +414,7 @@ export const StreamRoom = () => {
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
+    console.log('히히', peerConnection.getSenders());
     try {
       if (!navigator.mediaDevices.getDisplayMedia) {
         throw new Error('Screen sharing is not supported.');
@@ -421,9 +427,13 @@ export const StreamRoom = () => {
       // 화면 공유 스트림으로 트랙 교체
       peerConnection.getSenders().forEach((sender) => {
         if (sender.track?.kind === 'video') {
+          console.log('화면공유스트림', stream);
           sender.replaceTrack(stream.getVideoTracks()[0]);
+          console.log('겟비디오', stream.getVideoTracks());
         }
       });
+
+      console.log('트랙교체', peerConnection.getSenders());
 
       // 화면 공유 스트림 종료
       stream.getVideoTracks()[0].addEventListener('ended', () => {
@@ -545,6 +555,17 @@ export const StreamRoom = () => {
       <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
         <KickoutModal onClose={onCloseKickout} />
       </Modal>
+
+      <button type="button" onClick={startScreenShare}>
+        화면공유
+      </button>
+
+      <video
+        ref={contentVideoRef}
+        autoPlay
+        muted
+        className="w-full h-full object-cover rounded-3xl"
+      />
     </div>
   );
 };

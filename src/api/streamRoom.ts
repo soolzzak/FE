@@ -6,6 +6,7 @@ interface ApiResponse {
   status?: number;
   message: string;
   data?: Room[];
+  response?: { data: { message: string } };
 }
 
 export type Room = {
