@@ -7,7 +7,7 @@ import { JoinRoomModal } from '../components/Home/JoinRoomModal';
 import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
 import { Modal } from '../components/common/Modal';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../store/modalStore';
-// import { NoRoom } from '../components/Home/NoRoom';
+import { NoRoom } from '../components/Home/NoRoom';
 
 export const Home = () => {
   const [isOpenJoinRoom, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);

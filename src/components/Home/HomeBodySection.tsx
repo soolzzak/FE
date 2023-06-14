@@ -18,6 +18,7 @@ import {
   genderFilterAtom,
   isEmptyFilterAtom,
 } from '../../store/filterPanelStore';
+import { NoRoom } from './NoRoom';
 
 export const HomeBodySection = () => {
   const [tab] = useAtom(tabAtom);
@@ -104,7 +105,13 @@ export const HomeBodySection = () => {
             </p>
             <FilterPanel />
           </div>
-          {!chatList?.length && <div className="f-jic"> 방이 없습니다.</div>}
+
+          {!chatList?.length && (
+            <div className="f-jic">
+              {' '}
+              <NoRoom />
+            </div>
+          )}
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 h-full mb-14 mx-14 md:mx-0 xl:px-16">
             {chatList &&

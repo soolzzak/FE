@@ -1,40 +1,76 @@
-// import { useEffect, useState } from 'react';
-// import { NoroomSoju } from '../../assets/svgs/NoroomSoju';
-// import { NoroomBeer } from '../../assets/svgs/NoroomBeer';
-// import { NoroomWine } from '../../assets/svgs/NoroomWine';
+import { useEffect, useState, useRef } from 'react';
+import { NoroomSoju } from '../../assets/svgs/NoroomSoju';
+import { NoroomBeer } from '../../assets/svgs/NoroomBeer';
+import { NoroomWine } from '../../assets/svgs/NoroomWine';
 
-// export const NoRoom = () => {
-//   const [isButtonVisible, setIsButtonVisible] = useState(false);
+export const NoRoom = () => {
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [isSojuVisible, setIsSojuVisible] = useState(false);
+  const [isBeerVisible, setIsBeerVisible] = useState(false);
+  const [isWineVisible, setIsWineVisible] = useState(false);
 
-//   useEffect(() => {
-//     const timeout = setTimeout(() => {
-//       setIsButtonVisible(true);
-//     }, 2000);
+  const containerRef = useRef(null);
 
-//     return () => clearTimeout(timeout);
-//   }, []);
+  useEffect(() => {
+    const timeout1 = setTimeout(() => {
+      setIsSojuVisible(true);
+    }, 0); // 바로 나타나도록 변경
 
-//   return (
-//     <div className=" w-full flex flex-col items-center justify-center mt-32">
-//       <div className="mr-8">
-//         <NoroomSoju />
-//       </div>
-//       <NoroomBeer />
-//       <NoroomWine />
-//       <div>
-//         <p className="text-5xl font-bold mb-5">아직 개설된 방이 없어요!</p>
-//         <p className="text-4xl font-semibold text-[#646464]">
-//           혼술짝 방 만들고 가볍게 술 한잔 할까요?
-//         </p>
-//       </div>
-//       {isButtonVisible && (
-//         <button
-//           type="button"
-//           className="bg-[#179638] text-[#FFFFFF] rounded-lg w-[189px] h-[36px]"
-//         >
-//           혼술짝 방만들기
-//         </button>
-//       )}
-//     </div>
-//   );
-// };
+    const timeout2 = setTimeout(() => {
+      setIsBeerVisible(true);
+    }, 500);
+
+    const timeout3 = setTimeout(() => {
+      setIsWineVisible(true);
+    }, 1000);
+
+    const timeout4 = setTimeout(() => {
+      setIsButtonVisible(true);
+    }, 1500);
+
+    return () => {
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
+      clearTimeout(timeout3);
+      clearTimeout(timeout4);
+    };
+  }, []);
+
+  return (
+    <div className=" w-full h-[1000px] flex flex-col items-center justify-center">
+      <div>
+        {isSojuVisible && (
+          <div className="mr-64 mt-8 mb-8">
+            <NoroomSoju />
+          </div>
+        )}
+        {isBeerVisible && (
+          <div className="ml-8 mb-24">
+            <NoroomBeer />
+          </div>
+        )}
+        {isWineVisible && (
+          <div className="mr-60 mb-16">
+            <NoroomWine />
+          </div>
+        )}
+      </div>
+      {isSojuVisible && isBeerVisible && isWineVisible && (
+        <div className="flex flex-col justify-center items-center mt-12">
+          <p className="text-[40px] font-bold mb-2">아직 개설된 방이 없어요!</p>
+          <p className="text-[32px] font-semibold text-[#646464]">
+            혼술짝 방 만들고 가볍게 술 한잔 할까요?
+          </p>
+        </div>
+      )}
+      {isButtonVisible && (
+        <button
+          type="button"
+          className="bg-[#179638] text-[#FFFFFF] rounded-lg w-[525px] h-[75px] mt-12 text-3xl font-bold"
+        >
+          혼술짝 방만들기
+        </button>
+      )}
+    </div>
+  );
+};
