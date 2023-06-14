@@ -9,7 +9,7 @@ import { Like } from '../../assets/svgs/Like';
 import { UnLike } from '../../assets/svgs/UnLike';
 import { CategoryDropDown } from './CategoryDropDown';
 
-interface ApiResponse1 {
+export interface ApiResponse1 {
   status: number;
   msg: string;
   data: DetailUserProfile;
@@ -45,11 +45,24 @@ export const RemoteUserSection = ({
     },
   });
 
-  console.log('얘', guestProfile);
+  const handleThumbupClick = async () => {
+    if (!guestProfile?.alcoholDown) {
+      thumbsUpMutation.mutate(guestProfile.userId);
+    }
+  };
+
+  const handleThumbdownClick = async () => {
+    if (!guestProfile?.alcoholUp) {
+      thumbsDownMutation.mutate(guestProfile.userId);
+    }
+  };
 
   return (
     <section className="flex flex-row justify-center items-center">
-      <CategoryDropDown guestProfile={guestProfile} />
+      <CategoryDropDown
+        guestProfile={guestProfile}
+        guestProfileMutation={guestProfileMutation}
+      />
       <div className="flex flex-col gap-2">
         <div className="xl:text-3xl font-semibold mr-4">
           {guestProfile.username}과 따로 또 같이 혼술하는 중!
@@ -62,13 +75,10 @@ export const RemoteUserSection = ({
         </div>
       </div>
       <div className="flex flex-row gap-3 pl-5 pb-2 self-end">
-        <Like
-          onClick={() => thumbsUpMutation.mutate(guestProfile.userId)}
-          isActive={guestProfile?.alcoholUp}
-        />
+        <Like onClick={handleThumbupClick} isActive={guestProfile?.alcoholUp} />
 
         <UnLike
-          onClick={() => thumbsDownMutation.mutate(guestProfile.userId)}
+          onClick={handleThumbdownClick}
           isActive={guestProfile?.alcoholDown}
         />
       </div>

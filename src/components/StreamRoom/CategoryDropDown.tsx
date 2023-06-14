@@ -1,18 +1,31 @@
 import React, { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { UseMutationResult, useQueryClient } from 'react-query';
 import { DetailUserProfile, FollowHandler } from '../../api/mypage';
 import { useModal } from '../../hooks/useModal';
 import { ReportModal } from '../../report/ReportModal';
 import { Modal } from '../common/Modal';
+
 import { RoomFollowModal } from './RoomFollowModal';
+
+export interface ApiResponse1 {
+  status: number;
+  msg: string;
+  data: DetailUserProfile;
+}
 
 export const CategoryDropDown = ({
   guestProfile,
+  guestProfileMutation,
 }: {
   guestProfile: DetailUserProfile;
+  guestProfileMutation: UseMutationResult<
+    ApiResponse1 | undefined,
+    unknown,
+    string,
+    unknown
+  >;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   const queryClient = useQueryClient();
 
   const [isOpenReport, onCloseReport, setIsOpenReport] = useModal();
@@ -36,7 +49,9 @@ export const CategoryDropDown = ({
     // toast.success(response?.message);
     if (response.status === 200) {
       await queryClient.invalidateQueries('mypageInfo');
+
       await queryClient.invalidateQueries('detailUserInfo');
+      guestProfileMutation.mutate(guestProfile?.userId);
     }
   };
 
@@ -74,7 +89,7 @@ export const CategoryDropDown = ({
         />
       </Modal>
 
-      <div className="relative mt-3 font-semibold">
+      <div className="relative mt-3 font-semibold z-20">
         {isOpen && (
           <div className="bg-white rounded-lg w-[130px] h-[100px] border flex flex-col justify-center items-center absolute -right-14 top-8">
             <div

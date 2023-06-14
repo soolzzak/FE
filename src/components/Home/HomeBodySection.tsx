@@ -119,8 +119,8 @@ export const HomeBodySection = () => {
             <FilterPanel />
           </div>
 
-          {!chatList?.length && (
-            <div className="f-jic">
+          {!chatListMutation.isLoading && !chatList?.length && (
+            <div className="f-jic w-full h-[70vh]">
               {' '}
               <NoRoom />
             </div>

@@ -15,13 +15,18 @@ export const BlockModal = ({
   const handleBlockClick = async () => {
     try {
       const response = await BlockHandler(userinfo?.userId);
-      toast.success(response?.message);
+      if (response.message === 'Successfully unblocked the user.')
+        toast('차단이 해제되었습니다.');
+      else if (response?.message === 'Successfully blocked the user.')
+        toast('차단 되었습니다.');
       if (response.status === 200) {
         await queryClient.invalidateQueries('mypageInfo');
+        await queryClient.invalidateQueries('detailUserInfo');
       }
     } catch (err) {
       console.log(err);
     }
+    onClose();
   };
 
   return (
@@ -35,14 +40,14 @@ export const BlockModal = ({
           <button
             onClick={onClose}
             type="button"
-            className="border rounded-lg w-[139px] h-[44px] text-[16px]  text-[#827676] "
+            className="border-[#C1C1C1] border bg-[#FFFFFF] rounded-lg w-[139px] h-[44px] text-[16px] text-[#7B7B7B] "
           >
             취소
           </button>
           <button
             onClick={handleBlockClick}
             type="button"
-            className="border border-[#179638] bg-[#E0F5E6] rounded-lg w-[139px] h-[44px] text-[16px] text-[#179638] "
+            className="border border-[#FF4444] bg-[#FFF0F0] rounded-lg w-[139px] h-[44px] text-[16px] text-[#FF4444] "
           >
             {userinfo?.block ? '차단 해제' : '차단'}
           </button>

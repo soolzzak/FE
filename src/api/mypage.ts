@@ -12,7 +12,7 @@ export interface MypageProfileRooms {
   userImage: string | undefined;
   username: string;
   alcohol: number;
-  socialProvider: string;
+  kakaoId: string | null;
   email: string;
   metUser: TabUserList[];
   blockListedUser: TabUserList[];

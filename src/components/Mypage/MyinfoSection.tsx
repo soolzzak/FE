@@ -180,9 +180,21 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
       </div>
       <div className="md:ml-10 ml-5">
         <p className="font-semibold text-lg text-[#7C7C7C]">연결된 소셜계정</p>
-        <div className="flex flex-row border rounded-2xl gap-[8px]  items-center">
-          <Kakao />
-          <p className="mt-2">카카오톡 계정으로 연결되었습니다</p>
+        <div className="flex flex-row mt-2 items-center">
+          <div className="border p-2 rounded-3xl flex items-center">
+            {myinfo.kakaoId === null ? (
+              <>
+                <Kakao />
+                <p className="text-base font-normal ml-1">
+                  카카오톡 계정으로 연결되었습니다.
+                </p>
+              </>
+            ) : (
+              <p className="text-base font-normal">
+                연결된 소셜 계정이 없습니다.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
