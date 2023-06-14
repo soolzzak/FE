@@ -74,10 +74,6 @@ export const StreamRoom = () => {
   );
   const [cameraHover, setCameraHover] = useState(false);
 
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
-    new RTCPeerConnection(PeerConnectionConfig)
-  );
-
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
       setGuestProfile(data?.data);
