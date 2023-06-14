@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
 import { LuMic, LuMicOff } from 'react-icons/lu';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
@@ -57,15 +57,6 @@ const PeerConnectionConfig = {
 // let mediaStream: MediaStream;
 
 export const StreamRoom = () => {
-  const getlocalstream = async () => {
-    const localVideo = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-    return localVideo;
-  };
-  const { data: mediaStream } = useQuery('stream', getlocalstream);
-  console.log('mediaStream', mediaStream);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const contentVideoRef = useRef<HTMLVideoElement>(null);
@@ -80,10 +71,8 @@ export const StreamRoom = () => {
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
-  const [socket, setSocket] = useState<WebSocket>(
-    new WebSocket(signalingServerUrl)
-  );
-
+  let socket: WebSocket;
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
   const [screenHover, setScreenHover] = useState(false);
@@ -251,36 +240,36 @@ export const StreamRoom = () => {
   const startLocalStream = async () => {
     try {
       // eslint-disable-next-line no-undef
-
-      if (localVideoRef.current && mediaStream) {
-        localVideoRef.current.srcObject = mediaStream;
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      console.log('stream담기나?', stream);
+      setMediaStream(() => stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
       }
-      console.log('this media stream', mediaStream);
+      console.log('this media stream', stream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
     }
   };
 
-  const sendJoinMessage = async () => {
+  const sendJoinMessage = () => {
     const message = JSON.stringify({
       from: userId,
       type: 'join',
       data: roomNum,
     });
-    await socket.send(message);
-  };
+    socket.send(message);
+    console.log('send join message');
+  }
 
   useEffect(() => {
     const connectToSignalingServer = async () => {
+      socket = new WebSocket(signalingServerUrl);
       socket.onopen = () => {
         console.log('WebSocket connection opened');
-        // const message = JSON.stringify({
-        //   from: userId,
-        //   type: 'join',
-        //   data: roomNum,
-        // });
-
-        // socket.send(message);
       };
 
       socket.onclose = () => {
@@ -295,6 +284,11 @@ export const StreamRoom = () => {
         const message = JSON.parse(event.data);
 
         switch (message.type) {
+          case 'info':
+            console.log('received info message', message);
+            await startLocalStream();
+            await sendJoinMessage();
+            break;
           case 'offer':
             console.log('received offer message', message);
             await handleOfferMessage(message);
@@ -319,7 +313,6 @@ export const StreamRoom = () => {
             setRoomInfo(message.data);
             console.log('get room? ', message.data);
             // setGuestIn(prev => true);
-            await startLocalStream();
             await createPeerConnection();
             // console.log(message.data.data.hostId);
             if (message.data?.hostId !== userId) {
@@ -336,17 +329,6 @@ export const StreamRoom = () => {
 
     // Establish a connection with the signaling server
     connectToSignalingServer();
-    if (mediaStream && socket) {
-      // const message = JSON.stringify({
-      //   from: userId,
-      //   type: 'join',
-      //   data: roomNum,
-      // });
-      // socket.send(message);
-      sendJoinMessage();
-    }
-
-    // Establish a connection with the signaling server
     return () => {
       if (peerConnection) {
         peerConnection.close();
@@ -355,7 +337,7 @@ export const StreamRoom = () => {
         socket.close();
       }
     };
-  }, [mediaStream]);
+  }, []);
 
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
@@ -430,7 +412,7 @@ export const StreamRoom = () => {
     // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
     if (shareView && localVideoRef.current) {
       localVideoRef.current.srcObject = shareView;
-    } else if (localVideoRef.current && mediaStream) {
+    } else if (localVideoRef.current) {
       localVideoRef.current.srcObject = mediaStream;
     }
     if (shareView) {
@@ -476,7 +458,7 @@ export const StreamRoom = () => {
       // 화면 공유 스트림 종료
       console.log('sender stream', stream);
       stream.getVideoTracks()[0].onended = () => {
-        if (localVideoRef.current && mediaStream) {
+        if (localVideoRef.current) {
           localVideoRef.current.srcObject = mediaStream;
         }
         peerConnection.getSenders().forEach((sender) => {
