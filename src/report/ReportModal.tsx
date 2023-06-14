@@ -42,7 +42,14 @@ export const ReportModal = ({
       setErrMsg('신고사유를 선택해주세요');
     } else {
       const response = await ReportApi(userinfo.userId, reportDetail);
-      toast.success(response?.message);
+      if (response?.message === 'Already reported user.')
+        toast('이미 신고한 유저입니다.');
+      else if (response?.message === 'Your report has been processed.')
+        toast('신고가 처리되었습니다.');
+      else if (
+        response?.message === 'The reason for reporting is not appropriate.'
+      )
+        toast('신고 이유가 적절하지 않습니다.');
 
       setErrMsg('');
       setIsOpenReport(false);
@@ -80,7 +87,7 @@ export const ReportModal = ({
           <textarea
             value={another || ''}
             onChange={(e) => setAnother(e.target.value)}
-            className="w-full h-[136.54px] rounded-[18px] bg-[#F3F3F3] flex mb-5"
+            className="w-full h-[136.54px] rounded-[18px] bg-[#F3F3F3] flex mb-5 px-3"
             placeholder="그 외 신고사유를 작성해주세요"
           />
         ) : null}
@@ -94,6 +101,9 @@ export const ReportModal = ({
         >
           신고하기
         </button>
+      </div>
+      <div className="absolute right-1 top-32">
+        <CancelButton onClose={() => onCloseReport()} />
       </div>
     </div>
   );

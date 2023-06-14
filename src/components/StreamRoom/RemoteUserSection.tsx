@@ -9,7 +9,7 @@ import { Like } from '../../assets/svgs/Like';
 import { UnLike } from '../../assets/svgs/UnLike';
 import { CategoryDropDown } from './CategoryDropDown';
 
-interface ApiResponse1 {
+export interface ApiResponse1 {
   status: number;
   msg: string;
   data: DetailUserProfile;
@@ -49,7 +49,10 @@ export const RemoteUserSection = ({
 
   return (
     <section className="flex flex-row justify-center items-center">
-      <CategoryDropDown guestProfile={guestProfile} />
+      <CategoryDropDown
+        guestProfile={guestProfile}
+        guestProfileMutation={guestProfileMutation}
+      />
       <div className="flex flex-col gap-2">
         <div className="xl:text-3xl font-semibold mr-4">
           {guestProfile.username}과 따로 또 같이 혼술하는 중!

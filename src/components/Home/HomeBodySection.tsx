@@ -120,7 +120,7 @@ export const HomeBodySection = () => {
             <FilterPanel />
           </div>
 
-          {!chatList?.length && (
+          {!chatListMutation.isLoading && !chatList?.length && (
             <div className="f-jic">
               {' '}
               <NoRoom />
