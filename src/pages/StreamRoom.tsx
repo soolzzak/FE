@@ -72,7 +72,8 @@ export const StreamRoom = () => {
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
   let socket: WebSocket;
-  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+  let mediaStream: MediaStream;
+  // const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
   const [screenHover, setScreenHover] = useState(false);
@@ -245,11 +246,11 @@ export const StreamRoom = () => {
         audio: true,
       });
       console.log('stream담기나?', stream);
-      setMediaStream(() => stream);
+      mediaStream = stream;
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
-      console.log('this media stream', stream);
+      console.log('this media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
     }
@@ -263,7 +264,7 @@ export const StreamRoom = () => {
     });
     socket.send(message);
     console.log('send join message');
-  }
+  };
 
   useEffect(() => {
     const connectToSignalingServer = async () => {
@@ -468,12 +469,17 @@ export const StreamRoom = () => {
           }
         });
       };
+      // stream.getVideoTracks()[0].addEventListener('ended', () => {
+      //   peerConnection.getSenders().forEach((sender) => {
+      //     if (sender.track?.kind === 'video' && mediaStream) {
+      //       sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+      //     }
+      //   });
+      // });
     } catch (error) {
       console.error('Error starting screen share:', error);
     }
   };
-
-  console.log('mediaStream', mediaStream);
 
   return (
     <div className="w-full h-full min-w-[660px]">
