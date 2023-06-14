@@ -16,6 +16,7 @@ export const KakaoCallback = () => {
           `https://api.honsoolzzak.com/api/login?code=${code}`
         );
         const accessKey = response.headers.access_key;
+        console.log('response',response)
         // const refreshKey = response.headers.refresh_key;
         const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
         // const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);

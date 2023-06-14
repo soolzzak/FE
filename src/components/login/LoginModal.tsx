@@ -12,6 +12,7 @@ import { CancelButton } from '../common/CancelButton';
 export const KakaoLoginBtn = () => {
   const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
   const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+  console.log('ddd', REDIRECT_URI);
   const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   window.location.href = KAKAO_AUTH_URI;
 };
@@ -65,7 +66,7 @@ export const LoginModal = () => {
 
         <div>
           <input
-            className="box-border w-full py-2 rounded-lg border border-[#929292] placeholder:text-base placeholder:align-middle placeholder:indent-2"
+            className="box-border w-full py-2 rounded-lg border border-[#929292] indent-2 placeholder:text-base placeholder:align-middle placeholder:indent-2"
             type="text"
             value={email || ''}
             onChange={emailHandler}
@@ -73,7 +74,7 @@ export const LoginModal = () => {
           />
 
           <input
-            className="box-border w-full py-2 rounded-lg border border-[#929292] placeholder:text-base placeholder:align-middle placeholder:indent-2 mt-3"
+            className="box-border w-full py-2 rounded-lg border border-[#929292] indent-2 placeholder:text-base placeholder:align-middle placeholder:indent-2 mt-3"
             type="password"
             value={password || ''}
             onChange={passwordHandler}
