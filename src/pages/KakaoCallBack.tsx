@@ -1,11 +1,14 @@
 import axios, { AxiosResponse } from 'axios';
+import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiResponse } from '../api/auth';
+import { usernameAtom } from '../store/mainpageStore';
 
 export const KakaoCallback = () => {
+  const [, setUserToken] = useAtom(usernameAtom);
   const navigate = useNavigate();
   useEffect(() => {
     const code = new URL(document.location.toString()).searchParams.get('code');
@@ -29,8 +32,8 @@ export const KakaoCallback = () => {
         Cookies.set('refreshKey', refreshKey, {
           expires: refreshExpireDate,
         });
+        setUserToken(accessKey);
         navigate('/');
-        console.log('kakao response',response)
         return response;
       } catch (error) {
         throw error as Error;
