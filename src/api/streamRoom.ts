@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
+import { ApiResponse1, CreateRoomData } from './main';
+import { handleImageCompression } from '../utils/compressImage';
 
 interface ApiResponse {
   status?: number;
@@ -49,5 +51,31 @@ export const checkIfRoomIsEmpty = async (
     return response.data;
   } catch (error) {
     return error as Error;
+  }
+};
+
+export const modifyRoom = async ({data, image}: CreateRoomData, roomId: string): Promise<ApiResponse1> => {
+  try {
+    const formData = new FormData();
+    const sentData = JSON.stringify({ ...data });
+    const textBlob = new Blob([sentData], { type: 'application/json' });
+
+    formData.append('roomRequestDto', textBlob);
+
+    if (image) {
+      const compressedImage = await handleImageCompression(image);
+      formData.append('roomImage', image);
+    }
+
+    const token = Cookies.get('accessKey');
+    const headers = { ACCESS_KEY: `${token}` };
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.put(
+      `/room/${roomId}`,
+      formData,
+      { headers }
+    );
+    return response.data;
+  } catch (error) {
+    throw error as Error;
   }
 };

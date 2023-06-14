@@ -52,7 +52,6 @@ export const ModifyRoomModal = () => {
               className="fixed inset-0"
               onClick={() => onCloseExit()}
             />
-            <div className="fixed">sss</div>
           </div>
         )}
       </div>

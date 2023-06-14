@@ -8,6 +8,7 @@ import { LuMic, LuMicOff } from 'react-icons/lu';
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
+import { Toast } from '../components/StreamRoom/Toast';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { Room, getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
@@ -23,7 +24,15 @@ import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
-import { isOpenLeaveRoomAtom } from '../store/modalStore';
+
+import {
+  isOpenLeaveRoomAtom,
+  isOpenModifyRoomAtom,
+  toastAtom,
+} from '../store/modalStore';
+import { ScreenShare } from '../assets/svgs/ScreenShare';
+import { ToastIcon } from '../assets/svgs/ToastIcon';
+import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 
 export interface JwtPayload {
   auth: {
@@ -51,7 +60,7 @@ const PeerConnectionConfig = {
   ],
 };
 
-let mediaStream: MediaStream;
+// let mediaStream: MediaStream;
 
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -62,16 +71,25 @@ export const StreamRoom = () => {
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
+  const [socket, setSocket] = useState<WebSocket>(
+    new WebSocket(signalingServerUrl)
+  );
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
-  const [socket, setSocket] = useState<WebSocket>(
-    new WebSocket(signalingServerUrl)
-  );
+
+  let mediaStream: MediaStream;
+  const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
+  const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
+  const [screenHover, setScreenHover] = useState(false);
+  const [settingHover, setSettingHover] = useState(false);
+  const [closeHover, setCloseHover] = useState(false);
+  const [toastHover, setToastHover] = useState(false);
+  const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -81,7 +99,14 @@ export const StreamRoom = () => {
       toast.error(error as ToastContent);
     },
   });
+  const [showToast, setShowToast] = useAtom(toastAtom);
 
+  const showToastHandler = async () => {
+    setShowToast(() => true);
+    setTimeout(() => {
+      setShowToast(() => false);
+    }, 3700);
+  };
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
 
@@ -225,37 +250,43 @@ export const StreamRoom = () => {
     };
 
     console.log('adding media stream to track', mediaStream);
-    mediaStream.getTracks().forEach((track) => {
+    mediaStream?.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream);
     });
   };
   const startLocalStream = async () => {
     try {
       // eslint-disable-next-line no-undef
-      mediaStream = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
+      console.log('stream담기나?', stream);
+      mediaStream = stream;
+      setMyMediaStream(() => stream);
       if (localVideoRef.current) {
-        localVideoRef.current.srcObject = mediaStream;
+        localVideoRef.current.srcObject = stream;
       }
-
       console.log('this media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
     }
   };
 
+  const sendJoinMessage = () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'join',
+      data: roomNum,
+    });
+    socket.send(message);
+    console.log('send join message');
+  };
+
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
-        const message = JSON.stringify({
-          from: userId,
-          type: 'join',
-          data: roomNum,
-        });
-        console.log('WebSocket connection opened', message);
-        socket.send(message);
+        console.log('WebSocket connection opened');
       };
 
       socket.onclose = () => {
@@ -270,9 +301,13 @@ export const StreamRoom = () => {
         const message = JSON.parse(event.data);
 
         switch (message.type) {
+          case 'info':
+            console.log('received info message', message);
+            await startLocalStream();
+            await sendJoinMessage();
+            break;
           case 'offer':
             console.log('received offer message', message);
-
             await handleOfferMessage(message);
             break;
           case 'answer':
@@ -282,6 +317,7 @@ export const StreamRoom = () => {
             break;
           case 'toast':
             console.log('received toast message', message);
+            showToastHandler();
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
@@ -295,7 +331,6 @@ export const StreamRoom = () => {
             setRoomInfo(message.data);
             console.log('get room? ', message.data);
             // setGuestIn(prev => true);
-            await startLocalStream();
             await createPeerConnection();
             // console.log(message.data.data.hostId);
             if (message.data?.hostId !== userId) {
@@ -324,8 +359,8 @@ export const StreamRoom = () => {
 
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
-    if (audio) {
-      const audioTrack = mediaStream.getAudioTracks()[0];
+    if (audio && mediaStream) {
+      const audioTrack = mediaStream?.getAudioTracks()[0];
       audioTrack.enabled = !audioTrack.enabled;
       setMicOn((prev) => !prev);
     }
@@ -333,13 +368,14 @@ export const StreamRoom = () => {
 
   const videoToggleHandler = () => {
     const video = localVideoRef.current;
-    if (video) {
+    if (video && mediaStream) {
       const videoTrack = mediaStream.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
       setMonitorOn((prev) => !prev);
     }
   };
   const sendToastMessage = () => {
+    console.log('click toast');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -347,6 +383,7 @@ export const StreamRoom = () => {
         data: roomNum,
       });
       console.log('toast sent', message);
+      showToastHandler();
       socket.send(message);
     }
   };
@@ -389,11 +426,20 @@ export const StreamRoom = () => {
 
   // 화면공유
   const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
+  console.log('shareView', shareView);
 
   useEffect(() => {
     // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
     if (shareView && localVideoRef.current) {
       localVideoRef.current.srcObject = shareView;
+    } else if (localVideoRef.current) {
+      localVideoRef.current.srcObject = myMediaStream;
+      console.log('다시주입되니', myMediaStream);
+    }
+    if (shareView) {
+      shareView.onremovetrack = () => {
+        console.log('removeTrack');
+      };
     }
   }, [shareView]);
 
@@ -404,11 +450,12 @@ export const StreamRoom = () => {
       frameRate: 50,
       displaySurface: 'monitor', // 'monitor'를 지정하여 모니터 화면 공유 가능
     },
-    audio: true,
+    audio: false,
   };
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
+    console.log('mediaStream start', myMediaStream);
     console.log('히히', peerConnection.getSenders());
     try {
       if (!navigator.mediaDevices.getDisplayMedia) {
@@ -431,13 +478,29 @@ export const StreamRoom = () => {
       console.log('트랙교체', peerConnection.getSenders());
 
       // 화면 공유 스트림 종료
-      stream.getVideoTracks()[0].addEventListener('ended', () => {
+      console.log('sender stream', stream);
+      stream.getVideoTracks()[0].onended = () => {
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = myMediaStream;
+          console.log('mediastream 바꾸자0', myMediaStream);
+        }
+        console.log('mediastream 바꾸자1', myMediaStream);
         peerConnection.getSenders().forEach((sender) => {
-          if (sender.track?.kind === 'video') {
-            sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+          console.log('mediastream 바꾸자2', myMediaStream);
+          if (sender.track?.kind === 'video' && myMediaStream) {
+            console.log('mediastream 바꾸자3', myMediaStream);
+            sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
+            console.log('if mediaStream', myMediaStream);
           }
         });
-      });
+      };
+      // stream.getVideoTracks()[0].addEventListener('ended', () => {
+      //   peerConnection.getSenders().forEach((sender) => {
+      //     if (sender.track?.kind === 'video' && mediaStream) {
+      //       sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+      //     }
+      //   });
+      // });
     } catch (error) {
       console.error('Error starting screen share:', error);
     }
@@ -445,8 +508,10 @@ export const StreamRoom = () => {
 
   return (
     <div className="w-full h-full min-w-[660px]">
-      <div className="f-col">
-        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
+      {showToast && <Toast />}
+
+      <div className="f-col pt-20">
+        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5">
           <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
             <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
               {roomInfo?.title}
@@ -461,6 +526,20 @@ export const StreamRoom = () => {
 
           <div className="grid xl:grid-cols-6 grid-cols-1 xl:grid-rows-6 grid-rows-4 gap-4 w-full h-full">
             <div className="relative xl:col-span-4 xl:row-span-6 row-span-3 w-full h-full rounded-2xl">
+              <div
+                role="none"
+                onClick={sendToastMessage}
+                onMouseOver={() => setToastHover(true)}
+                onMouseOut={() => setToastHover(false)}
+                className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
+              >
+                <ToastIcon />
+                {toastHover ? (
+                  <div className="absolute w-48 h-10 top-16 xl:right-0 ml-36 bg-white text-lg font-semibold rounded-xl f-jic">
+                    건배할 때 눌러보세요!
+                  </div>
+                ) : null}
+              </div>
               <div className="w-full h-full rounded-2xl">
                 {guestIn ? (
                   <video
@@ -478,6 +557,8 @@ export const StreamRoom = () => {
                 <div
                   role="none"
                   onClick={micToggleHandler}
+                  onMouseOver={() => setMicHover(true)}
+                  onMouseOut={() => setMicHover(false)}
                   className={`iconStyle ${
                     micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
                   } `}
@@ -487,6 +568,11 @@ export const StreamRoom = () => {
                   ) : (
                     <LuMicOff className="text-3xl text-white" />
                   )}
+                  {micHover ? (
+                    <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Microphone
+                    </div>
+                  ) : null}
                 </div>
                 <div
                   role="none"
@@ -499,17 +585,51 @@ export const StreamRoom = () => {
                 >
                   {monitorOn ? <MonitorOn /> : <MonitorOff />}
                   {cameraHover ? (
-                    <div className="absolute -top-10 text-white px-3 py-1 z-auto">
+                    <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
                       Camera
                     </div>
                   ) : null}
                 </div>
 
-                <div className="iconStyle bg-[#C0C0C0]">
-                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
+                <div
+                  role="none"
+                  onClick={startScreenShare}
+                  onMouseOver={() => setScreenHover(true)}
+                  onMouseOut={() => setScreenHover(false)}
+                  className="iconStyle relative bg-[#C0C0C0]"
+                >
+                  <ScreenShare />
+                  {screenHover ? (
+                    <div className="w-32 absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Screen Share
+                    </div>
+                  ) : null}
                 </div>
 
-                <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
+                <div
+                  onMouseOver={() => setSettingHover(true)}
+                  onMouseOut={() => setSettingHover(false)}
+                  className="iconStyle bg-[#C0C0C0]"
+                >
+                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
+                  {settingHover ? (
+                    <div className="absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Setting
+                    </div>
+                  ) : null}
+                </div>
+
+                <div
+                  onMouseOver={() => setCloseHover(true)}
+                  onMouseOut={() => setCloseHover(false)}
+                >
+                  <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
+                  {closeHover ? (
+                    <div className="absolute -top-10 right-0 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+                      Close
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
 
@@ -522,7 +642,7 @@ export const StreamRoom = () => {
               />
             </div>
 
-            <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4">
+            <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
               <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
                 <Camera />
                 함께 사진찍기
@@ -551,16 +671,20 @@ export const StreamRoom = () => {
         <KickoutModal onClose={onCloseKickout} />
       </Modal>
 
-      <button type="button" onClick={startScreenShare}>
-        화면공유
-      </button>
+      <Modal
+        isOpen={modifyRoomIsOpen}
+        onClose={() => setModiftRoomIsOpen(false)}
+        hasOverlay
+      >
+        <ModifyRoomModal />
+      </Modal>
 
-      <video
+      {/* <video
         ref={contentVideoRef}
         autoPlay
         muted
         className="w-full h-full object-cover rounded-3xl"
-      />
+      /> */}
     </div>
   );
 };

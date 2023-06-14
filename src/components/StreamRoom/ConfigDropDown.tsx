@@ -1,3 +1,4 @@
+import { useAtom } from 'jotai';
 import React, {
   Dispatch,
   SetStateAction,
@@ -6,6 +7,9 @@ import React, {
   useState,
 } from 'react';
 import { AiOutlineSetting } from 'react-icons/ai';
+import { isOpenModifyRoomAtom } from '../../store/modalStore';
+import { Modal } from '../common/Modal';
+import { ModifyRoomModal } from './ModifyRoomModal';
 
 export const ConfigDropDown = ({
   setIsOpenKickout,
@@ -13,6 +17,7 @@ export const ConfigDropDown = ({
   setIsOpenKickout: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom)
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const onToggle = () => {
@@ -43,6 +48,7 @@ export const ConfigDropDown = ({
 
   // 방 수정하기
   const handleModifyClick = () => {
+    setModiftRoomIsOpen(true);
     setIsOpen(false);
   };
 

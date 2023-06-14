@@ -13,7 +13,7 @@ export interface PageableContent {
   totalPages: number;
   content: MainpageRooms[];
 }
-interface ApiResponse1 {
+export interface ApiResponse1 {
   status: number;
   msg: string;
   data: MainpageRooms;
