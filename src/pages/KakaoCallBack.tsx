@@ -16,21 +16,21 @@ export const KakaoCallback = () => {
           `https://api.honsoolzzak.com/api/login?code=${code}`
         );
         const accessKey = response.headers.access_key;
-        console.log('response',response)
-        // const refreshKey = response.headers.refresh_key;
+        const refreshKey = response.headers.refresh_key;
         const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
-        // const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
+        const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
         const accessExp = decodedAccessToken.exp;
-        // const refreshExp = decodedRefreshToken.exp;
+        const refreshExp = decodedRefreshToken.exp;
         const accessExpireDate = new Date(accessExp * 1000);
-        // const refreshExpireDate = new Date(refreshExp * 1000);
+        const refreshExpireDate = new Date(refreshExp * 1000);
         Cookies.set('accessKey', accessKey, {
           expires: accessExpireDate,
         });
-        // Cookies.set('refreshKey', refreshKey, {
-        //   expires: refreshExpireDate,
-        // });
+        Cookies.set('refreshKey', refreshKey, {
+          expires: refreshExpireDate,
+        });
         navigate('/');
+        console.log('kakao response',response)
         return response;
       } catch (error) {
         throw error as Error;
