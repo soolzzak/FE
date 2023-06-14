@@ -8,6 +8,7 @@ import { LuMic, LuMicOff } from 'react-icons/lu';
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
+import { Toast } from '../components/StreamRoom/Toast';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { Room, getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
@@ -23,7 +24,12 @@ import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
-import { isOpenLeaveRoomAtom, isOpenModifyRoomAtom } from '../store/modalStore';
+
+import {
+  isOpenLeaveRoomAtom,
+  isOpenModifyRoomAtom,
+  toastAtom,
+} from '../store/modalStore';
 import { ScreenShare } from '../assets/svgs/ScreenShare';
 import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
@@ -65,13 +71,16 @@ export const StreamRoom = () => {
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
+  const [socket, setSocket] = useState<WebSocket>(
+    new WebSocket(signalingServerUrl)
+  );
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
-  let socket: WebSocket;
+
   let mediaStream: MediaStream;
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
   const [micHover, setMicHover] = useState(false);
@@ -90,7 +99,14 @@ export const StreamRoom = () => {
       toast.error(error as ToastContent);
     },
   });
+  const [showToast, setShowToast] = useAtom(toastAtom);
 
+  const showToastHandler = async () => {
+    setShowToast(() => true);
+    setTimeout(() => {
+      setShowToast(() => false);
+    }, 3700);
+  };
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
 
@@ -269,7 +285,6 @@ export const StreamRoom = () => {
 
   useEffect(() => {
     const connectToSignalingServer = async () => {
-      socket = new WebSocket(signalingServerUrl);
       socket.onopen = () => {
         console.log('WebSocket connection opened');
       };
@@ -302,6 +317,7 @@ export const StreamRoom = () => {
             break;
           case 'toast':
             console.log('received toast message', message);
+            showToastHandler();
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
@@ -359,6 +375,7 @@ export const StreamRoom = () => {
     }
   };
   const sendToastMessage = () => {
+    console.log('click toast');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -366,6 +383,7 @@ export const StreamRoom = () => {
         data: roomNum,
       });
       console.log('toast sent', message);
+      showToastHandler();
       socket.send(message);
     }
   };
@@ -416,7 +434,7 @@ export const StreamRoom = () => {
       localVideoRef.current.srcObject = shareView;
     } else if (localVideoRef.current) {
       localVideoRef.current.srcObject = myMediaStream;
-      console.log('다시주입되니', myMediaStream)
+      console.log('다시주입되니', myMediaStream);
     }
     if (shareView) {
       shareView.onremovetrack = () => {
@@ -464,13 +482,13 @@ export const StreamRoom = () => {
       stream.getVideoTracks()[0].onended = () => {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = myMediaStream;
-          console.log('mediastream 바꾸자0', myMediaStream)
+          console.log('mediastream 바꾸자0', myMediaStream);
         }
-        console.log('mediastream 바꾸자1', myMediaStream)
+        console.log('mediastream 바꾸자1', myMediaStream);
         peerConnection.getSenders().forEach((sender) => {
-          console.log('mediastream 바꾸자2', myMediaStream)
+          console.log('mediastream 바꾸자2', myMediaStream);
           if (sender.track?.kind === 'video' && myMediaStream) {
-            console.log('mediastream 바꾸자3', myMediaStream)
+            console.log('mediastream 바꾸자3', myMediaStream);
             sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
             console.log('if mediaStream', myMediaStream);
           }
@@ -490,8 +508,10 @@ export const StreamRoom = () => {
 
   return (
     <div className="w-full h-full min-w-[660px]">
-      <div className="f-col">
-        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 mt-32">
+      {showToast && <Toast />}
+
+      <div className="f-col pt-20">
+        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5">
           <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
             <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
               {roomInfo?.title}
@@ -507,6 +527,8 @@ export const StreamRoom = () => {
           <div className="grid xl:grid-cols-6 grid-cols-1 xl:grid-rows-6 grid-rows-4 gap-4 w-full h-full">
             <div className="relative xl:col-span-4 xl:row-span-6 row-span-3 w-full h-full rounded-2xl">
               <div
+                role="none"
+                onClick={sendToastMessage}
                 onMouseOver={() => setToastHover(true)}
                 onMouseOut={() => setToastHover(false)}
                 className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
@@ -657,12 +679,12 @@ export const StreamRoom = () => {
         <ModifyRoomModal />
       </Modal>
 
-      <video
+      {/* <video
         ref={contentVideoRef}
         autoPlay
         muted
         className="w-full h-full object-cover rounded-3xl"
-      />
+      /> */}
     </div>
   );
 };

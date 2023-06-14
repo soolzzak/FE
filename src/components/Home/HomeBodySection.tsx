@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { debounce } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -127,7 +126,7 @@ export const HomeBodySection = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 h-full mb-14 mx-14 md:mx-0 xl:px-16">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6 h-full mb-14 mx-14 md:mx-0 xl:px-16">
             {chatList &&
               chatList.map((chatRoom) => (
                 <div className="flex justify-center" key={chatRoom.roomId}>
