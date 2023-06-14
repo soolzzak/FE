@@ -49,31 +49,30 @@ export const NoRoom = () => {
       setIsOpenAuth(true);
       return;
     }
-
     setIsOpenRoomCreate(true);
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row relative mt-10">
+    <div className="f-jic-col w-full h-full relative max-w-[800px]">
+      <div className="flex flex-row w-full max-w-[800px] absolute top-0 mt-10">
         {isSojuVisible && (
-          <div className="absolute inset-y-0 left-80 ml-8">
+          <div className="absolute left-60 ml-8 transform -translate-x-1/2 -translate-y-1/2">
             <NoroomSoju />
           </div>
         )}
         {isBeerVisible && (
-          <div className="absolute inset-y-0 left-1/2 ml-16 top-1/2 mt-24 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute left-1/2 ml-16 top-1/2 mt-32 transform -translate-x-1/2 -translate-y-1/2">
             <NoroomBeer />
           </div>
         )}
         {isWineVisible && (
-          <div className="absolute inset-y-0 top-72 transform left-96">
+          <div className="absolute top-72 transform -translate-x-1/2 -translate-y-1/2 left-72">
             <NoroomWine />
           </div>
         )}
       </div>
 
-      <div className="absolute bottom-1/3">
+      <div className="absolute bottom-0">
         {isSojuVisible && isBeerVisible && isWineVisible && (
           <div className="flex flex-col justify-center items-center">
             <p className="text-[40px] font-bold mb-2">
@@ -87,13 +86,16 @@ export const NoRoom = () => {
         {isButtonVisible && (
           <button
             type="button"
-            className="bg-[#179638] text-[#FFFFFF] rounded-lg w-[525px] h-[75px] mt-12 text-3xl font-bold"
+            className="bg-[#179638] text-[#FFFFFF] rounded-xl w-[525px] h-[75px] mt-12 text-3xl font-bold"
             onClick={handleButtonClick}
           >
             혼술짝 방만들기
           </button>
         )}
       </div>
+      <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
+        <AddRoom onClose={onCloseRoomCreate} />
+      </Modal>
     </div>
   );
 };

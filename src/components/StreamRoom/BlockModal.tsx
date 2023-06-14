@@ -21,6 +21,7 @@ export const BlockModal = ({
         toast('차단 되었습니다.');
       if (response.status === 200) {
         await queryClient.invalidateQueries('mypageInfo');
+        await queryClient.invalidateQueries('detailUserInfo');
       }
     } catch (err) {
       console.log(err);

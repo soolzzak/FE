@@ -45,7 +45,17 @@ export const RemoteUserSection = ({
     },
   });
 
-  console.log('얘', guestProfile);
+  const handleThumbupClick = async () => {
+    if (!guestProfile?.alcoholDown) {
+      thumbsUpMutation.mutate(guestProfile.userId);
+    }
+  };
+
+  const handleThumbdownClick = async () => {
+    if (!guestProfile?.alcoholUp) {
+      thumbsDownMutation.mutate(guestProfile.userId);
+    }
+  };
 
   return (
     <section className="flex flex-row justify-center items-center">
@@ -65,13 +75,10 @@ export const RemoteUserSection = ({
         </div>
       </div>
       <div className="flex flex-row gap-3 pl-5 pb-2 self-end">
-        <Like
-          onClick={() => thumbsUpMutation.mutate(guestProfile.userId)}
-          isActive={guestProfile?.alcoholUp}
-        />
+        <Like onClick={handleThumbupClick} isActive={guestProfile?.alcoholUp} />
 
         <UnLike
-          onClick={() => thumbsDownMutation.mutate(guestProfile.userId)}
+          onClick={handleThumbdownClick}
           isActive={guestProfile?.alcoholDown}
         />
       </div>
