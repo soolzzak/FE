@@ -9,10 +9,11 @@ import { ScreenShare } from '../../assets/svgs/ScreenShare';
 import { useModal } from '../../hooks/useModal';
 import { isOpenLeaveRoomAtom } from '../../store/modalStore';
 import { ConfigDropDown } from './ConfigDropDown';
+import { micOnAtom, monitorOnAtom } from '../../store/streamControlStore';
 
 export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startScreenShare}: {micToggleHandler: () => void, videoToggleHandler: () => void, startScreenShare: () => void}) => {
-  const [micOn, setMicOn] = useState<boolean>(true);
-  const [monitorOn, setMonitorOn] = useState<boolean>(true);
+  const [micOn] = useAtom(micOnAtom)
+  const [monitorOn] = useAtom(monitorOnAtom)
   const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
   const [screenHover, setScreenHover] = useState(false);

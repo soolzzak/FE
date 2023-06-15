@@ -2,17 +2,17 @@ import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { LoginApi, LoginInfo } from '../../api/auth';
+import { Logo } from '../../assets/svgs/Logo';
 import { Vector } from '../../assets/svgs/Vector';
 import { usernameAtom } from '../../store/mainpageStore';
-import { Logo } from '../../assets/svgs/Logo';
 import { isOpenLoginModalAtom } from '../../store/modalStore';
 import { CancelButton } from '../common/CancelButton';
 
 export const KakaoLoginBtn = () => {
   const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
   const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
-  console.log('ddd', REDIRECT_URI);
   const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   window.location.href = KAKAO_AUTH_URI;
 };
@@ -36,8 +36,10 @@ export const LoginModal = () => {
       setUserToken(response?.headers.access_key);
       navigate('/');
     },
-    onError: (error) => {
-      console.log(error);
+    onError: (error: any) => {
+      if (error.response.data.message === 'The email address does not exist.') {
+        toast.error('일치하는 회원정보가 없습니다')
+      }
     },
   });
 
