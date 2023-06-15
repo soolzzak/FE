@@ -16,11 +16,11 @@ import { ModifyRoomButton } from './ModifyRoomButton';
 
 export const ModifyRoomModal = () => {
   const [, setIsOpenModifyRoom] = useAtom(isOpenModifyRoomAtom);
+
   const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
   const [isOpenExit, onCloseExit] = useModal();
 
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
-  console.log('히히', roomInfo);
 
   return (
     <div className="relative f-col bg-white py-8 px-12 rounded-[20px]">
@@ -47,8 +47,8 @@ export const ModifyRoomModal = () => {
           />
         </div>
       </div>
-      {/* <AddRoomButton closeModal={() => setIsOpenModifyRoom} /> */}
-      <ModifyRoomButton closeModal={() => setIsOpenModifyRoom} />
+
+      <ModifyRoomButton />
       <div
         role="none"
         className="absolute right-3 top-3 hover:cursor-pointer"

@@ -55,28 +55,28 @@ export const modifyRoom = async ({
   data,
   image,
   roomId,
-  }: CreateRoomData & { roomId: string }): Promise<ApiResponse1> => {
+}: CreateRoomData & { roomId: string }): Promise<ApiResponse1> => {
   try {
-  const formData = new FormData();
-  const sentData = JSON.stringify({ ...data });
-  const textBlob = new Blob([sentData], { type: 'application/json' });
-  
-  formData.append('roomRequestDto', textBlob);
-  
-  if (image) {
-  const compressedImage = await handleImageCompression(image);
-  formData.append('roomImage', image);
-  }
-  
-  const token = Cookies.get('accessKey');
-  const headers = { ACCESS_KEY: `${token}` };
-  const response: AxiosResponse<ApiResponse1> = await axiosInstance.put(
-  `/room/${roomId}`,
-  formData,
-  { headers }
-  );
-  return response.data;
+    const formData = new FormData();
+    const sentData = JSON.stringify({ ...data });
+    const textBlob = new Blob([sentData], { type: 'application/json' });
+
+    formData.append('roomRequestDto', textBlob);
+
+    if (image) {
+      const compressedImage = await handleImageCompression(image);
+      formData.append('roomImage', image);
+    }
+
+    const token = Cookies.get('accessKey');
+    const headers = { ACCESS_KEY: `${token}` };
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.put(
+      `/room/${roomId}`,
+      formData,
+      { headers }
+    );
+    return response.data;
   } catch (error) {
-  throw error as Error;
+    throw error as Error;
   }
-  };
+};

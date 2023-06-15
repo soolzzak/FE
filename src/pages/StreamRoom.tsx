@@ -95,7 +95,8 @@ export const StreamRoom = () => {
 
   let mediaStream: MediaStream;
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
-  const [remoteMediaStream, setRemoteMediaStream] = useState<MediaStream | null>(null);
+  const [remoteMediaStream, setRemoteMediaStream] =
+    useState<MediaStream | null>(null);
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 
