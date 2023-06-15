@@ -35,6 +35,8 @@ import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
 import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
+import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
+import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
 
 export interface JwtPayload {
   auth: {
@@ -67,16 +69,18 @@ const PeerConnectionConfig = {
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const contentVideoRef = useRef<HTMLVideoElement>(null);
+  const secondScreenVideoRef = useRef<HTMLVideoElement>(null);
+  const thirdScreenVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
-  const [socket, setSocket] = useState<WebSocket>(
-    new WebSocket(signalingServerUrl)
+  const [peerConnection1] = useState<RTCPeerConnection>(
+    new RTCPeerConnection(PeerConnectionConfig)
   );
+  const [socket] = useState<WebSocket>(new WebSocket(signalingServerUrl));
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [micOn, setMicOn] = useState<boolean>(true);
   const [monitorOn, setMonitorOn] = useState<boolean>(true);
@@ -86,6 +90,8 @@ export const StreamRoom = () => {
 
   let mediaStream: MediaStream;
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
+  const [remoteMediaStream, setRemoteMediaStream] =
+    useState<MediaStream | null>(null);
   const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
   const [screenHover, setScreenHover] = useState(false);
@@ -129,22 +135,41 @@ export const StreamRoom = () => {
     setGuestIn(true);
     try {
       console.log('setRemoteDescription', message.sdp);
-      await peerConnection.setRemoteDescription(answerSDP);
-      const answer = await peerConnection.createAnswer();
-      console.log('setLocalDescription', answer);
-      await peerConnection.setLocalDescription(answer);
+      if (peerConnection.connectionState !== 'connected') {
+        await peerConnection.setRemoteDescription(answerSDP);
+        const answer = await peerConnection.createAnswer();
+        console.log('setLocalDescription', answer);
+        await peerConnection.setLocalDescription(answer);
 
-      const response = {
-        from: userId,
-        data: Number(roomNum),
-        type: 'answer',
-        sdp: peerConnection.localDescription,
-      };
+        const response = {
+          from: userId,
+          data: Number(roomNum),
+          type: 'answer',
+          sdp: peerConnection.localDescription,
+        };
 
-      console.log('sending sdp', peerConnection.localDescription);
-      console.log('added answer to peerConnection', peerConnection);
-      console.log('sending answer to received offer', response);
-      socket.send(JSON.stringify(response));
+        console.log('sending sdp', peerConnection.localDescription);
+        console.log('added answer to peerConnection', peerConnection);
+        console.log('sending answer to received offer', response);
+        socket.send(JSON.stringify(response));
+      } else {
+        await peerConnection1.setRemoteDescription(answerSDP);
+        const answer = await peerConnection1.createAnswer();
+        console.log('setLocalDescription', answer);
+        await peerConnection1.setLocalDescription(answer);
+
+        const response = {
+          from: userId,
+          data: Number(roomNum),
+          type: 'answer',
+          sdp: peerConnection1.localDescription,
+        };
+
+        console.log('sending sdp', peerConnection1.localDescription);
+        console.log('added answer to peerConnection', peerConnection1);
+        console.log('sending answer to received offer', response);
+        socket.send(JSON.stringify(response));
+      }
     } catch (error) {
       console.error('Error handling offer:', error);
     }
@@ -152,13 +177,23 @@ export const StreamRoom = () => {
 
   const handleAnswerMessage = async (message: RTCSessionMessage) => {
     console.log('have received answer', message.sdp);
-    console.log(
-      'using received answer for Remote peer description',
-      peerConnection
-    );
+
     try {
       console.log('setRemotelDescription', message.sdp);
-      await peerConnection.setRemoteDescription(message.sdp);
+
+      if (peerConnection.connectionState !== 'connected') {
+        console.log(
+          'using received answer for Remote peer description',
+          peerConnection
+        );
+        await peerConnection.setRemoteDescription(message.sdp);
+      } else {
+        console.log(
+          'using received answer for Remote peer description1',
+          peerConnection1
+        );
+        await peerConnection1.setRemoteDescription(message.sdp);
+      }
     } catch (error) {
       console.error('Error handling answer:', error);
     }
@@ -166,7 +201,11 @@ export const StreamRoom = () => {
 
   const handleCandidateMessage = async (message: RTCIceMessage) => {
     try {
-      await peerConnection.addIceCandidate(message.candidate);
+      if (peerConnection.connectionState !== 'connected') {
+        await peerConnection.addIceCandidate(message.candidate);
+      } else {
+        await peerConnection1.addIceCandidate(message.candidate);
+      }
     } catch (error) {
       console.error('Error handling candidate:', error);
     }
@@ -271,6 +310,9 @@ export const StreamRoom = () => {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
+      if (thirdScreenVideoRef.current) {
+        thirdScreenVideoRef.current.srcObject = stream;
+      }
       console.log('this media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
@@ -286,7 +328,68 @@ export const StreamRoom = () => {
     socket.send(message);
     console.log('send join message');
   };
+  const createScreenSharePeerConnection = async () => {
+    console.log('created peer connection: ', peerConnection1);
 
+    peerConnection1.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log('sending ice candidate', event.candidate);
+        const message = {
+          from: userId,
+          data: Number(roomNum),
+          type: 'ice',
+          candidate: event.candidate,
+        };
+        socket.send(JSON.stringify(message));
+      }
+    };
+    peerConnection1.ontrack = (event) => {
+      console.log('응', peerConnection1.getSenders());
+      console.log('got remote stream', event.streams[0]);
+      const stream = event.streams[0];
+      setRemoteMediaStream(stream);
+      if (secondScreenVideoRef.current) {
+        console.log('adding screenshare video element');
+        secondScreenVideoRef.current.srcObject = stream;
+        console.log('stream?', stream);
+      }
+      console.log('remote ref', secondScreenVideoRef.current);
+      console.log(
+        'secondScreenVideoRef.current.srcObject',
+        secondScreenVideoRef.current?.srcObject
+      );
+    };
+    peerConnection1.oniceconnectionstatechange = () => {
+      console.log('opposing user disconnect event');
+      if (
+        peerConnection1.iceConnectionState === 'disconnected' ||
+        peerConnection1.iceConnectionState === 'closed'
+      ) {
+        console.log('Opposing peer disconnected');
+        if (secondScreenVideoRef.current) {
+          if (secondScreenVideoRef.current.srcObject) {
+            const stream = secondScreenVideoRef.current
+              .srcObject as MediaStream;
+            // stream.getTracks().forEach((track) => track.stop());
+          }
+          secondScreenVideoRef.current.srcObject = null;
+        }
+        console.log(
+          'secondScreenVideoRef.current.srcObject',
+          secondScreenVideoRef.current?.srcObject
+        );
+        setRemoteMonitorOn(() => false);
+        setGuestIn(() => false);
+        setGuestProfile(() => undefined);
+        console.log('peerConnection', peerConnection1);
+      }
+    };
+
+    console.log('adding media stream to track', mediaStream);
+    mediaStream?.getTracks().forEach((track) => {
+      peerConnection1.addTrack(track, mediaStream);
+    });
+  };
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
@@ -337,6 +440,7 @@ export const StreamRoom = () => {
             console.log('get room? ', message.data);
             // setGuestIn(prev => true);
             await createPeerConnection();
+            await createScreenSharePeerConnection();
             // console.log(message.data.data.hostId);
             if (message.data?.hostId !== userId) {
               console.log('starting call');
@@ -457,9 +561,30 @@ export const StreamRoom = () => {
     },
     audio: false,
   };
+  const startShare = async () => {
+    try {
+      console.log('sending offer using peer11111111: ', peerConnection1);
+      const offer = await peerConnection1.createOffer();
+      console.log('setLocalDescription', offer);
+      await peerConnection1.setLocalDescription(offer);
+
+      const message = {
+        from: userId,
+        type: 'offer',
+        data: Number(roomNum),
+        sdp: peerConnection1.localDescription,
+      };
+      console.log('sending sdp', peerConnection1.localDescription);
+      console.log('sending offer', message);
+      socket.send(JSON.stringify(message));
+    } catch (error) {
+      console.error('Error creating offer:', error);
+    }
+  };
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
+    startShare();
     console.log('mediaStream start', myMediaStream);
     console.log('히히', peerConnection.getSenders());
     try {
@@ -510,7 +635,7 @@ export const StreamRoom = () => {
       console.error('Error starting screen share:', error);
     }
   };
-
+  console.log(peerConnection, peerConnection1);
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
@@ -642,16 +767,32 @@ export const StreamRoom = () => {
               </div>
             </div>
 
-            <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
               <video
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full xl:max-h-96 max-h-56 object-contain rounded-2xl"
+                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
+              />
+            </div>
+            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+              <video
+                ref={thirdScreenVideoRef}
+                autoPlay
+                muted
+                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
+              />
+            </div>
+            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+              <video
+                ref={secondScreenVideoRef}
+                autoPlay
+                muted
+                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
               />
             </div>
 
-            <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
+            {/* <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
               <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
                 <Camera />
                 함께 사진찍기
@@ -664,7 +805,7 @@ export const StreamRoom = () => {
                 <Youtube />
                 유튜브 같이보기
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
