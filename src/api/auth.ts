@@ -46,15 +46,21 @@ export const SignupApi = async (signupInfo: SignupInfo) => {
   }
 };
 
+export const UsernameConfirm = async (username: string) => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/signup?username=${username}`)
+    return response
+  } catch (error) {
+    throw error as Error
+  }
+}
+
 export const EmailSignupConfirm = async (email: EmailInfo) => {
   try {
     const response = await axiosInstance.post('/signup/mailconfirm', email);
     return response.data.code;
   } catch (error) {
-    // if (axios.isAxiosError(error)) {
-      // return error.response?.data.message;
       throw error as Error
-    // }
   }
 };
 
@@ -102,9 +108,7 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
     });
     return response;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      return error.response?.data.message;
-    }
+    throw error as Error;
   }
 };
 

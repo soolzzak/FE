@@ -35,6 +35,12 @@ import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
 import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
+import {
+  micOnAtom,
+  micOnChangeAtom,
+  monitorOnAtom,
+  monitorOnChangeAtom,
+} from '../store/streamControlStore';
 
 export interface JwtPayload {
   auth: {
@@ -78,19 +84,15 @@ export const StreamRoom = () => {
     new WebSocket(signalingServerUrl)
   );
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
-  const [micOn, setMicOn] = useState<boolean>(true);
-  const [monitorOn, setMonitorOn] = useState<boolean>(true);
+  const [, micOnChange] = useAtom(micOnChangeAtom);
+  const [, monitorOnChange] = useAtom(monitorOnChangeAtom);
+  const [monitorOn, setMonitorOn] = useAtom<boolean>(monitorOnAtom);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
 
   let mediaStream: MediaStream;
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
-  const [micHover, setMicHover] = useState(false);
-  const [cameraHover, setCameraHover] = useState(false);
-  const [screenHover, setScreenHover] = useState(false);
-  const [settingHover, setSettingHover] = useState(false);
-  const [closeHover, setCloseHover] = useState(false);
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 
@@ -366,7 +368,7 @@ export const StreamRoom = () => {
     if (audio && myMediaStream) {
       const audioTrack = myMediaStream.getAudioTracks()[0];
       audioTrack.enabled = !audioTrack.enabled;
-      setMicOn((prev) => !prev);
+      micOnChange(micOnAtom);
     }
   };
 
@@ -375,7 +377,7 @@ export const StreamRoom = () => {
     if (video && myMediaStream) {
       const videoTrack = myMediaStream.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
-      setMonitorOn((prev) => !prev);
+      monitorOnChange(monitorOnAtom);
     }
   };
   const sendToastMessage = () => {
@@ -518,7 +520,7 @@ export const StreamRoom = () => {
         <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5">
           <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
             <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
-              {roomInfo?.title}
+              &apos;{roomInfo?.title}&apos;
             </div>
             {guestProfile && (
               <RemoteUserSection
@@ -557,92 +559,20 @@ export const StreamRoom = () => {
               </div>
 
               <div className="flex gap-3 absolute left-1/2 -translate-x-1/2 bottom-5">
-                {/* <div
-                  role="none"
-                  onClick={micToggleHandler}
-                  onMouseOver={() => setMicHover(true)}
-                  onMouseOut={() => setMicHover(false)}
-                  className={`iconStyle ${
-                    micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
-                  } `}
-                >
-                  {micOn ? (
-                    <LuMic className="text-3xl text-white" />
-                  ) : (
-                    <LuMicOff className="text-3xl text-white" />
-                  )}
-                  {micHover ? (
-                    <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
-                      Microphone
-                    </div>
-                  ) : null}
-                </div>
-                <div
-                  role="none"
-                  onClick={videoToggleHandler}
-                  onMouseOver={() => setCameraHover(true)}
-                  onMouseOut={() => setCameraHover(false)}
-                  className={`iconStyle ${
-                    monitorOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
-                  } relative`}
-                >
-                  {monitorOn ? <MonitorOn /> : <MonitorOff />}
-                  {cameraHover ? (
-                    <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
-                      Camera
-                    </div>
-                  ) : null}
-                </div>
-
-                <div
-                  role="none"
-                  onClick={startScreenShare}
-                  onMouseOver={() => setScreenHover(true)}
-                  onMouseOut={() => setScreenHover(false)}
-                  className="iconStyle relative bg-[#C0C0C0]"
-                >
-                  <ScreenShare />
-                  {screenHover ? (
-                    <div className="w-32 absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-                      Screen Share
-                    </div>
-                  ) : null}
-                </div>
-
-                <div
-                  onMouseOver={() => setSettingHover(true)}
-                  onMouseOut={() => setSettingHover(false)}
-                  className="iconStyle bg-[#C0C0C0]"
-                >
-                  <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
-                  {settingHover ? (
-                    <div className="absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-                      Setting
-                    </div>
-                  ) : null}
-                </div>
-
-                <div
-                  onMouseOver={() => setCloseHover(true)}
-                  onMouseOut={() => setCloseHover(false)}
-                >
-                  <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
-                  {closeHover ? (
-                    <div className="absolute -top-10 right-0 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-                      Close
-                    </div>
-                  ) : null}
-                </div> */}
-                <ControlStreamRoom micToggleHandler={micToggleHandler} videoToggleHandler={videoToggleHandler} startScreenShare={startScreenShare}/>
+                <ControlStreamRoom
+                  micToggleHandler={micToggleHandler}
+                  videoToggleHandler={videoToggleHandler}
+                  startScreenShare={startScreenShare}
+                />
               </div>
             </div>
 
-            <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+            <div className="rounded-2xl xl:relative xl:col-span-2 xl:row-span-3 xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
               <video
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full xl:max-h-96 max-h-56 object-contain rounded-2xl"
+                className="rounded-2xl w-full h-full xl:max-h-96 max-h-56 object-contain"
               />
             </div>
 

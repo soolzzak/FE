@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
 export const NotFoundIcon = () => {
-  const [time, setTime] = useState(200);
+  const [time, setTime] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime((prev) => prev - 10);
-    }, 50);
+      setTime((prev) => prev + 1);
+    }, 10);
 
-    if (time === 0) {
+    if (time === 100) {
       clearInterval(timer);
     }
 
@@ -26,8 +26,8 @@ export const NotFoundIcon = () => {
         xmlns="http://www.w3.org/2000/svg"
       >
         <linearGradient id="verticalGradient" gradientTransform="rotate(90)">
-          <stop offset={`${time}%`} stopColor="#FFFFFF" />
-          <stop offset={`${time-100}%`} stopColor="#179638" />
+          <stop offset={`${time}%`} stopColor="#f6fff9" />
+          <stop offset={`${time}%`} stopColor="#179638" />
         </linearGradient>
         <path
           d="M9.42822 12.9277V42.6854C9.42822 47.8259 15.2792 51.9954 22.5001 51.9954C29.721 51.9954 35.572 47.8259 35.572 42.6854V12.9277H9.42822Z"
