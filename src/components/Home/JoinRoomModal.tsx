@@ -1,8 +1,12 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getMypageProfile } from '../../api/mypage';
+import { getRoom } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { roomPasswordAtom } from '../../store/addRoomStore';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../../store/modalStore';
 import {
   genderSelection,
@@ -20,6 +24,22 @@ export const JoinRoomModal = () => {
   const [, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom);
   const [chatRoomInfo] = useAtom(chatRoomInfoAtom);
   const { data } = useQuery('userProfile', getMypageProfile);
+  const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
+  const roomNum = chatRoomInfo?.roomId
+  const navigate = useNavigate();
+  const enterRoomHandler = async () => {
+    try {
+      if(roomNum) {
+        const response = await getRoom(roomNum?.toString(), roomPassword)
+        setIsOpenWaitingRoom(true);
+        setIsOpenJoinRoom(false);
+      }
+    } catch (error:any) {
+      if (error.response.data.message === 'The passwords do not match.') {
+        toast.error('비밀번호를 확인해주세요')
+      }
+    }
+  }
 
   useEffect(() => {
     if (chatRoomInfo) {
@@ -100,6 +120,7 @@ export const JoinRoomModal = () => {
                 <input
                   type="password"
                   className="border border-secondary-300 rounded-md h-9"
+                  onChange={(e) => setRoomPassword(e.target.value)}
                 />
               </>
             ) : null}
@@ -107,10 +128,7 @@ export const JoinRoomModal = () => {
           <button
             type="button"
             className="w-[100%] h-16 bg-primary-300 rounded-2xl text-[#FFFFFF] text-[22px] font-bold hover:bg-primary-400"
-            onClick={() => {
-              setIsOpenJoinRoom(false);
-              setIsOpenWaitingRoom(true);
-            }}
+            onClick={enterRoomHandler}
           >
             혼술짝 방 입장하기
           </button>

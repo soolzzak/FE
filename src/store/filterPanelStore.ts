@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-export const genderFilterAtom = atom('ANY');
+export const genderFilterAtom = atom('ALL');
 export const handleTokenChangeAtom = atom(null, (get, set, update: string) => {
   set(genderFilterAtom, () => update);
 });
