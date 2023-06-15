@@ -28,10 +28,7 @@ export type Room = {
 
 export const getRoom = async (roomId: string, roomPassword: string | null) => {
   try {
-    const config: AxiosRequestConfig = {
-      params: { roomPassword, }
-    }
-    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/room/${roomId}`,config);
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/room/${roomId}?roomPassword=${roomPassword}`);
     return response.data;
   } catch (error) {
     throw error as Error;

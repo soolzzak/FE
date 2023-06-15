@@ -69,7 +69,7 @@ export const StreamRoom = () => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const contentVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
-  const [roomPassword] = useAtom(roomPasswordAtom);
+  const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
@@ -332,6 +332,7 @@ export const StreamRoom = () => {
             setSocketIsOnline(true);
             message.data = await getRoom(params as string, roomPassword);
             setRoomInfo(message.data);
+            setRoomPassword(null);
             console.log('get room? ', message.data);
             // setGuestIn(prev => true);
             await createPeerConnection();
