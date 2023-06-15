@@ -24,22 +24,22 @@ export const categorySelection = (chatCategory: string) => {
       result = '전체';
       break;
     case 'MOVIE_DRAMA':
-      result = '영화/드라마';
+      result = '🎟 영화/드라마';
       break;
     case 'FOOD_TRAVEL':
-      result = '맛집/여행';
+      result = '🥨 맛집/여행';
       break;
     case 'SPORTS_GAME':
-      result = '스포츠/게임';
+      result = '⚽ 스포츠/게임';
       break;
     case 'ABOUT_TODAY':
-      result = '오늘하루';
+      result = '🎈 오늘하루';
       break;
     case 'COUNSELING':
-      result = '고민상담';
+      result = '🔮 고민상담';
       break;
     case 'GENERAL':
-      result = '자유방';
+      result = '🙌 자유방';
       break;
     default:
       break;

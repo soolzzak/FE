@@ -1,15 +1,23 @@
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { genderAtom } from '../../store/addRoomStore';
+import { genderSelection } from '../../utils/switchSelections';
 
-export const CustomSelector = () => {
+export const CustomSelector = ({
+  genderSetting,
+}: {
+  genderSetting?: string;
+}) => {
   const selections = ['ANY', 'FEMALE', 'MALE'];
   const displayedSelections = ['누구나', '여자만', '남자만'];
 
   const [selectedOption, handleOptionClick] = useAtom(genderAtom);
 
+  console.log('젠더세팅', genderSetting);
+  console.log('성별', selectedOption);
+
   useEffect(() => {
-    handleOptionClick(selections[0]);
+    handleOptionClick(genderSetting || selections[0]);
   }, []);
   return (
     <section className="f-col">

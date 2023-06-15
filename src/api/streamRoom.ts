@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 import { ApiResponse1, CreateRoomData } from './main';
@@ -17,18 +18,20 @@ export type Room = {
   title: string;
   username: string;
   category: string;
-  genderSettings: string;
+  genderSetting: string;
   isPrivate: boolean;
   roomPassword: string;
   createdAt: string;
   alcohol: number;
   userImage: string;
-  roomImage: string;
+  roomImageUrl: string;
 };
 
 export const getRoom = async (roomId: string, roomPassword: string | null) => {
   try {
-    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/room/${roomId}?roomPassword=${roomPassword}`);
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+      `/room/${roomId}?roomPassword=${roomPassword}`
+    );
     return response.data;
   } catch (error) {
     throw error as Error;

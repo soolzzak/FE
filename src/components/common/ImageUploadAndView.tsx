@@ -1,8 +1,17 @@
 import { Logo } from '../../assets/svgs/Logo';
 import useImageUpload from '../../hooks/useImageUpload';
 
-export const ImageUploadAndView = () => {
+export const ImageUploadAndView = ({
+  roomImageUrl,
+}: {
+  roomImageUrl?: string;
+}) => {
   const { view, handleImageChange } = useImageUpload();
+  let imageSource = roomImageUrl;
+  if (view) {
+    imageSource = view;
+  }
+
   return (
     <label
       htmlFor="imageInput"
@@ -16,10 +25,11 @@ export const ImageUploadAndView = () => {
         className="hidden"
         onChange={handleImageChange}
       />
-      {view ? (
+
+      {imageSource ? (
         <img
-          className="rounded-lg object-cover shadow w-full h-full "
-          src={view}
+          className="rounded-lg object-cover shadow w-full h-full"
+          src={imageSource}
           alt=""
         />
       ) : (

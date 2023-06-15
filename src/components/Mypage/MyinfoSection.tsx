@@ -182,7 +182,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
         <p className="font-semibold text-lg text-[#7C7C7C]">연결된 소셜계정</p>
         <div className="flex flex-row mt-2 items-center">
           <div className="border p-2 rounded-3xl flex items-center">
-            {myinfo.kakaoId === null ? (
+            {myinfo.kakaoId !== null ? (
               <>
                 <Kakao />
                 <p className="text-base font-normal ml-1">
