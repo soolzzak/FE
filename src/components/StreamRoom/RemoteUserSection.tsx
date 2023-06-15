@@ -45,7 +45,7 @@ export const RemoteUserSection = ({
     },
   });
 
-  console.log('얘', guestProfile);
+  // console.log('얘', guestProfile);
 
   return (
     <section className="flex flex-row justify-center items-center">

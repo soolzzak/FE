@@ -78,12 +78,15 @@ export const HomeBodySection = () => {
       } else {
         chatListMutation.mutate(
           tab === 'ALL'
-            ? `/main?genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
-            : `/rooms?category=${tab}&genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
+            ? `/main?genderSetting=${
+                genderFilter === 'ALL' ? '' : genderFilter
+              }&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
+            : `/rooms?category=${tab}&genderSetting=${
+                genderFilter === 'ALL' ? '' : genderFilter
+              }&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
         );
       }
   }, [pageNum]);
-
   useEffect(() => {
     window.addEventListener('scroll', debouncedHandleScroll);
     return () => {
@@ -99,8 +102,12 @@ export const HomeBodySection = () => {
       } else {
         chatListMutation.mutate(
           tab === 'ALL'
-            ? `/main?genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
-            : `/rooms?category=${tab}&genderSetting=${genderFilter}&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
+            ? `/main?genderSetting=${
+                genderFilter === 'ALL' ? '' : genderFilter
+              }&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
+            : `/rooms?category=${tab}&genderSetting=${
+                genderFilter === 'ALL' ? '' : genderFilter
+              }&roomCapacityCheck=${emptyRoomFilter}&page=${pageNum}`
         );
       }
     }
