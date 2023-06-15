@@ -1,8 +1,12 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getMypageProfile } from '../../api/mypage';
+import { getRoom } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
+import { roomPasswordAtom } from '../../store/addRoomStore';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../../store/modalStore';
 import {
   genderSelection,
@@ -10,8 +14,6 @@ import {
   tabList,
 } from '../../utils/switchSelections';
 import { chatRoomInfoAtom } from './ChatroomCard';
-import { getRoom } from '../../api/streamRoom';
-import { roomPasswordAtom } from '../../store/addRoomStore';
 
 export const JoinRoomModal = () => {
   const myVideoRef = useRef<HTMLVideoElement>(null);
@@ -24,14 +26,18 @@ export const JoinRoomModal = () => {
   const { data } = useQuery('userProfile', getMypageProfile);
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const roomNum = chatRoomInfo?.roomId
+  const navigate = useNavigate();
   const enterRoomHandler = async () => {
     try {
       if(roomNum) {
         const response = await getRoom(roomNum?.toString(), roomPassword)
-        console.log('enterRoom response', response)
+        setIsOpenWaitingRoom(true);
+        setIsOpenJoinRoom(false);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error:any) {
+      if (error.response.data.message === 'The passwords do not match.') {
+        toast.error('비밀번호를 확인해주세요')
+      }
     }
   }
 
