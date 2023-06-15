@@ -33,8 +33,6 @@ import {
 import { ScreenShare } from '../assets/svgs/ScreenShare';
 import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
-import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
-import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
 import {
   micOnAtom,
   micOnChangeAtom,
@@ -97,6 +95,7 @@ export const StreamRoom = () => {
 
   let mediaStream: MediaStream;
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
+  const [remoteMediaStream, setRemoteMediaStream] = useState<MediaStream | null>(null);
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 

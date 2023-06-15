@@ -26,8 +26,7 @@ export const CategoryTab = () => {
   return (
     <nav className="w-full border-t f-jic bg-white">
       <div
-        className={`f-jic grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1600px] min-w-[660px] gap-4 xl:px-32 
-        ${currentTab === 'SEARCH' ? 'hidden' : ''}`}
+        className="f-jic grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1600px] min-w-[660px] gap-4 xl:px-32"
       >
         {tabList.map((tab, index) => (
           <motion.div
