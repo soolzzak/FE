@@ -53,12 +53,12 @@ export const FilterPanel = () => {
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, scale: 0, y: -100, x: 100 }}
             transition={{ duration: 0.1 }}
-            className="absolute w-[341px] top-full right-0 z-10 mt-2 p-4 pt-3 pb-6 bg-white rounded-xl shadow"
+            className="absolute w-[381px] top-full right-0 z-10 mt-2 p-4 pt-3 pb-6 bg-white rounded-xl shadow"
           >
             <HorizontalSelector
               title="성별"
-              selections={['ANY', 'FEMALE', 'MALE']}
-              displayedSelections={['누구나', '여자만', '남자만']}
+              selections={['ALL', 'ANY', 'FEMALE', 'MALE']}
+              displayedSelections={['전체', '누구나', '여자만', '남자만']}
               selectedOption={genderOption}
               handleOptionClick={
                 setGenderOption as Dispatch<SetStateAction<string | boolean>>
