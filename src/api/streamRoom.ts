@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 import { ApiResponse1, CreateRoomData } from './main';
@@ -52,10 +51,11 @@ export const checkIfRoomIsEmpty = async (
   }
 };
 
-export const modifyRoom = async (
-  { data, image }: CreateRoomData,
-  roomId: string
-): Promise<ApiResponse1> => {
+export const modifyRoom = async ({
+  data,
+  image,
+  roomId,
+}: CreateRoomData & { roomId: string }): Promise<ApiResponse1> => {
   try {
     const formData = new FormData();
     const sentData = JSON.stringify({ ...data });

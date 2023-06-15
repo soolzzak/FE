@@ -35,8 +35,6 @@ import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
 import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
-import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
-import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
 
 export interface JwtPayload {
   auth: {
