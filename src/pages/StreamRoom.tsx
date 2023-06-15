@@ -27,6 +27,7 @@ import { isOpenLeaveRoomAtom, isOpenModifyRoomAtom } from '../store/modalStore';
 import { ScreenShare } from '../assets/svgs/ScreenShare';
 import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
+import { streamRoomInfoAtom } from '../store/addRoomStore';
 
 export interface JwtPayload {
   auth: {
@@ -61,7 +62,7 @@ export const StreamRoom = () => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const contentVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
-  const [roomInfo, setRoomInfo] = useState<Room>();
+  const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
@@ -343,8 +344,10 @@ export const StreamRoom = () => {
 
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
-    if (audio && mediaStream) {
-      const audioTrack = mediaStream?.getAudioTracks()[0];
+    if (audio && myMediaStream) {
+      const audioTrack = myMediaStream.getAudioTracks()[0];
+      console.log('volume', audio.volume);
+      console.log('audiotrack', audioTrack);
       audioTrack.enabled = !audioTrack.enabled;
       setMicOn((prev) => !prev);
     }
@@ -352,8 +355,8 @@ export const StreamRoom = () => {
 
   const videoToggleHandler = () => {
     const video = localVideoRef.current;
-    if (video && mediaStream) {
-      const videoTrack = mediaStream.getVideoTracks()[0];
+    if (video && myMediaStream) {
+      const videoTrack = myMediaStream.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
       setMonitorOn((prev) => !prev);
     }
@@ -416,7 +419,7 @@ export const StreamRoom = () => {
       localVideoRef.current.srcObject = shareView;
     } else if (localVideoRef.current) {
       localVideoRef.current.srcObject = myMediaStream;
-      console.log('다시주입되니', myMediaStream)
+      console.log('다시주입되니', myMediaStream);
     }
     if (shareView) {
       shareView.onremovetrack = () => {
@@ -464,13 +467,13 @@ export const StreamRoom = () => {
       stream.getVideoTracks()[0].onended = () => {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = myMediaStream;
-          console.log('mediastream 바꾸자0', myMediaStream)
+          console.log('mediastream 바꾸자0', myMediaStream);
         }
-        console.log('mediastream 바꾸자1', myMediaStream)
+        console.log('mediastream 바꾸자1', myMediaStream);
         peerConnection.getSenders().forEach((sender) => {
-          console.log('mediastream 바꾸자2', myMediaStream)
+          console.log('mediastream 바꾸자2', myMediaStream);
           if (sender.track?.kind === 'video' && myMediaStream) {
-            console.log('mediastream 바꾸자3', myMediaStream)
+            console.log('mediastream 바꾸자3', myMediaStream);
             sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
             console.log('if mediaStream', myMediaStream);
           }
@@ -523,8 +526,7 @@ export const StreamRoom = () => {
                   <video
                     ref={remoteVideoRef}
                     autoPlay
-                    muted
-                    className="bg-black w-full h-full object-cover rounded-2xl"
+                    className="bg-black w-full h-full xl:max-h-[730px] max-h-[500px] object-contain rounded-2xl"
                   />
                 ) : (
                   <WaitingGuestRef />
@@ -611,12 +613,12 @@ export const StreamRoom = () => {
               </div>
             </div>
 
-            <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-[250px]">
+            <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-60">
               <video
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="xl:w-full xl:h-full object-fill rounded-2xl"
+                className="w-full h-full xl:max-h-96 max-h-56 object-contain rounded-2xl"
               />
             </div>
 
