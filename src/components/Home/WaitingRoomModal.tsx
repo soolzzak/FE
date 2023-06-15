@@ -1,7 +1,6 @@
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { CancelButton } from '../common/CancelButton';
 import { isOpenWaitingAtom } from '../../store/modalStore';
 import { chatRoomInfoAtom } from './ChatroomCard';
@@ -11,7 +10,7 @@ export const WaitingRoomModal = () => {
   const navigation = useNavigate();
   const [, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom)
   const [chatRoomInfo] =useAtom(chatRoomInfoAtom)
-  
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((time) => time - 1);

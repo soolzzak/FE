@@ -55,7 +55,7 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
           return <AlcoholBrandy />;
         })()}
       </div>
-      <div className="w-full bg-[#B6ECC4] rounded-full h-2.5 dark:bg-gray-700 ">
+      <div className="w-full bg-[#B6ECC4] rounded-full h-2.5">
         <div
           className="bg-[#179638] h-2.5 rounded-full"
           style={{ width: `${alcohol}%` }}

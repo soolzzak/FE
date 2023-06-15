@@ -26,7 +26,7 @@ export const RoomFollowModal = ({
         showModal ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {userinfo.follow ? '팔로우 취소' : '팔로우 완료🍻'}
+      {userinfo.follow ? '팔로우 완료🍻' : '팔로우 취소'}
     </div>
   );
 };
