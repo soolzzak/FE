@@ -12,6 +12,7 @@ import { DropdownSelector } from '../common/DropdownSelector';
 import { ImageUploadAndView } from '../common/ImageUploadAndView';
 import { ModalInput } from '../common/ModalInput';
 import { OptionalFieldChange } from '../common/OptionalFieldChange';
+import { ModifyRoomButton } from './ModifyRoomButton';
 
 export const ModifyRoomModal = () => {
   const [, setIsOpenModifyRoom] = useAtom(isOpenModifyRoomAtom);
@@ -46,7 +47,8 @@ export const ModifyRoomModal = () => {
           />
         </div>
       </div>
-      <AddRoomButton closeModal={() => setIsOpenModifyRoom} />
+      {/* <AddRoomButton closeModal={() => setIsOpenModifyRoom} /> */}
+      <ModifyRoomButton closeModal={() => setIsOpenModifyRoom} />
       <div
         role="none"
         className="absolute right-3 top-3 hover:cursor-pointer"

@@ -5,15 +5,22 @@ import { publicOrPrivateAtom } from '../../store/addRoomStore';
 type InputProps = {
   title: string;
   leftRightSelect: Array<boolean>;
+  isPrivate?: boolean;
+  roomPassword?: string;
 };
 
-export const TwoOptionsSelector = ({ title, leftRightSelect }: InputProps) => {
+export const TwoOptionsSelector = ({
+  title,
+  leftRightSelect,
+  isPrivate,
+  roomPassword,
+}: InputProps) => {
   const [selectedOption, setSelectedOption] = useAtom(publicOrPrivateAtom);
   const selections = [false, true];
   console.log(selectedOption);
 
   useEffect(() => {
-    setSelectedOption(leftRightSelect[0]);
+    setSelectedOption(isPrivate || leftRightSelect[0]);
   }, []);
 
   return (

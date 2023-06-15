@@ -7,6 +7,11 @@ export const ImageUploadAndView = ({
   roomImageUrl?: string;
 }) => {
   const { view, handleImageChange } = useImageUpload();
+  let imageSource = roomImageUrl;
+  if (view) {
+    imageSource = view;
+  }
+
   return (
     <label
       htmlFor="imageInput"
@@ -21,19 +26,14 @@ export const ImageUploadAndView = ({
         onChange={handleImageChange}
       />
 
-      {view ? (
+      {imageSource ? (
         <img
-          className="rounded-lg object-cover shadow w-full h-full "
-          src={view}
+          className="rounded-lg object-cover shadow w-full h-full"
+          src={imageSource}
           alt=""
         />
       ) : (
-        // <Logo logoSize="150" />
-        <img
-          className="rounded-lg object-cover shadow w-full h-full "
-          src={roomImageUrl}
-          alt=""
-        />
+        <Logo logoSize="150" />
       )}
     </label>
   );

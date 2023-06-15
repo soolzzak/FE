@@ -19,17 +19,22 @@ export const OptionalFieldChange = ({
 
   // let leftRightSelect: boolean[] = selections;
 
-  if (isPrivate === true) {
-    setSelectedOption(selections[1]);
-  } else if (isPrivate === false) {
-    setSelectedOption(selections[0]);
-  }
+  // if (isPrivate === true) {
+  //   setSelectedOption(selections[1]);
+  // } else if (isPrivate === false) {
+  //   setSelectedOption(selections[0]);
+  // }
 
   console.log('비밀인지', isPrivate);
 
   return (
     <div className="f-ic ">
-      <TwoOptionsSelector title="방 공개설정" leftRightSelect={selections} />
+      <TwoOptionsSelector
+        title="방 공개설정"
+        leftRightSelect={selections}
+        isPrivate={isPrivate}
+        roomPassword={roomPassword}
+      />
       {selectedOption === selections[1] ? (
         <ModalInput
           inputType="password"
