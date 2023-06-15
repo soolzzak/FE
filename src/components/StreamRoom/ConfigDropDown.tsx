@@ -10,6 +10,7 @@ import { AiOutlineSetting } from 'react-icons/ai';
 import { isOpenModifyRoomAtom } from '../../store/modalStore';
 import { Modal } from '../common/Modal';
 import { ModifyRoomModal } from './ModifyRoomModal';
+import { Room } from '../../api/streamRoom';
 
 export const ConfigDropDown = ({
   setIsOpenKickout,
@@ -17,7 +18,7 @@ export const ConfigDropDown = ({
   setIsOpenKickout: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom)
+  const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const onToggle = () => {

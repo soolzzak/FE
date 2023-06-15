@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+
 import { Room } from '../api/streamRoom';
 
 export const imageAtom = atom<File | null>(null);
