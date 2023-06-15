@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { Room } from '../api/streamRoom';
 
 export const imageAtom = atom<File | null>(null);
 export const handleImageChangeAtom = atom(null, (get, set, update: File) => {
@@ -28,3 +29,5 @@ export const handleRoomPasswprdChangeAtom = atom(
     set(roomPasswordAtom, () => update);
   }
 );
+
+export const streamRoomInfoAtom = atom<Room | null>(null);

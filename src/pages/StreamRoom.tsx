@@ -33,6 +33,7 @@ import {
 import { ScreenShare } from '../assets/svgs/ScreenShare';
 import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
+import { streamRoomInfoAtom } from '../store/addRoomStore';
 
 export interface JwtPayload {
   auth: {
@@ -67,7 +68,7 @@ export const StreamRoom = () => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const contentVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
-  const [roomInfo, setRoomInfo] = useState<Room>();
+  const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
@@ -254,6 +255,7 @@ export const StreamRoom = () => {
       peerConnection.addTrack(track, mediaStream);
     });
   };
+
   const startLocalStream = async () => {
     try {
       // eslint-disable-next-line no-undef

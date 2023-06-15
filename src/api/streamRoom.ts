@@ -17,13 +17,13 @@ export type Room = {
   title: string;
   username: string;
   category: string;
-  genderSettings: string;
+  genderSetting: string;
   isPrivate: boolean;
   roomPassword: string;
   createdAt: string;
   alcohol: number;
   userImage: string;
-  roomImage: string;
+  roomImageUrl: string;
 };
 
 export const getRoom = async (
@@ -54,7 +54,10 @@ export const checkIfRoomIsEmpty = async (
   }
 };
 
-export const modifyRoom = async ({data, image}: CreateRoomData, roomId: string): Promise<ApiResponse1> => {
+export const modifyRoom = async (
+  { data, image }: CreateRoomData,
+  roomId: string
+): Promise<ApiResponse1> => {
   try {
     const formData = new FormData();
     const sentData = JSON.stringify({ ...data });
