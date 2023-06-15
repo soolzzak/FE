@@ -33,7 +33,8 @@ import {
 import { ScreenShare } from '../assets/svgs/ScreenShare';
 import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
-import { streamRoomInfoAtom } from '../store/addRoomStore';
+import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
+import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
 
 export interface JwtPayload {
   auth: {
@@ -68,6 +69,7 @@ export const StreamRoom = () => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const contentVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
+  const [roomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
@@ -328,7 +330,7 @@ export const StreamRoom = () => {
           case 'join':
             console.log('received join message');
             setSocketIsOnline(true);
-            message.data = await getRoom(params as string);
+            message.data = await getRoom(params as string, roomPassword);
             setRoomInfo(message.data);
             console.log('get room? ', message.data);
             // setGuestIn(prev => true);
@@ -362,8 +364,6 @@ export const StreamRoom = () => {
     const audio = localVideoRef.current;
     if (audio && myMediaStream) {
       const audioTrack = myMediaStream.getAudioTracks()[0];
-      console.log('volume', audio.volume);
-      console.log('audiotrack', audioTrack);
       audioTrack.enabled = !audioTrack.enabled;
       setMicOn((prev) => !prev);
     }
@@ -556,7 +556,7 @@ export const StreamRoom = () => {
               </div>
 
               <div className="flex gap-3 absolute left-1/2 -translate-x-1/2 bottom-5">
-                <div
+                {/* <div
                   role="none"
                   onClick={micToggleHandler}
                   onMouseOver={() => setMicHover(true)}
@@ -631,11 +631,12 @@ export const StreamRoom = () => {
                       Close
                     </div>
                   ) : null}
-                </div>
+                </div> */}
+                <ControlStreamRoom micToggleHandler={micToggleHandler} videoToggleHandler={videoToggleHandler} startScreenShare={startScreenShare}/>
               </div>
             </div>
 
-            <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-60">
+            <div className="xl:relative xl:col-span-2 xl:row-span-3 rounded-2xl xl:w-full xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
               <video
                 ref={localVideoRef}
                 autoPlay

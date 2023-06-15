@@ -6,6 +6,7 @@ import { createRoom } from '../../api/main';
 import {
   categoryAtom,
   genderAtom,
+  handleRoomPasswprdChangeAtom,
   imageAtom,
   publicOrPrivateAtom,
   roomPasswordAtom,

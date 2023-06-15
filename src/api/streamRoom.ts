@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 import { ApiResponse1, CreateRoomData } from './main';
@@ -26,14 +26,12 @@ export type Room = {
   roomImage: string;
 };
 
-export const getRoom = async (
-  params: string
-): Promise<ApiResponse | undefined> => {
+export const getRoom = async (roomId: string, roomPassword: string | null) => {
   try {
-    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/room/${params}`
-    );
-    console.log('getroom data api ', response);
+    const config: AxiosRequestConfig = {
+      params: { roomPassword, }
+    }
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/room/${roomId}`,config);
     return response.data;
   } catch (error) {
     throw error as Error;
@@ -54,7 +52,10 @@ export const checkIfRoomIsEmpty = async (
   }
 };
 
-export const modifyRoom = async ({data, image}: CreateRoomData, roomId: string): Promise<ApiResponse1> => {
+export const modifyRoom = async (
+  { data, image }: CreateRoomData,
+  roomId: string
+): Promise<ApiResponse1> => {
   try {
     const formData = new FormData();
     const sentData = JSON.stringify({ ...data });
