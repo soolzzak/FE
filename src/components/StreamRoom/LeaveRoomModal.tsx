@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { isOpenLeaveRoomAtom } from '../../store/modalStore';
 import { CancelButton } from '../common/CancelButton';
 
-export const LeaveRoomModal = () => {
+export const LeaveRoomModal = ({closeMediaStream}: {closeMediaStream: () => void}) => {
   const [, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const navigation = useNavigate();
   return (
@@ -23,6 +23,7 @@ export const LeaveRoomModal = () => {
           className="w-36 h-11 text-base font-semibold text-[#FF4444] rounded-lg border border-[#FF4444] bg-[#FFF0F0] text-center hover:bg-[#FF4444] hover:text-[#FFF0F0] transition-colors duration-200 ease-in-out"
           onClick={() => {
             setIsOpenLeaveRoom(false);
+            closeMediaStream();
             navigation('/');
           }}
         >

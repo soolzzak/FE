@@ -15,7 +15,7 @@ export const KakaoCallback = () => {
 
     (async () => {
       try {
-        const response: AxiosResponse<ApiResponse> = await axios.get(
+        const response = await axios.get(
           `https://api.honsoolzzak.com/api/login?code=${code}`
         );
         const accessKey = response.headers.access_key;

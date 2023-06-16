@@ -1,46 +1,44 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable jsx-a11y/media-has-caption */
+import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
-import { LuMic, LuMicOff } from 'react-icons/lu';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
-import { Toast } from '../components/StreamRoom/Toast';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
-import { Room, getRoom } from '../api/streamRoom';
+import { getRoom } from '../api/streamRoom';
 import { Camera } from '../assets/svgs/Camera';
-import { Exit } from '../assets/svgs/Exit';
 import { Game } from '../assets/svgs/Game';
-import { MonitorOff } from '../assets/svgs/MonitorOff';
-import { MonitorOn } from '../assets/svgs/MonitorOn';
 import { Youtube } from '../assets/svgs/Youtube';
-import { ConfigDropDown } from '../components/StreamRoom/ConfigDropDown';
 import { KickoutModal } from '../components/StreamRoom/KickoutModal';
 import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
 import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
+import { Toast } from '../components/StreamRoom/Toast';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { Modal } from '../components/common/Modal';
 import { useModal } from '../hooks/useModal';
 
+import { ToastIcon } from '../assets/svgs/ToastIcon';
+import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
+import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
+import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
 import {
+  isOpenKickoutModalAtom,
   isOpenLeaveRoomAtom,
   isOpenModifyRoomAtom,
   toastAtom,
 } from '../store/modalStore';
-import { ScreenShare } from '../assets/svgs/ScreenShare';
-import { ToastIcon } from '../assets/svgs/ToastIcon';
-import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 import {
+  hostIdAtom,
   micOnAtom,
   micOnChangeAtom,
   monitorOnAtom,
   monitorOnChangeAtom,
 } from '../store/streamControlStore';
-import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
-import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
+import { ScreenShare } from '../assets/svgs/ScreenShare';
 
 export interface JwtPayload {
   auth: {
@@ -73,12 +71,14 @@ const PeerConnectionConfig = {
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const secondScreenVideoRef = useRef<HTMLVideoElement>(null);
-  const thirdScreenVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteWebcamVideoRef = useRef<HTMLVideoElement>(null);
+  const myWebcamVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
+
+  const navigate = useNavigate();
+  const [peerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
   const [peerConnection1] = useState<RTCPeerConnection>(
@@ -88,17 +88,21 @@ export const StreamRoom = () => {
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [, micOnChange] = useAtom(micOnChangeAtom);
   const [, monitorOnChange] = useAtom(monitorOnChangeAtom);
-  const [monitorOn, setMonitorOn] = useAtom<boolean>(monitorOnAtom);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
+  const [isMyScreenShare, setIsMyScreenShare] = useState<boolean>(false);
+  const [isRemoteScreenShare, setIsRemoteScreenShare] =
+    useState<boolean>(false);
 
-  let mediaStream: MediaStream;
+  let mediaStream: MediaStream | null = null;
+  let remoteMediaStream: MediaStream | null = null;
+
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
-  const [remoteMediaStream, setRemoteMediaStream] =
-    useState<MediaStream | null>(null);
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
+  const [numberShare, setNumberShare] = useState(0);
+  const [, setHostIdcheck] = useAtom(hostIdAtom);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -117,7 +121,7 @@ export const StreamRoom = () => {
     }, 3700);
   };
   const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
-  const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
+  const [isOpenKickOut, setIsOpenKickOut] = useAtom(isOpenKickoutModalAtom);
 
   const getCookie = Cookies.get('refreshKey');
   const params = useParams().id;
@@ -293,7 +297,7 @@ export const StreamRoom = () => {
 
     console.log('adding media stream to track', mediaStream);
     mediaStream?.getTracks().forEach((track) => {
-      peerConnection.addTrack(track, mediaStream);
+      peerConnection.addTrack(track, mediaStream as MediaStream);
     });
   };
 
@@ -306,13 +310,11 @@ export const StreamRoom = () => {
       });
       console.log('stream담기나?', stream);
       mediaStream = stream;
-      setMyMediaStream(() => stream);
+      setMyMediaStream(stream);
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
-      if (thirdScreenVideoRef.current) {
-        thirdScreenVideoRef.current.srcObject = stream;
-      }
+
       console.log('this media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
@@ -328,6 +330,7 @@ export const StreamRoom = () => {
     socket.send(message);
     console.log('send join message');
   };
+
   const createScreenSharePeerConnection = async () => {
     console.log('created peer connection: ', peerConnection1);
 
@@ -346,37 +349,29 @@ export const StreamRoom = () => {
     peerConnection1.ontrack = (event) => {
       console.log('응', peerConnection1.getSenders());
       console.log('got remote stream', event.streams[0]);
+      console.log(isRemoteScreenShare, remoteWebcamVideoRef.current);
       const stream = event.streams[0];
-      setRemoteMediaStream(stream);
-      if (secondScreenVideoRef.current) {
-        console.log('adding screenshare video element');
-        secondScreenVideoRef.current.srcObject = stream;
-        console.log('stream?', stream);
-      }
-      console.log('remote ref', secondScreenVideoRef.current);
-      console.log(
-        'secondScreenVideoRef.current.srcObject',
-        secondScreenVideoRef.current?.srcObject
-      );
+      remoteMediaStream = stream;
     };
     peerConnection1.oniceconnectionstatechange = () => {
+      console.log(' remote media', remoteMediaStream);
       console.log('opposing user disconnect event');
       if (
         peerConnection1.iceConnectionState === 'disconnected' ||
         peerConnection1.iceConnectionState === 'closed'
       ) {
         console.log('Opposing peer disconnected');
-        if (secondScreenVideoRef.current) {
-          if (secondScreenVideoRef.current.srcObject) {
-            const stream = secondScreenVideoRef.current
+        if (remoteWebcamVideoRef.current) {
+          if (remoteWebcamVideoRef.current.srcObject) {
+            const stream = remoteWebcamVideoRef.current
               .srcObject as MediaStream;
             // stream.getTracks().forEach((track) => track.stop());
           }
-          secondScreenVideoRef.current.srcObject = null;
+          remoteWebcamVideoRef.current.srcObject = null;
         }
         console.log(
-          'secondScreenVideoRef.current.srcObject',
-          secondScreenVideoRef.current?.srcObject
+          'remoteWebcamVideoRef.current.srcObject',
+          remoteWebcamVideoRef.current?.srcObject
         );
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
@@ -387,9 +382,47 @@ export const StreamRoom = () => {
 
     console.log('adding media stream to track', mediaStream);
     mediaStream?.getTracks().forEach((track) => {
-      peerConnection1.addTrack(track, mediaStream);
+      peerConnection1.addTrack(track, mediaStream as MediaStream);
     });
   };
+
+  const closeMediaStream = () => {
+    console.log('closing');
+    if (localVideoRef.current) {
+      if (localVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = localVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    if (remoteVideoRef.current) {
+      if (remoteVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = remoteVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    if (remoteWebcamVideoRef.current) {
+      if (remoteWebcamVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = remoteWebcamVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    if (myWebcamVideoRef.current) {
+      if (myWebcamVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = myWebcamVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    peerConnection.close();
+  };
+
+  window.onpopstate = () => {
+    closeMediaStream();
+  };
+
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
@@ -398,6 +431,8 @@ export const StreamRoom = () => {
 
       socket.onclose = () => {
         console.log('WebSocket connection closed');
+        closeMediaStream();
+        navigate('/');
       };
 
       socket.onerror = (error) => {
@@ -415,26 +450,51 @@ export const StreamRoom = () => {
             break;
           case 'offer':
             console.log('received offer message', message);
+            console.log('offerMessage remote media', remoteMediaStream);
+
             await handleOfferMessage(message);
             break;
           case 'answer':
             console.log('received answer message', message);
+            console.log('answer remote media', remoteMediaStream);
             setGuestIn(() => true);
+
             await handleAnswerMessage(message);
+            break;
+          case 'ice':
+            guestProfileMutation.mutate(message.from);
+            console.log('received ice message', message);
+            console.log('ice remote media', remoteMediaStream);
+            await handleCandidateMessage(message);
             break;
           case 'toast':
             console.log('received toast message', message);
             showToastHandler();
             break;
-          case 'ice':
-            guestProfileMutation.mutate(message.from);
-            console.log('received ice message', message);
-            await handleCandidateMessage(message);
+          case 'startShare':
+            console.log('received startShare message', message);
+            setIsRemoteScreenShare(true);
+            setNumberShare((prev) => prev + 0.5);
+            setTimeout(() => {
+              if (remoteWebcamVideoRef.current) {
+                console.log(' remote media', remoteMediaStream);
+                console.log('adding screenshare video element');
+                remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
+              }
+            }, 300);
+            break;
+          case 'stopShare':
+            console.log('received stopShare message', message);
+            console.log('startshare remote media', remoteMediaStream);
+            setIsRemoteScreenShare(() => false);
+            setNumberShare((prev) => prev - 1);
             break;
           case 'join':
             console.log('received join message');
+            console.log('join remote media', remoteMediaStream);
             setSocketIsOnline(true);
-            message.data = await getRoom(params as string, roomPassword);
+            message.data = await getRoom(params as string);
+            setHostIdcheck(message.data.hostId);
             setRoomInfo(message.data);
             setRoomPassword(null);
             console.log('get room? ', message.data);
@@ -465,7 +525,7 @@ export const StreamRoom = () => {
       }
     };
   }, []);
-
+  console.log('base remote media', remoteMediaStream);
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
     if (audio && myMediaStream) {
@@ -483,6 +543,7 @@ export const StreamRoom = () => {
       monitorOnChange(monitorOnAtom);
     }
   };
+
   const sendToastMessage = () => {
     console.log('click toast');
     if (socket) {
@@ -495,6 +556,40 @@ export const StreamRoom = () => {
       showToastHandler();
       socket.send(message);
     }
+  };
+  const sendShareOnMessage = () => {
+    console.log('click share On');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'startShare',
+        data: roomNum,
+      });
+      console.log('startShare sent', message);
+      socket.send(message);
+    }
+  };
+  const sendShareOffMessage = () => {
+    console.log('click share Off');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'stopShare',
+        data: roomNum,
+      });
+      console.log('stopeShare sent', message);
+      socket.send(message);
+    }
+  };
+
+  const sendKickMessage = () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'kick',
+      data: roomNum,
+    });
+    socket.send(message);
+    console.log('send kick message');
   };
 
   useEffect(() => {
@@ -535,7 +630,7 @@ export const StreamRoom = () => {
 
   // 화면공유
   const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
-  console.log('shareView', shareView);
+  // console.log('shareView', shareView);
 
   useEffect(() => {
     // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
@@ -559,7 +654,7 @@ export const StreamRoom = () => {
       frameRate: 50,
       displaySurface: 'monitor', // 'monitor'를 지정하여 모니터 화면 공유 가능
     },
-    audio: false,
+    audio: true,
   };
   const startShare = async () => {
     try {
@@ -584,8 +679,6 @@ export const StreamRoom = () => {
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
-    startShare();
-    console.log('mediaStream start', myMediaStream);
     console.log('히히', peerConnection.getSenders());
     try {
       if (!navigator.mediaDevices.getDisplayMedia) {
@@ -594,8 +687,15 @@ export const StreamRoom = () => {
 
       // 화면 공유 스트림 가져오기
       const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+      sendShareOnMessage();
       setShareView(stream); // 화면 공유 스트림 상태 업데이트
-
+      setIsMyScreenShare(true);
+      setNumberShare((prev) => prev + 1);
+      await startShare();
+      console.log('mediaStream start', myMediaStream);
+      if (myWebcamVideoRef.current) {
+        myWebcamVideoRef.current.srcObject = myMediaStream;
+      }
       // 화면 공유 스트림으로 트랙 교체
       peerConnection.getSenders().forEach((sender) => {
         if (sender.track?.kind === 'video') {
@@ -610,7 +710,11 @@ export const StreamRoom = () => {
       // 화면 공유 스트림 종료
       console.log('sender stream', stream);
       stream.getVideoTracks()[0].onended = () => {
+        sendShareOffMessage();
         if (localVideoRef.current) {
+          setShareView(null);
+          setIsMyScreenShare(false);
+          setNumberShare((prev) => prev - 1);
           localVideoRef.current.srcObject = myMediaStream;
           console.log('mediastream 바꾸자0', myMediaStream);
         }
@@ -635,16 +739,88 @@ export const StreamRoom = () => {
       console.error('Error starting screen share:', error);
     }
   };
-  console.log(peerConnection, peerConnection1);
+
+  console.log('share', shareView);
+
+  // className 추가
+  let firstVideoClassName = 'w-full h-full rounded-2xl';
+  if (numberShare === 0) {
+    firstVideoClassName +=
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[300px] h-fit';
+  } else if (numberShare === 1) {
+    firstVideoClassName +=
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[250px] h-fit';
+  } else if (numberShare === 2) {
+    firstVideoClassName +=
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[200px] h-fit';
+  }
+
+  let secondVideoClassName = 'w-full h-full rounded-2xl';
+  if (numberShare === 0) {
+    secondVideoClassName += ' hidden';
+  } else if (numberShare === 1) {
+    secondVideoClassName +=
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[227.5px] right-5 max-w-[250px] h-fit';
+  } else if (numberShare === 2) {
+    secondVideoClassName +=
+      ' xl:absolute xl:top-5 xl:left-5 xl:max-w-[250px] xl:h-auto absolute top-[360px] right-5 max-w-[200px] h-fit';
+  }
+
+  let thirdVideoClassName = 'w-full h-full rounded-2xl';
+  if (numberShare === 0) {
+    thirdVideoClassName += ' hidden';
+  } else if (numberShare === 1) {
+    thirdVideoClassName += ' hidden';
+  } else if (numberShare === 2) {
+    thirdVideoClassName +=
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[190px] right-5 max-w-[200px] h-fit';
+  }
+
+  let controlBtnClassName = 'flex items-center gap-4 relative';
+  if (numberShare === 0) {
+    controlBtnClassName +=
+      ' xl:justify-self-center justify-self-end xl:col-span-4 col-start-2 xl:row-start-6 row-start-6';
+  } else if (numberShare === 1) {
+    controlBtnClassName +=
+      ' justify-self-end xl:col-start-3 xl:col-span-2 xl:row-start-6 xl:mr-1 col-start-2 row-start-6';
+  } else if (numberShare === 2) {
+    controlBtnClassName +=
+      ' justify-self-end xl:col-start-3 xl:col-span-2 xl:row-start-6 xl:mr-1 col-start-2 row-start-6';
+  }
+
+  let activityBtnClassName = 'w-full h-full gap-4';
+  if (numberShare === 0) {
+    activityBtnClassName +=
+      ' xl:f-col xl:col-start-5 xl:col-span-2 xl:row-start-4 xl:row-span-3 col-start-1 row-start-6 flex';
+  } else if (numberShare === 1) {
+    activityBtnClassName +=
+      ' xl:col-start-1 xl:col-span-2 xl:row-start-6 flex xl:ml-1 col-start-1 row-start-6';
+  } else if (numberShare === 2) {
+    activityBtnClassName +=
+      ' xl:col-start-1 xl:col-span-2 xl:row-start-6 flex xl:ml-1 col-start-1 row-start-6';
+  }
+
+  let activityBtnSubClassName =
+    'f-jic xl:text-xl font-semibold gap-4 rounded-2xl shadow-sm';
+  if (numberShare === 0) {
+    activityBtnSubClassName +=
+      ' xl:h-1/3 xl:border xl:border-[#D9D9D9] hover:cursor-pointer';
+  }
+
+  const delayServiceMessage = () => {
+    toast.error('추후 서비스 예정입니다');
+  };
+
+  console.log('numbershare', numberShare);
+
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
-
-      <div className="f-col pt-20">
-        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5">
-          <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
-            <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
-              &apos;{roomInfo?.title}&apos;
+      <div className="f-col pt-24">
+        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 bg-white">
+          <div className="flex flex-row-reverse w-full xl:h-16 h-12 mb-5 justify-between">
+            <div className="flex items-center xl:text-3xl text-xl font-semibold pr-1 truncate">
+              &quot;{roomInfo?.title}&quot;
             </div>
             {guestProfile && (
               <RemoteUserSection
@@ -654,8 +830,21 @@ export const StreamRoom = () => {
             )}
           </div>
 
-          <div className="grid xl:grid-cols-6 grid-cols-1 xl:grid-rows-6 grid-rows-4 gap-4 w-full h-full">
-            <div className="relative xl:col-span-4 xl:row-span-6 row-span-3 w-full h-full rounded-2xl">
+          {/* 여기 비디오 부분 */}
+
+          <div className="relative w-full h-full grid xl:grid-cols-6 xl:grid-rows-6 grid-cols-2 grid-rows-6 gap-4">
+            {/* 메인비디오 화면 */}
+            <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
+              {guestIn ? (
+                <video
+                  ref={remoteVideoRef}
+                  autoPlay
+                  className="bg-black w-full h-full object-contain rounded-2xl max-h-[600px] min-h-[600px]"
+                />
+              ) : (
+                <WaitingGuestRef />
+              )}
+              {/* 건배 */}
               <div
                 role="none"
                 onClick={sendToastMessage}
@@ -670,65 +859,109 @@ export const StreamRoom = () => {
                   </div>
                 ) : null}
               </div>
-              <div className="w-full h-full rounded-2xl">
-                {guestIn ? (
-                  <video
-                    ref={remoteVideoRef}
-                    autoPlay
-                    className="bg-black w-full h-full xl:max-h-[730px] max-h-[500px] object-contain rounded-2xl"
-                  />
-                ) : (
-                  <WaitingGuestRef />
-                )}
-              </div>
-
-              <div className="flex gap-3 absolute left-1/2 -translate-x-1/2 bottom-5">
-                <ControlStreamRoom
-                  micToggleHandler={micToggleHandler}
-                  videoToggleHandler={videoToggleHandler}
-                  startScreenShare={startScreenShare}
-                />
-              </div>
             </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+
+            {/* 메인버튼 */}
+            <div className={controlBtnClassName}>
+              <ControlStreamRoom
+                micToggleHandler={micToggleHandler}
+                videoToggleHandler={videoToggleHandler}
+                startScreenShare={startScreenShare}
+              />
+            </div>
+
+            {/* sub first */}
+            <div className={firstVideoClassName}>
               <video
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
-              />
-            </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
-              <video
-                ref={thirdScreenVideoRef}
-                autoPlay
-                muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
-              />
-            </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
-              <video
-                ref={secondScreenVideoRef}
-                autoPlay
-                muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
+                className="bg-black w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[190px] min-h-[190px]"
               />
             </div>
 
-            {/* <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
-              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
-                <Camera />
-                함께 사진찍기
+            {isMyScreenShare && (
+              <div className={secondVideoClassName}>
+                <video
+                  ref={myWebcamVideoRef}
+                  autoPlay
+                  muted
+                  className="bg-black w-full h-full object-contain rounded-2xl"
+                />
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
-                <Game />
-                게임하기
+            )}
+
+            {isRemoteScreenShare && (
+              <div
+                className={
+                  numberShare === 1 ? secondVideoClassName : thirdVideoClassName
+                }
+              >
+                <video
+                  ref={remoteWebcamVideoRef}
+                  autoPlay
+                  muted
+                  className="bg-black w-full h-full object-contain rounded-2xl"
+                />
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
-                <Youtube />
-                유튜브 같이보기
+            )}
+
+            {/* activity button */}
+            <div className={activityBtnClassName}>
+              <motion.div
+                role="none"
+                className={activityBtnSubClassName}
+                onClick={startScreenShare}
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
+                  <div className="iconStyle bg-[#E0F5E6]">
+                    <ScreenShare />
+                  </div>
+                  <span
+                    className={`${
+                      numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
+                    }`}
+                  >
+                    화면 공유하기
+                  </span>
+                </div>
+              </motion.div>
+
+              <div
+                role="none"
+                className={activityBtnSubClassName}
+                onClick={delayServiceMessage}
+              >
+                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
+                  <Game />
+                  <span
+                    className={`${
+                      numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
+                    }`}
+                  >
+                    게임하기
+                  </span>
+                </div>
               </div>
-            </div> */}
+
+              <div
+                role="none"
+                className={activityBtnSubClassName}
+                onClick={delayServiceMessage}
+              >
+                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
+                  <Youtube />
+                  <span
+                    className={`${
+                      numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
+                    }`}
+                  >
+                    유튜브
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -737,11 +970,17 @@ export const StreamRoom = () => {
         onClose={() => setIsOpenLeaveRoom(false)}
         hasOverlay
       >
-        <LeaveRoomModal />
+        <LeaveRoomModal closeMediaStream={closeMediaStream} />
       </Modal>
 
-      <Modal isOpen={isOpenKickout} onClose={onCloseKickout}>
-        <KickoutModal onClose={onCloseKickout} />
+      <Modal isOpen={isOpenKickOut} onClose={() => setIsOpenKickOut(false)}>
+        {guestProfile && (
+          <KickoutModal
+            onClose={() => setIsOpenKickOut(false)}
+            sendKickMessage={sendKickMessage}
+            username={guestProfile?.username}
+          />
+        )}
       </Modal>
 
       <Modal
@@ -751,13 +990,6 @@ export const StreamRoom = () => {
       >
         <ModifyRoomModal />
       </Modal>
-
-      {/* <video
-        ref={contentVideoRef}
-        autoPlay
-        muted
-        className="w-full h-full object-cover rounded-3xl"
-      /> */}
     </div>
   );
 };

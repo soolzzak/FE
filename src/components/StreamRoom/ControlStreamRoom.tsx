@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 import { useAtom } from 'jotai';
+import Cookies from 'js-cookie';
+import jwtDecode from 'jwt-decode';
 import { useState } from 'react';
 import { LuMic, LuMicOff } from 'react-icons/lu';
 import { Exit } from '../../assets/svgs/Exit';
@@ -8,8 +10,19 @@ import { MonitorOn } from '../../assets/svgs/MonitorOn';
 import { ScreenShare } from '../../assets/svgs/ScreenShare';
 import { useModal } from '../../hooks/useModal';
 import { isOpenLeaveRoomAtom } from '../../store/modalStore';
+import { hostIdAtom, micOnAtom, monitorOnAtom } from '../../store/streamControlStore';
 import { ConfigDropDown } from './ConfigDropDown';
-import { micOnAtom, monitorOnAtom } from '../../store/streamControlStore';
+
+interface JwtPayload {
+  auth: {
+    email: string;
+    id: string;
+    role: string;
+  };
+  exp: string;
+  iat: string;
+  sub: string;
+}
 
 export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startScreenShare}: {micToggleHandler: () => void, videoToggleHandler: () => void, startScreenShare: () => void}) => {
   const [micOn] = useAtom(micOnAtom)
@@ -19,9 +32,16 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
   const [screenHover, setScreenHover] = useState(false);
   const [settingHover, setSettingHover] = useState(false);
   const [closeHover, setCloseHover] = useState(false);
+  
+  let userId: string | undefined = ""
+  const getCookie = Cookies.get('accessKey');
+  if (getCookie) {
+    userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
+  }
 
-  const [isOpenLeaveRoom, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
+  const [, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
+  const [hostId] = useAtom(hostIdAtom);
 
   return (
     <>
@@ -30,7 +50,7 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
         onClick={micToggleHandler}
         onMouseOver={() => setMicHover(true)}
         onMouseOut={() => setMicHover(false)}
-        className={`iconStyle ${micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'} `}
+        className={`iconStyle ${micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'} shadow`}
       >
         {micOn ? (
           <LuMic className="text-3xl text-white" />
@@ -38,7 +58,7 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
           <LuMicOff className="text-3xl text-white" />
         )}
         {micHover ? (
-          <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute -top-[17px] text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Microphone
           </div>
         ) : null}
@@ -50,17 +70,17 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
         onMouseOut={() => setCameraHover(false)}
         className={`iconStyle ${
           monitorOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
-        } relative`}
+        } relative shadow`}
       >
         {monitorOn ? <MonitorOn /> : <MonitorOff />}
         {cameraHover ? (
-          <div className="absolute -top-10 text-white px-3 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute -top-10 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Camera
           </div>
         ) : null}
       </div>
 
-      <div
+      {/* <div
         role="none"
         onClick={startScreenShare}
         onMouseOver={() => setScreenHover(true)}
@@ -69,32 +89,36 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
       >
         <ScreenShare />
         {screenHover ? (
-          <div className="w-32 absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="w-32 absolute -top-10 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Screen Share
           </div>
         ) : null}
-      </div>
+      </div> */}
 
-      <div
+      {hostId === userId ? (
+        <div
         onMouseOver={() => setSettingHover(true)}
         onMouseOut={() => setSettingHover(false)}
-        className="iconStyle bg-[#C0C0C0]"
+        className="iconStyle bg-[#C0C0C0] shadow"
       >
-        <ConfigDropDown setIsOpenKickout={setIsOpenKickout} />
+        <ConfigDropDown />
         {settingHover ? (
-          <div className="absolute -top-10 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute -top-[17px] text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Setting
           </div>
         ) : null}
       </div>
+      ) : null}
+      
 
       <div
         onMouseOver={() => setCloseHover(true)}
         onMouseOut={() => setCloseHover(false)}
+        className='shadow rounded-full'
       >
         <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
         {closeHover ? (
-          <div className="absolute -top-10 right-0 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute -top-[16.5px] text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Close
           </div>
         ) : null}

@@ -39,9 +39,10 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
       navigate(`/room/${data.data.roomId}`);
       toast.success('방 반들기 성공!');
     },
-    onError: (error) => {
+    onError: (error: { response: { data: { message: string } } }) => {
       toast('사용할 수 없는 단어가 있습니다.');
-      toast.error(error as ToastContent);
+      console.log(error);
+      toast.error(error?.response.data.message);
     },
   });
 

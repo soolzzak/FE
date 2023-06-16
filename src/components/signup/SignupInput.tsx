@@ -140,6 +140,8 @@ export const SignupInput = () => {
     onError: (error: any) => {
       if(error.response.data.message === 'The username contains forbidden words. Please choose a different username.') {
         toast.error('사용할 수 없는 닉네임 입니다')
+      } else if (error.response.data.message === 'The username already exist.') {
+        toast.error('중복된 닉네임 입니다')
       }
     },
   });
@@ -155,8 +157,12 @@ export const SignupInput = () => {
     onSuccess: () => {
       toast.success('인증번호가 발송되었습니다');
     },
-    onError: (error) => {
-      toast.error('이미 가입된 이메일 입니다');
+    onError: (error:any) => {
+      if (error.response.data.message === 'Failed to send the verification email.') {
+        toast.error('올바른 이메일 형식을 입력하세요')
+      } else if (error.response.data.message === 'The email address is already registered.') {
+        toast.error('등록된 이메일 입니다')
+      }
     },
   });
 
@@ -183,12 +189,12 @@ export const SignupInput = () => {
   };
 
   const signupMutation = useMutation(SignupApi, {
-    onSuccess: (response) => {
+    onSuccess: () => {
       toast.success('혼술짝 회원이 되신것을 환영합니다');
       navigate('/');
       setIsOpenLogin(true);
     },
-    onError: (error) => {
+    onError: () => {
       toast.error('회원가입에 실패하였습니다');
     },
   });
@@ -269,7 +275,7 @@ export const SignupInput = () => {
           inputValue={password || ''}
           inputType="password"
           className="signupInput"
-          placeholderText="비밀번호를 입력해주세요"
+          placeholderText="8~16자 영문, 숫자, 특수문자를 사용하세요"
           handleInputChange={passwordHandler}
           handleValidation={() => passwordTypeHandler(password)}
         />
@@ -301,7 +307,7 @@ export const SignupInput = () => {
             className="absolute w-16 h-7 top-11 right-3 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
             onClick={confirmUsernameHandler}
           >
-            인증하기
+            중복확인
           </button>
         </div>
         <div className="signupError">{usernameErr}</div>

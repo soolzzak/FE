@@ -40,9 +40,7 @@ export const SignupApi = async (signupInfo: SignupInfo) => {
     );
     return response;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      return error.response?.data.message;
-    }
+    throw error as Error
   }
 };
 
@@ -80,9 +78,7 @@ export const ChangePassword = async (changePwdInfo: ChangePwdInfo) => {
     const response = await axiosInstance.put('/change_password', changePwdInfo);
     return response;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response?.data.message;
-    }
+    throw error as Error
   }
 };
 
