@@ -2,20 +2,21 @@ import { AnimatePresence } from 'framer-motion';
 import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from '../layout/Layout';
+import { ChangePassword } from '../pages/ChangePassword';
 import { Home } from '../pages/Home';
+import { KakaoCallback } from '../pages/KakaoCallBack';
 import { Mypage } from '../pages/Mypage';
+import { NotFound } from '../pages/NotFound';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
 import { handleTokenChangeAtom } from '../store/mainpageStore';
-import { NotFound } from '../pages/NotFound';
-import { ChangePassword } from '../pages/ChangePassword';
-import { KakaoCallback } from '../pages/KakaoCallBack';
 
 export const Router = () => {
   const token = Cookies.get('accessKey');
   const [, setUserToken] = useAtom(handleTokenChangeAtom);
+  const location = useLocation();
 
   useEffect(() => {
     if (token) {
@@ -24,7 +25,13 @@ export const Router = () => {
   }, []);
 
   return (
-    <Layout>
+    // <Layout>
+    <Layout
+      hideFooter={
+        location.pathname === '/signup' ||
+        /^\/room\/\d+$/.test(location.pathname)
+      }
+    >
       <AnimatePresence mode="wait">
         <Routes>
           <Route path="*" element={<NotFound />} />

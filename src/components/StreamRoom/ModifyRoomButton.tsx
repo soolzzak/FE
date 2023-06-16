@@ -1,8 +1,7 @@
-import { SetStateAction, useAtom } from 'jotai';
-import { useMutation, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ToastContent, toast } from 'react-toastify';
-import { modifyRoom } from '../../api/streamRoom';
+import { Room, getRoom, modifyRoom } from '../../api/streamRoom';
 import {
   categoryAtom,
   genderAtom,
@@ -12,8 +11,8 @@ import {
   streamRoomInfoAtom,
   titleAtom,
 } from '../../store/addRoomStore';
-import { CommonButton } from '../common/CommonButton';
 import { isOpenModifyRoomAtom } from '../../store/modalStore';
+import { CommonButton } from '../common/CommonButton';
 
 export type CreateRoomData = {
   title: string;
@@ -30,23 +29,25 @@ export const ModifyRoomButton = () => {
   const [genderSetting] = useAtom(genderAtom);
   const [isPrivate] = useAtom(publicOrPrivateAtom);
   const [roomPassword] = useAtom(roomPasswordAtom);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [,setIsClose] = useAtom(isOpenModifyRoomAtom)
 
-  const [roomInfo] = useAtom(streamRoomInfoAtom);
+  const [, setIsClose] = useAtom(isOpenModifyRoomAtom);
 
-  //   const [, setIsOpenModifyRoom] = useAtom(isOpenModifyRoomAtom);
+
+  // const [roomInfo] = useAtom(streamRoomInfoAtom);
   const [, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
+  const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
 
   const modifyRoomMutation = useMutation(modifyRoom, {
     onSuccess: () => {
-      queryClient.invalidateQueries('chatrooms');
+      const newRoomInfo = { ...roomInfo, title };
+      setRoomInfo(newRoomInfo as Room);
       setModiftRoomIsOpen(false);
-
       toast.success('방 수정 성공!');
     },
     onError: (error) => {
+      toast('사용할 수 없는 단어가 있습니다.');
       toast.error(error as ToastContent);
     },
   });
@@ -61,7 +62,6 @@ export const ModifyRoomButton = () => {
       roomPassword,
     };
 
-    // const roomId = roomInfo?.roomId;
     modifyRoomMutation.mutate({
       data,
       image,
@@ -73,7 +73,7 @@ export const ModifyRoomButton = () => {
     <CommonButton
       buttonText="혼술짝 방 수정하기"
       clickHandler={onSubmit}
-      dimensions="text-xl py-6 mt-7 mb-[34px] w-2/3 self-center"
+      dimensions="text-xl py-5 mt-10 mb-[34px] rounded-[16px] w-2/3 self-center"
     />
   );
 };

@@ -25,7 +25,7 @@ export const DropdownSelector = ({ category }: { category?: string }) => {
     setIsOpen(false);
   };
 
-  console.log(selectedOption);
+  // console.log(selectedOption);
   useEffect(() => {
     handleOptionClick(category || dropdownSelection[0]);
     setCurrentSelectionView(
@@ -56,7 +56,7 @@ export const DropdownSelector = ({ category }: { category?: string }) => {
       <div className="relative" ref={dropdownRef}>
         <div
           role="none"
-          className={`f-ic border-2 px-7 h-9 border-[#929292] rounded-lg cursor-pointer ${
+          className={`f-ic border-2 px-3 h-9 border-[#929292] rounded-lg cursor-pointer ${
             isOpen ? 'bg-primary-50 text-primary-200 border-primary-200' : ''
           }`}
           onClick={handleDropdownToggle}
@@ -69,7 +69,7 @@ export const DropdownSelector = ({ category }: { category?: string }) => {
               <div
                 role="none"
                 key={option}
-                className={`px-7 py-2 cursor-pointer hover:bg-primary-50 hover:text-primary-200 
+                className={`px-3 py-2 cursor-pointer hover:bg-primary-50 hover:text-primary-200 
                 ${selectedOption === option ? 'text-primary-200' : ''}
                 ${index === 0 ? 'rounded-t-lg' : ''}
                 ${index === 6 ? 'rounded-b-lg' : ''}

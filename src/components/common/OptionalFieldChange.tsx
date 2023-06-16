@@ -14,7 +14,7 @@ export const OptionalFieldChange = ({
   roomPassword?: string;
 }) => {
   const [, setPassword] = useAtom(handleRoomPasswprdChangeAtom);
-  const [selectedOption, setSelectedOption] = useAtom(publicOrPrivateAtom);
+  const [selectedOption] = useAtom(publicOrPrivateAtom);
   const selections = [false, true];
 
   // let leftRightSelect: boolean[] = selections;
@@ -25,7 +25,7 @@ export const OptionalFieldChange = ({
   //   setSelectedOption(selections[0]);
   // }
 
-  console.log('비밀인지', isPrivate);
+  // console.log('비밀인지', isPrivate);
 
   return (
     <div className="f-ic ">
