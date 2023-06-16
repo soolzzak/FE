@@ -48,7 +48,7 @@ export const ModifyRoomModal = () => {
         </div>
       </div>
       {/* <AddRoomButton closeModal={() => setIsOpenModifyRoom} /> */}
-      <ModifyRoomButton closeModal={() => setIsOpenModifyRoom} />
+      <ModifyRoomButton />
       <div
         role="none"
         className="absolute right-3 top-3 hover:cursor-pointer"

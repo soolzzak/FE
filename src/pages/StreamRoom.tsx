@@ -88,14 +88,14 @@ export const StreamRoom = () => {
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [, micOnChange] = useAtom(micOnChangeAtom);
   const [, monitorOnChange] = useAtom(monitorOnChangeAtom);
-  const [monitorOn, setMonitorOn] = useAtom<boolean>(monitorOnAtom);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
 
   let mediaStream: MediaStream;
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
-  const [remoteMediaStream, setRemoteMediaStream] = useState<MediaStream | null>(null);
+  const [remoteMediaStream, setRemoteMediaStream] =
+    useState<MediaStream | null>(null);
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 
@@ -433,7 +433,7 @@ export const StreamRoom = () => {
           case 'join':
             console.log('received join message');
             setSocketIsOnline(true);
-            message.data = await getRoom(params as string, roomPassword);
+            message.data = await getRoom(params as string);
             setRoomInfo(message.data);
             setRoomPassword(null);
             console.log('get room? ', message.data);
@@ -482,6 +482,7 @@ export const StreamRoom = () => {
       monitorOnChange(monitorOnAtom);
     }
   };
+
   const sendToastMessage = () => {
     console.log('click toast');
     if (socket) {
@@ -635,14 +636,80 @@ export const StreamRoom = () => {
     }
   };
   console.log(peerConnection, peerConnection1);
+
+  // 화면 공유 개수 state
+  const [numberShare, setNumberShare] = useState(0);
+
+  // className 추가
+  let firstVideoClassName = 'w-full h-full rounded-2xl';
+  if (numberShare === 0) {
+    firstVideoClassName +=
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[300px] h-auto';
+  } else if (numberShare === 1) {
+    firstVideoClassName += ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[250px] h-auto';
+  } else if (numberShare === 2) {
+    firstVideoClassName += ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[200px] h-auto';
+  }
+
+  let secondVideoClassName = 'w-full h-full';
+  if (numberShare === 0) {
+    secondVideoClassName += ' hidden';
+  } else if (numberShare === 1) {
+    secondVideoClassName += ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[227.5px] right-5 max-w-[250px] h-auto';
+  } else if (numberShare === 2) {
+    secondVideoClassName += ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[190px] right-5 max-w-[200px] h-auto';
+  }
+
+  let thirdVideoClassName = 'w-full h-full';
+  if (numberShare === 0) {
+    thirdVideoClassName += ' hidden';
+  } else if (numberShare === 1) {
+    thirdVideoClassName += ' hidden';
+  } else if (numberShare === 2) {
+    thirdVideoClassName += ' xl:absolute xl:top-5 xl:left-5 xl:max-w-[250px] xl:h-auto absolute top-[360px] right-5 max-w-[200px] h-auto';
+  }
+
+  let controlBtnClassName = 'flex items-center gap-4 relative';
+  if (numberShare === 0) {
+    controlBtnClassName +=
+      ' xl:justify-self-center justify-self-end xl:col-span-4 col-start-2 xl:row-start-6 row-start-6';
+  } else if (numberShare === 1) {
+    controlBtnClassName +=
+      ' justify-self-end xl:col-start-3 xl:col-span-2 xl:row-start-6 xl:mr-1 col-start-2 row-start-6';
+  } else if (numberShare === 2) {
+    controlBtnClassName +=
+      ' justify-self-end xl:col-start-3 xl:col-span-2 xl:row-start-6 xl:mr-1 col-start-2 row-start-6';
+  }
+
+  let activityBtnClassName = 'w-full h-full gap-4';
+  if (numberShare === 0) {
+    activityBtnClassName +=
+      ' xl:f-col xl:col-start-5 xl:col-span-2 xl:row-start-4 xl:row-span-3 col-start-1 row-start-6 flex';
+  } else if (numberShare === 1) {
+    activityBtnClassName +=
+      ' xl:col-start-1 xl:col-span-2 xl:row-start-6 flex xl:ml-1 col-start-1 row-start-6';
+  } else if (numberShare === 2) {
+    activityBtnClassName +=
+      ' xl:col-start-1 xl:col-span-2 xl:row-start-6 flex xl:ml-1 col-start-1 row-start-6';
+  }
+
+  let activityBtnSubClassName =
+    'f-jic xl:text-xl font-semibold gap-4 rounded-2xl';
+  if (numberShare === 0) {
+    activityBtnSubClassName += ' xl:h-1/3 xl:border xl:border-[#D9D9D9]';
+  } else if (numberShare === 1) {
+    activityBtnSubClassName += '';
+  } else if (numberShare === 2) {
+    activityBtnSubClassName += '';
+  }
+
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
-
-      <div className="f-col pt-20">
+      <div className="f-col pt-24">
         <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5">
-          <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
-            <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
+          <div className="flex flex-row-reverse w-full xl:h-16 h-12 mb-5 justify-between">
+            <div className="flex items-center xl:text-3xl text-xl font-semibold pr-1 truncate">
               &apos;{roomInfo?.title}&apos;
             </div>
             {guestProfile && (
@@ -653,81 +720,112 @@ export const StreamRoom = () => {
             )}
           </div>
 
-          <div className="grid xl:grid-cols-6 grid-cols-1 xl:grid-rows-6 grid-rows-4 gap-4 w-full h-full">
-            <div className="relative xl:col-span-4 xl:row-span-6 row-span-3 w-full h-full rounded-2xl">
-              <div
-                role="none"
-                onClick={sendToastMessage}
-                onMouseOver={() => setToastHover(true)}
-                onMouseOut={() => setToastHover(false)}
-                className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
-              >
-                <ToastIcon />
-                {toastHover ? (
-                  <div className="absolute w-48 h-10 top-16 xl:right-0 ml-36 bg-white text-lg font-semibold rounded-xl f-jic">
-                    건배할 때 눌러보세요!
-                  </div>
-                ) : null}
-              </div>
-              <div className="w-full h-full rounded-2xl">
-                {guestIn ? (
-                  <video
-                    ref={remoteVideoRef}
-                    autoPlay
-                    className="bg-black w-full h-full xl:max-h-[730px] max-h-[500px] object-contain rounded-2xl"
-                  />
-                ) : (
-                  <WaitingGuestRef />
-                )}
-              </div>
+          {/* 여기 비디오 부분 */}
 
-              <div className="flex gap-3 absolute left-1/2 -translate-x-1/2 bottom-5">
-                <ControlStreamRoom
-                  micToggleHandler={micToggleHandler}
-                  videoToggleHandler={videoToggleHandler}
-                  startScreenShare={startScreenShare}
+          <div className="relative w-full h-full grid xl:grid-cols-6 xl:grid-rows-6 grid-cols-2 grid-rows-6 gap-4">
+
+            {/* 메인비디오 화면 */}
+            <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
+              {guestIn ? (
+                <video
+                  ref={remoteVideoRef}
+                  autoPlay
+                  className="bg-black w-full h-full object-contain rounded-2xl"
                 />
-              </div>
+              ) : (
+                <WaitingGuestRef />
+              )}
+              {/* 건배 */}
+            <div
+              role="none"
+              onClick={sendToastMessage}
+              onMouseOver={() => setToastHover(true)}
+              onMouseOut={() => setToastHover(false)}
+              className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
+            >
+              <ToastIcon />
+              {toastHover ? (
+                <div className="absolute w-48 h-10 top-16 xl:right-0 ml-36 bg-white text-lg font-semibold rounded-xl f-jic">
+                  건배할 때 눌러보세요!
+                </div>
+              ) : null}
             </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+            </div>
+
+            {/* 메인버튼 */}
+            <div className={controlBtnClassName}>
+              <ControlStreamRoom
+                micToggleHandler={micToggleHandler}
+                videoToggleHandler={videoToggleHandler}
+                startScreenShare={startScreenShare}
+              />
+            </div>
+
+            {/* sub first */}
+            <div className={firstVideoClassName}>
               <video
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
+                className="bg-black w-full h-full object-contain rounded-2xl"
               />
             </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
-              <video
-                ref={thirdScreenVideoRef}
-                autoPlay
-                muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
-              />
-            </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+
+            {/* sub second */}
+            <div className={secondVideoClassName}>
               <video
                 ref={secondScreenVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
+                className="bg-black w-full h-full object-contain rounded-2xl"
               />
             </div>
 
-            {/* <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
-              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
+            {/* sub third */}
+            <div className={thirdVideoClassName}>
+              <video
+                ref={thirdScreenVideoRef}
+                autoPlay
+                muted
+                className="bg-black w-full h-full object-contain rounded-2xl"
+              />
+            </div>
+
+            {/* activity button */}
+            <div className={activityBtnClassName}>
+              <div className={activityBtnSubClassName}>
                 <Camera />
-                함께 사진찍기
+                <span
+                  className={`${
+                    numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
+                  }`}
+                >
+                  함께 사진찍기
+                </span>
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
+
+              <div className={activityBtnSubClassName}>
                 <Game />
-                게임하기
+                <span
+                  className={`${
+                    numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
+                  }`}
+                >
+                  게임하기
+                </span>
               </div>
-              <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
+
+              <div className={activityBtnSubClassName}>
                 <Youtube />
-                유튜브 같이보기
+                <span
+                  className={`${
+                    numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
+                  }`}
+                >
+                  유튜브 같이보기
+                </span>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
@@ -750,13 +848,6 @@ export const StreamRoom = () => {
       >
         <ModifyRoomModal />
       </Modal>
-
-      {/* <video
-        ref={contentVideoRef}
-        autoPlay
-        muted
-        className="w-full h-full object-cover rounded-3xl"
-      /> */}
     </div>
   );
 };

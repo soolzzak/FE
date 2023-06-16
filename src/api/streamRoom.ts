@@ -26,10 +26,10 @@ export type Room = {
   roomImageUrl: string;
 };
 
-export const getRoom = async (roomId: string, roomPassword: string | null) => {
+export const getRoom = async (roomId: string) => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-      `/room/${roomId}?roomPassword=${roomPassword}`
+      `/room/${roomId}`
     );
     return response.data;
   } catch (error) {
@@ -79,4 +79,15 @@ export const modifyRoom = async ({
   } catch (error) {
   throw error as Error;
   }
+  };
+
+  export const checkRoomPassword = async (roomId: string, roomPassword: string | null) => {
+    try {
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+        `/room/passwordCheck/${roomId}?roomPassword=${roomPassword}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error as Error;
+    }
   };

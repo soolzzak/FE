@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getMypageProfile } from '../../api/mypage';
-import { getRoom } from '../../api/streamRoom';
+import { checkRoomPassword, getRoom } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { roomPasswordAtom } from '../../store/addRoomStore';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../../store/modalStore';
@@ -30,7 +30,7 @@ export const JoinRoomModal = () => {
   const enterRoomHandler = async () => {
     try {
       if (roomNum) {
-        const response = await getRoom(roomNum?.toString(), roomPassword);
+        const response = await checkRoomPassword(roomNum?.toString(),roomPassword);
         setIsOpenWaitingRoom(true);
         setIsOpenJoinRoom(false);
       }
@@ -69,83 +69,7 @@ export const JoinRoomModal = () => {
   }, []);
 
   return (
-    // <div className="relative flex w-full bg-white rounded-[36px] justify-center items-center px-8 py-8">
-    //   <div className="w-[70%] h-[90%] flex flex-col justify-between items-center px-4">
-    //     <div className="w-[100%] h-[10%] text-left text-3xl font-bold truncate pl-1 pt-2">
-    //       {chatRoomInfo?.title}
-    //     </div>
-    //     <div className="w-[100%] h-[90%] bg-[#D9D9D9] rounded-[20px]">
-    //       <video
-    //         className="w-full h-full object-cover rounded-[20px]"
-    //         ref={myVideoRef}
-    //         autoPlay
-    //         muted
-    //       />
-    //     </div>
-    //   </div>
-
-    //   <div className="w-[40%] h-[90%] flex flex-col items-center self-center px-4">
-    //     <div className="w-[100%] h-[10%]" />
-    //     <div className="flex items-center justify-center self-end h-[15%] gap-4 rounded-2xl bg-[#E0F5E6] px-2">
-    //       <div>
-    //         <img
-    //           alt="userImg"
-    //           src={data?.data.userImage}
-    //           className="w-14 min-w-[56px] h-14 rounded-full"
-    //         />
-    //       </div>
-
-    //       <div>
-    //         <p className="font-bold">{data?.data.username}님</p>
-    //         <p className="font-bold">{data?.data.alcohol}%</p>
-    //       </div>
-    //     </div>
-    //     <div className="w-[100%] h-[75%] flex flex-col justify-between ">
-    //       <div className="mt-20">
-    //         <p className="text-[#454545] font-semibold text-base mb-1">
-    //           카테고리
-    //         </p>
-    //         <div className="join-room-modal-tag">
-    //           {selections.map((tab, index) =>
-    //             tab === category ? tabList[index] : null
-    //           )}
-    //         </div>
-    //         <p className="text-[#454545] font-semibold text-base mb-1">성별</p>
-    //         <div className="join-room-modal-tag">{gender}</div>
-    //         {chatRoomInfo?.isPrivate ? (
-    //           <>
-    //             <p className="text-[#454545] font-semibold text-base mb-1">
-    //               비밀번호
-    //             </p>
-    //             <input
-    //               type="password"
-    //               className="border border-secondary-300 rounded-md h-9"
-    //               onChange={(e) => setRoomPassword(e.target.value)}
-    //             />
-    //           </>
-    //         ) : null}
-    //       </div>
-    //       <button
-    //         type="button"
-    //         className="w-[100%] h-16 bg-primary-300 rounded-2xl text-[#FFFFFF] text-[22px] font-bold hover:bg-primary-400"
-    //         onClick={enterRoomHandler}
-    //       >
-    //         혼술짝 방 입장하기
-    //       </button>
-    //     </div>
-    //     {/* <div className="flex items-center justify-center rounded-xl w-64 h-12 bg-[#D9D9D9] text-[18px] mb-3">
-    //         누르면 5초 후에 입장해요😊
-    //       </div> */}
-    //   </div>
-    //   <div
-    //     role="none"
-    //     className="absolute right-3 top-2 hover:cursor-pointer"
-    //     onClick={() => setIsOpenJoinRoom(false)}
-    //   >
-    //     <DeleteBtn />
-    //   </div>
-    // </div>
-    <div className="bg-white p-10 rounded-2xl">
+    <div className="bg-white px-12 py-8 rounded-2xl">
       <div className="w-full text-3xl font-bold truncate">
         &apos;{chatRoomInfo?.title}&apos;
       </div>

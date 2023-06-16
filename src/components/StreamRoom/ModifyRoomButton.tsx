@@ -13,6 +13,7 @@ import {
   titleAtom,
 } from '../../store/addRoomStore';
 import { CommonButton } from '../common/CommonButton';
+import { isOpenModifyRoomAtom } from '../../store/modalStore';
 
 export type CreateRoomData = {
   title: string;
@@ -22,11 +23,7 @@ export type CreateRoomData = {
   roomPassword: string;
 };
 
-export const ModifyRoomButton = ({
-  closeModal,
-}: {
-  closeModal: () => void;
-}) => {
+export const ModifyRoomButton = () => {
   const [image] = useAtom(imageAtom);
   const [title] = useAtom(titleAtom);
   const [category] = useAtom(categoryAtom);
@@ -35,13 +32,14 @@ export const ModifyRoomButton = ({
   const [roomPassword] = useAtom(roomPasswordAtom);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [,setIsClose] = useAtom(isOpenModifyRoomAtom)
 
   const [roomInfo] = useAtom(streamRoomInfoAtom);
 
   const modifyRoomMutation = useMutation(modifyRoom, {
     onSuccess: () => {
       queryClient.invalidateQueries('chatrooms');
-      closeModal();
+      setIsClose(false);
       //   navigate(`/room/${data.data.roomId}`);
       toast.success('방 수정 성공!');
     },

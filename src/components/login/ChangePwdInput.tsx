@@ -1,6 +1,7 @@
 import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
+import { toast } from 'react-toastify';
 import { ChangePassword, ChangePwdInfo, EmailLoginConfirm } from '../../api/auth';
 import { isOpenLoginModalAtom } from '../../store/modalStore';
 
@@ -26,7 +27,16 @@ export const ChangePwdInput = () => {
   }
   const authNumberChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => setAuthNumber(event.target.value);
 
-  const EmailMutation = useMutation(EmailLoginConfirm);
+  const EmailMutation = useMutation(EmailLoginConfirm,{
+    onSuccess: () => {
+      toast.success('인증번호가 발송되었습니다');
+    },
+    onError: (error:any) => {
+      if (error.response.data.message === 'Failed to send the verification email.') {
+        toast.error('올바른 이메일 형식을 입력하세요')
+      }
+    }
+  });
   const confirmEmailHandler = async () => {
     if (!email) {
       return;
@@ -46,9 +56,16 @@ export const ChangePwdInput = () => {
   }
 
   const changePasswordMutation = useMutation(ChangePassword, {
-    onSuccess: (response) => {
-      alert('비밀번호가 변경되었습니다')
+    onSuccess: () => {
+      toast.success('비밀번호가 변경되었습니다')
       setIsOpenLogin(true);
+    },
+    onError: (error:any) => {
+      if (error.response.data.message === 'The email address does not exist.') {
+        toast.error('존재하지 않는 이메일 입니다')
+      } else if (error.response.data.message === 'Please reset your password. Passwords must be 8-15 characters long and contain a combination of lowercase letters, uppercase letters, numbers, and special characters.') {
+        toast.error('비밀번호 형식을 올바르게 입력하세요')
+      }
     }
   }
     );
@@ -88,14 +105,17 @@ export const ChangePwdInput = () => {
 
       
       {EmailMutation.data?.length === 6? (
+        <>
+        <p className="font-bold text-lg mb-2 mt-4">인증번호</p>
         <input
-          type="text"
+          type="password"
           value={authNumber || ''}
           onChange={authNumberChangeHandler}
           onBlur={authNumberCheckHandler}
           placeholder="인증번호 6자리를 입력해주세요"
           className="signupInput"
         />
+        </>
       ) : null}
 
         <div className="text-base text-red-600 mb-4 pl-1">
@@ -110,7 +130,7 @@ export const ChangePwdInput = () => {
           onChange={pwdChangeHandler}
           onBlur={() => pwdTypeHandler(pwd)}
           className="signupInput"
-          placeholder="비밀번호"
+          placeholder="8~16자 영문, 숫자, 특수문자를 사용하세요"
         />
         <div className="text-base text-red-600 mt-1 mb-4 pl-1">
         {pwdErrMsg}
