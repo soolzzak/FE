@@ -14,7 +14,6 @@ import {
 } from '../../store/addRoomStore';
 import { CommonButton } from '../common/CommonButton';
 import { isOpenModifyRoomAtom } from '../../store/modalStore';
-import { isOpenModifyRoomAtom } from '../../store/modalStore';
 
 export type CreateRoomData = {
   title: string;
@@ -24,7 +23,6 @@ export type CreateRoomData = {
   roomPassword: string;
 };
 
-export const ModifyRoomButton = () => {
 export const ModifyRoomButton = () => {
   const [image] = useAtom(imageAtom);
   const [title] = useAtom(titleAtom);

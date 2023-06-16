@@ -8,5 +8,6 @@ export const isOpenJoinHostAtom = atom<boolean>(false);
 export const isOpenLeaveRoomAtom = atom<boolean>(false);
 export const isOpenAuthModalAtom = atom<boolean>(false);
 export const isOpenLoginModalAtom = atom<boolean>(false);
+export const isOpenKickoutModalAtom = atom<boolean>(false);
 
 export const toastAtom = atom(false);
