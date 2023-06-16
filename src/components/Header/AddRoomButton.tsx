@@ -13,6 +13,7 @@ import {
   titleAtom,
 } from '../../store/addRoomStore';
 import { CommonButton } from '../common/CommonButton';
+import { errorMessageConvert } from '../../utils/switchSelections';
 
 export type CreateRoomData = {
   title: string;
@@ -40,9 +41,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
       toast.success('방 반들기 성공!');
     },
     onError: (error: { response: { data: { message: string } } }) => {
-      toast('사용할 수 없는 단어가 있습니다.');
-      console.log(error);
-      toast.error(error?.response.data.message);
+      toast.error(errorMessageConvert(error?.response.data.message));
     },
   });
 

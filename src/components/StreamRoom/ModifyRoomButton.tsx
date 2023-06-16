@@ -29,7 +29,7 @@ export const ModifyRoomButton = () => {
   const [genderSetting] = useAtom(genderAtom);
   const [isPrivate] = useAtom(publicOrPrivateAtom);
   const [roomPassword] = useAtom(roomPasswordAtom);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [, setIsClose] = useAtom(isOpenModifyRoomAtom);
 

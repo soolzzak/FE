@@ -73,8 +73,8 @@ export const errorMessageConvert = (chatCategory: string) => {
     case 'The username already exist.':
       result = '중복된 닉네임입니다.';
       break;
-    case 'FOOD_TRAVEL':
-      result = '🥨 맛집/여행';
+    case 'The room title contains forbidden words. Please use different room title.':
+      result = '사용할 수 없는 단어가 있습니다';
       break;
     case 'SPORTS_GAME':
       result = '⚽ 스포츠/게임';
