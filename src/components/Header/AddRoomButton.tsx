@@ -39,8 +39,9 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
       navigate(`/room/${data.data.roomId}`);
       toast.success('방 반들기 성공!');
     },
-    onError: (error) => {
-      toast.error(error as ToastContent);
+    onError: (error: { response: { data: { message: string } } }) => {
+      console.log(error);
+      toast.error(error?.response.data.message);
     },
   });
 
