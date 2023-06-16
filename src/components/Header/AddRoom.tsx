@@ -8,6 +8,7 @@ import { ImageUploadAndView } from '../common/ImageUploadAndView';
 import { ModalInput } from '../common/ModalInput';
 import { OptionalFieldChange } from '../common/OptionalFieldChange';
 import { AddRoomButton } from './AddRoomButton';
+import { Modify } from '../../assets/svgs/Modify';
 
 export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
@@ -16,7 +17,7 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="relative f-col bg-white px-12 rounded-[20px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-7">
-        <div className="w-[356px] h-[236px] mt-5 rounded-2xl bg-slate-400">
+        <div className="w-[356px] h-[300px] rounded-2xl bg-slate-400">
           <ImageUploadAndView />
         </div>
         <div className="f-col gap-3">

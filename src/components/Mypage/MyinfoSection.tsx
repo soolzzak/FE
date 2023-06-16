@@ -8,13 +8,13 @@ import {
 } from '../../api/mypage';
 import { Modify } from '../../assets/svgs/Modify';
 import { Kakao } from '../../assets/svgs/Kakao';
+import { errorMessageConvert } from '../../utils/switchSelections';
 
 // 얘가 원래꺼
 export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const [image, setImage] = useState<File | undefined>();
   const queryClient = useQueryClient();
 
-  // const [view, setView] = useState<string | undefined>();
   const [view, setView] = useState<string | undefined>(myinfo.userImage);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [editMode, setEditMode] = useState(false);
@@ -28,11 +28,13 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   // 수정 ,,,
   const updateMyProfileMutation = useMutation(updateMypageProfile, {
     onSuccess: () => {
-      toast.success('업데이트 성공');
+      toast.success('프로필 수정이 완료되었습니다.');
+      setEditMode(!editMode);
       queryClient.invalidateQueries('profile');
     },
-    onError: (error) => {
-      toast.error('업데이트 실패');
+    onError: (error: { response: { data: { message: string } } }) => {
+      console.log(error.response.data.message);
+      toast.error(errorMessageConvert(error.response.data.message));
     },
   });
 
@@ -43,10 +45,10 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
 
     const updateMypageData: UpdateMypageData = {
       userImage: image || null,
-      username: modifyUserName || '',
+      username:
+        myinfo.username === modifyUserName ? '' : (modifyUserName as string),
     };
     await updateMyProfileMutation.mutate(updateMypageData);
-    setEditMode(!editMode);
   };
 
   const handleImageChange = (

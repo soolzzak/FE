@@ -40,6 +40,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
       toast.success('방 반들기 성공!');
     },
     onError: (error) => {
+      toast('사용할 수 없는 단어가 있습니다.');
       toast.error(error as ToastContent);
     },
   });
@@ -59,7 +60,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
     <CommonButton
       buttonText="혼술짝 방만들기"
       clickHandler={onSubmit}
-      dimensions="text-xl py-6 mt-7 mb-[34px] w-2/3 self-center"
+      dimensions="text-xl py-5 mt-10 mb-[34px] rounded-[16px] w-2/3 self-center"
     />
   );
 };
