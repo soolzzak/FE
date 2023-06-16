@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai';
+import { SetStateAction, useAtom } from 'jotai';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
@@ -14,6 +14,7 @@ import {
 } from '../../store/addRoomStore';
 import { CommonButton } from '../common/CommonButton';
 import { isOpenModifyRoomAtom } from '../../store/modalStore';
+import { isOpenModifyRoomAtom } from '../../store/modalStore';
 
 export type CreateRoomData = {
   title: string;
@@ -23,6 +24,7 @@ export type CreateRoomData = {
   roomPassword: string;
 };
 
+export const ModifyRoomButton = () => {
 export const ModifyRoomButton = () => {
   const [image] = useAtom(imageAtom);
   const [title] = useAtom(titleAtom);
@@ -36,11 +38,14 @@ export const ModifyRoomButton = () => {
 
   const [roomInfo] = useAtom(streamRoomInfoAtom);
 
+  //   const [, setIsOpenModifyRoom] = useAtom(isOpenModifyRoomAtom);
+  const [, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
+
   const modifyRoomMutation = useMutation(modifyRoom, {
     onSuccess: () => {
       queryClient.invalidateQueries('chatrooms');
-      setIsClose(false);
-      //   navigate(`/room/${data.data.roomId}`);
+      setModiftRoomIsOpen(false);
+
       toast.success('방 수정 성공!');
     },
     onError: (error) => {
@@ -57,8 +62,7 @@ export const ModifyRoomButton = () => {
       isPrivate,
       roomPassword,
     };
-    console.log('이미지', image);
-    console.log('데이터', data);
+
     // const roomId = roomInfo?.roomId;
     modifyRoomMutation.mutate({
       data,
