@@ -99,7 +99,7 @@ export const ChangePwdInput = () => {
           onClick={confirmEmailHandler}
           className="absolute w-16 h-7 top-2 right-2 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
         >
-          인증번호
+          인증하기
         </button>
       </div>
 
