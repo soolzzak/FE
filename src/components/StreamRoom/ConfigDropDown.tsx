@@ -7,18 +7,15 @@ import React, {
   useState,
 } from 'react';
 import { AiOutlineSetting } from 'react-icons/ai';
-import { isOpenModifyRoomAtom } from '../../store/modalStore';
+import { isOpenKickoutModalAtom, isOpenModifyRoomAtom } from '../../store/modalStore';
 import { Modal } from '../common/Modal';
 import { ModifyRoomModal } from './ModifyRoomModal';
 import { Room } from '../../api/streamRoom';
 
-export const ConfigDropDown = ({
-  setIsOpenKickout,
-}: {
-  setIsOpenKickout: Dispatch<SetStateAction<boolean>>;
-}) => {
+export const ConfigDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
+  const [, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
+  const [, setIsOpenKickOut] = useAtom(isOpenKickoutModalAtom)
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const onToggle = () => {
@@ -58,7 +55,7 @@ export const ConfigDropDown = ({
     console.log('바보');
     // event.stopPropagation();
 
-    setIsOpenKickout(true);
+    setIsOpenKickOut(true);
     setIsOpen(false);
   };
 
