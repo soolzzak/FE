@@ -33,6 +33,12 @@ import {
 import { ScreenShare } from '../assets/svgs/ScreenShare';
 import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
+import {
+  micOnAtom,
+  micOnChangeAtom,
+  monitorOnAtom,
+  monitorOnChangeAtom,
+} from '../store/streamControlStore';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
 import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
 
@@ -73,7 +79,7 @@ export const StreamRoom = () => {
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
   const navigate = useNavigate();
-  const [peerConnection] = useState<RTCPeerConnection>(
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
   const [peerConnection1] = useState<RTCPeerConnection>(
@@ -81,8 +87,9 @@ export const StreamRoom = () => {
   );
   const [socket] = useState<WebSocket>(new WebSocket(signalingServerUrl));
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
-  const [micOn, setMicOn] = useState<boolean>(true);
-  const [monitorOn, setMonitorOn] = useState<boolean>(true);
+  const [, micOnChange] = useAtom(micOnChangeAtom);
+  const [, monitorOnChange] = useAtom(monitorOnChangeAtom);
+  const [monitorOn, setMonitorOn] = useAtom<boolean>(monitorOnAtom);
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
@@ -95,11 +102,6 @@ export const StreamRoom = () => {
 
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
 
-  const [micHover, setMicHover] = useState(false);
-  const [cameraHover, setCameraHover] = useState(false);
-  const [screenHover, setScreenHover] = useState(false);
-  const [settingHover, setSettingHover] = useState(false);
-  const [closeHover, setCloseHover] = useState(false);
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 
@@ -299,6 +301,7 @@ export const StreamRoom = () => {
       peerConnection.addTrack(track, mediaStream as MediaStream);
     });
   };
+
   const startLocalStream = async () => {
     try {
       // eslint-disable-next-line no-undef
@@ -485,7 +488,7 @@ export const StreamRoom = () => {
     if (audio && myMediaStream) {
       const audioTrack = myMediaStream.getAudioTracks()[0];
       audioTrack.enabled = !audioTrack.enabled;
-      setMicOn((prev) => !prev);
+      micOnChange(micOnAtom);
     }
   };
 
@@ -494,7 +497,7 @@ export const StreamRoom = () => {
     if (video && myMediaStream) {
       const videoTrack = myMediaStream.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
-      setMonitorOn((prev) => !prev);
+      monitorOnChange(monitorOnAtom);
     }
   };
   const sendToastMessage = () => {
@@ -726,7 +729,7 @@ export const StreamRoom = () => {
         <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5">
           <div className="flex flex-row-reverse w-full h-16  mb-5 justify-between">
             <div className="flex items-centertext-xl text-[32px] font-semibold pr-1">
-              {roomInfo?.title}
+              &apos;{roomInfo?.title}&apos;
             </div>
             {guestProfile && (
               <RemoteUserSection
@@ -772,7 +775,6 @@ export const StreamRoom = () => {
                 />
               </div>
             </div>
-
             <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
               <video
                 ref={localVideoRef}

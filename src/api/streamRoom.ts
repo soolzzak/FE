@@ -17,18 +17,20 @@ export type Room = {
   title: string;
   username: string;
   category: string;
-  genderSettings: string;
+  genderSetting: string;
   isPrivate: boolean;
   roomPassword: string;
   createdAt: string;
   alcohol: number;
   userImage: string;
-  roomImage: string;
+  roomImageUrl: string;
 };
 
 export const getRoom = async (roomId: string, roomPassword: string | null) => {
   try {
-    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/room/${roomId}?roomPassword=${roomPassword}`);
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+      `/room/${roomId}?roomPassword=${roomPassword}`
+    );
     return response.data;
   } catch (error) {
     throw error as Error;
@@ -49,10 +51,11 @@ export const checkIfRoomIsEmpty = async (
   }
 };
 
-export const modifyRoom = async (
-  { data, image }: CreateRoomData,
-  roomId: string
-): Promise<ApiResponse1> => {
+export const modifyRoom = async ({
+  data,
+  image,
+  roomId,
+}: CreateRoomData & { roomId: string }): Promise<ApiResponse1> => {
   try {
     const formData = new FormData();
     const sentData = JSON.stringify({ ...data });

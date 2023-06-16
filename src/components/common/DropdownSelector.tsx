@@ -1,9 +1,13 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { categoryAtom } from '../../store/addRoomStore';
-import { selections, tabList } from '../../utils/switchSelections';
+import {
+  selections,
+  tabList,
+  categorySelection,
+} from '../../utils/switchSelections';
 
-export const DropdownSelector = () => {
+export const DropdownSelector = ({ category }: { category?: string }) => {
   const dropdownSelection = selections.slice(1);
   const dropdownDisplayedSelection = tabList.slice(1);
   const [selectedOption, handleOptionClick] = useAtom(categoryAtom);
@@ -21,9 +25,12 @@ export const DropdownSelector = () => {
     setIsOpen(false);
   };
 
+  console.log(selectedOption);
   useEffect(() => {
-    handleOptionClick(dropdownSelection[0]);
-    setCurrentSelectionView(dropdownDisplayedSelection[0]);
+    handleOptionClick(category || dropdownSelection[0]);
+    setCurrentSelectionView(
+      categorySelection(category as string) || dropdownDisplayedSelection[0]
+    );
   }, []);
 
   useEffect(() => {
