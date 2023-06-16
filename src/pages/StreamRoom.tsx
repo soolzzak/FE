@@ -78,8 +78,9 @@ export const StreamRoom = () => {
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
+
   const navigate = useNavigate();
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
+  const [peerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
   const [peerConnection1] = useState<RTCPeerConnection>(
@@ -101,6 +102,12 @@ export const StreamRoom = () => {
   let remoteMediaStream: MediaStream | null = null;
 
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
+
+  const [micHover, setMicHover] = useState(false);
+  const [cameraHover, setCameraHover] = useState(false);
+  const [screenHover, setScreenHover] = useState(false);
+  const [settingHover, setSettingHover] = useState(false);
+  const [closeHover, setCloseHover] = useState(false);
 
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
