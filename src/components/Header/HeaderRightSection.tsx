@@ -28,6 +28,26 @@ export const HeaderRightSection = () => {
       setUserAtom(jwtDecode(user));
     }
   }, [user]);
+  let eventSource: EventSource;
+  console.log(userAtom);
+  useEffect(() => {
+    if (user) {
+      eventSource = new EventSource(
+        `https://api.honsoolzzak.com/events/${userAtom?.auth.id}`
+      );
+    }
+    if (eventSource) {
+      eventSource.onmessage = (event) => {
+        console.log('Received SSE event:', event.data);
+      };
+      eventSource.onerror = (error) => {
+        console.error('SSE connection error:', error);
+      };
+    }
+    return () => {
+      eventSource.close();
+    };
+  }, []);
   const navigate = useNavigate();
   return (
     <motion.section
@@ -65,6 +85,7 @@ export const HeaderRightSection = () => {
         >
           <CommonButton
             buttonText="혼술짝 방만들기"
+            enabled
             clickHandler={() => setIsOpenRoomCreate(true)}
             dimensions="mr-7 min-w-[185px]"
           />
@@ -87,6 +108,7 @@ export const HeaderRightSection = () => {
           </button>
           <CommonButton
             buttonText="로그인"
+            enabled
             clickHandler={() => setIsOpenAuth(true)}
             dimensions="mr-7 text-lg min-w-[70px]"
           />

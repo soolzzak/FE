@@ -134,12 +134,15 @@ export const SignupInput = () => {
   const usernameMutation = useMutation(UsernameConfirm, {
     onSuccess: (response: any) => {
       if (response.data.message === 'This nickname is available') {
-        toast.success('사용할 수 있는 닉네임 입니다')
+        toast.success('사용할 수 있는 닉네임 입니다');
       }
     },
     onError: (error: any) => {
-      if(error.response.data.message === 'The username contains forbidden words. Please choose a different username.') {
-        toast.error('사용할 수 없는 닉네임 입니다')
+      if (
+        error.response.data.message ===
+        'The username contains forbidden words. Please choose a different username.'
+      ) {
+        toast.error('사용할 수 없는 닉네임 입니다');
       }
     },
   });
@@ -155,11 +158,16 @@ export const SignupInput = () => {
     onSuccess: () => {
       toast.success('인증번호가 발송되었습니다');
     },
-    onError: (error:any) => {
-      if (error.response.data.message === 'Failed to send the verification email.') {
-        toast.error('올바른 이메일 형식을 입력하세요')
-      } else if (error.response.data.message === 'The email address is already registered.') {
-        toast.error('등록된 이메일 입니다')
+    onError: (error: any) => {
+      if (
+        error.response.data.message === 'Failed to send the verification email.'
+      ) {
+        toast.error('올바른 이메일 형식을 입력하세요');
+      } else if (
+        error.response.data.message ===
+        'The email address is already registered.'
+      ) {
+        toast.error('등록된 이메일 입니다');
       }
     },
   });
@@ -290,7 +298,7 @@ export const SignupInput = () => {
         />
         <div className="signupError">{pwcheckErrMsg}</div>
 
-        <div className='relative'>
+        <div className="relative">
           <p className="signupInputTitle">닉네임</p>
           <SignupInputForm
             inputValue={username || ''}
@@ -383,7 +391,23 @@ export const SignupInput = () => {
 
         <button
           type="submit"
-          className="w-96 h-11 rounded-lg font-bold text-white text-lg bg-primary-300 mt-5 hover:bg-primary-400"
+          className={`w-96 h-11 rounded-lg font-bold text-white text-lg ${
+            (admin && !adminkey) ||
+            !email ||
+            !emailType.test(email) ||
+            !emailNumber ||
+            emailNumber !== EmailMutation.data ||
+            !password ||
+            !passwordType.test(password) ||
+            !pwcheck ||
+            !username ||
+            !birthday ||
+            ageDiff < 19 ||
+            !gender ||
+            usernameMutation.error
+              ? 'bg-gray-300'
+              : 'bg-primary-300 mt-5 hover:bg-primary-400'
+          } `}
         >
           회원가입하기
         </button>

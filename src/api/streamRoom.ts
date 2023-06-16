@@ -1,8 +1,8 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
 import { ApiResponse1, CreateRoomData } from './main';
-import { handleImageCompression } from '../utils/compressImage';
+// import { handleImageCompression } from '../utils/compressImage';
 
 interface ApiResponse {
   status?: number;
@@ -44,7 +44,7 @@ export const checkIfRoomIsEmpty = async (
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
       `/room/${params}/check`
     );
-    console.log('check if room is empty ', response.data);
+    // console.log('check if room is empty ', response.data);
     return response.data;
   } catch (error) {
     return error as Error;
@@ -64,7 +64,7 @@ export const modifyRoom = async ({
     formData.append('roomRequestDto', textBlob);
 
     if (image) {
-      const compressedImage = await handleImageCompression(image);
+      // const compressedImage = await handleImageCompression(image);
       formData.append('roomImage', image);
     }
 
@@ -81,13 +81,16 @@ export const modifyRoom = async ({
   }
 };
 
-  export const checkRoomPassword = async (roomId: string, roomPassword: string | null) => {
-    try {
-      const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
-        `/room/passwordCheck/${roomId}?roomPassword=${roomPassword}`
-      );
-      return response.data;
-    } catch (error) {
-      throw error as Error;
-    }
-  };
+export const checkRoomPassword = async (
+  roomId: string,
+  roomPassword: string | null
+) => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+      `/room/passwordCheck/${roomId}?roomPassword=${roomPassword}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error as Error;
+  }
+};

@@ -68,6 +68,11 @@ body {
   background-size: 200% 200%;
   animation: gradient 5s linear infinite;
 }
+.gradient {
+  background: linear-gradient(135deg, #e0f5e6, #b9f5cb, #b6ecc4);
+  background-size: 200% 200%;
+  animation: gradient 5s linear infinite;
+}
 
 @keyframes gradient {
   0% {

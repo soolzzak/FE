@@ -1,7 +1,6 @@
 import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import axiosInstance from './axios';
-import { handleImageCompression } from '../utils/compressImage';
 
 interface ApiResponse {
   status: number;
@@ -108,7 +107,6 @@ export const createRoom = async ({
     formData.append('roomRequestDto', textBlob);
 
     if (image) {
-      const compressedImage = await handleImageCompression(image);
       formData.append('roomImage', image);
     }
 
@@ -121,7 +119,6 @@ export const createRoom = async ({
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error as Error;
   }
 };
