@@ -1,10 +1,9 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getMypageProfile } from '../../api/mypage';
-import { checkRoomPassword, getRoom } from '../../api/streamRoom';
+import { checkRoomPassword } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { roomPasswordAtom } from '../../store/addRoomStore';
 import { isOpenJoinRoomAtom, isOpenWaitingAtom } from '../../store/modalStore';
@@ -26,14 +25,11 @@ export const JoinRoomModal = () => {
   const { data } = useQuery('userProfile', getMypageProfile);
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const roomNum = chatRoomInfo?.roomId;
-  const navigate = useNavigate();
+
   const enterRoomHandler = async () => {
     try {
       if (roomNum) {
-        const response = await checkRoomPassword(
-          roomNum?.toString(),
-          roomPassword
-        );
+        await checkRoomPassword(roomNum?.toString(), roomPassword);
         setIsOpenWaitingRoom(true);
         setIsOpenJoinRoom(false);
       }
@@ -56,11 +52,11 @@ export const JoinRoomModal = () => {
 
   const mediaStreamMutation = useMutation(getMediaStream, {
     onSuccess: () => {
-      console.log('mediastream??', mediaStream);
-      console.log('myvideo??', myVideoRef);
+      // console.log('mediastream??', mediaStream);
+      // console.log('myvideo??', myVideoRef);
       if (myVideoRef.current) {
         myVideoRef.current.srcObject = mediaStream;
-        console.log('mediastream', mediaStream);
+        // console.log('mediastream', mediaStream);
       }
     },
   });
@@ -105,7 +101,7 @@ export const JoinRoomModal = () => {
           <div className="grid grid-cols-2 grid-rows-6">
             <div className="col-span-2 rounded-2xl w-full">
               <div className="flex w-full flex-row-reverse">
-                <div className='bg-primary-100 f-jic rounded-2xl px-3 py-1'>
+                <div className="bg-primary-100 f-jic rounded-2xl px-3 py-1">
                   <img
                     alt="userImg"
                     src={data?.data.userImage}

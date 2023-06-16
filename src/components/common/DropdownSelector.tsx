@@ -25,7 +25,7 @@ export const DropdownSelector = ({ category }: { category?: string }) => {
     setIsOpen(false);
   };
 
-  console.log(selectedOption);
+  // console.log(selectedOption);
   useEffect(() => {
     handleOptionClick(category || dropdownSelection[0]);
     setCurrentSelectionView(

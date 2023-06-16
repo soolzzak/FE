@@ -7,13 +7,9 @@ import { BadgeSection } from '../components/Mypage/BadgeSection';
 import { FollowSection } from '../components/Mypage/FollowSection';
 
 export const Mypage = () => {
-  const { data, isLoading, isError, error } = useQuery(
-    'mypageInfo',
-    getMypageProfile,
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
+  const { data } = useQuery('mypageInfo', getMypageProfile, {
+    refetchOnWindowFocus: false,
+  });
   const [myinfo, setMyinfo] = useState<MypageProfileRooms | undefined>();
 
   // if (isLoading) return <div>Loading...</div>;
@@ -22,7 +18,7 @@ export const Mypage = () => {
   useEffect(() => {
     if (data) {
       setMyinfo(data.data);
-      console.log(data);
+      // console.log(data);
     }
   }, [data]);
 

@@ -1,21 +1,15 @@
 import { useAtom } from 'jotai';
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlineSetting } from 'react-icons/ai';
-import { isOpenKickoutModalAtom, isOpenModifyRoomAtom } from '../../store/modalStore';
-import { Modal } from '../common/Modal';
-import { ModifyRoomModal } from './ModifyRoomModal';
-import { Room } from '../../api/streamRoom';
+import {
+  isOpenKickoutModalAtom,
+  isOpenModifyRoomAtom,
+} from '../../store/modalStore';
 
 export const ConfigDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
-  const [, setIsOpenKickOut] = useAtom(isOpenKickoutModalAtom)
+  const [, setIsOpenKickOut] = useAtom(isOpenKickoutModalAtom);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const onToggle = () => {
@@ -52,7 +46,7 @@ export const ConfigDropDown = () => {
 
   // 강퇴하기
   const handleKickOutClick = () => {
-    console.log('바보');
+    // console.log('바보');
     // event.stopPropagation();
 
     setIsOpenKickOut(true);

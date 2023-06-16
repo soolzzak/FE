@@ -1,12 +1,11 @@
 import { useAtom } from 'jotai';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { ToastContent, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { createRoom } from '../../api/main';
 import {
   categoryAtom,
   genderAtom,
-  handleRoomPasswprdChangeAtom,
   imageAtom,
   publicOrPrivateAtom,
   roomPasswordAtom,

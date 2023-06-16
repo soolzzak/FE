@@ -1,8 +1,8 @@
 import { HistoryCard } from './HistoryCard';
 import { TabUserList } from '../../api/mypage';
 
-export const TabSection = ({ infolist }: { infolist: TabUserList[] }) => {
-  console.log(infolist);
+export const TabSection = ({ infolist }: { infolist: TabUserList[] }) => (
+  // console.log(infolist);
 
   // 얘가 원래
   //   return (
@@ -14,11 +14,9 @@ export const TabSection = ({ infolist }: { infolist: TabUserList[] }) => {
   //   );
   // };
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 mt-5  ">
-      {infolist?.map((item) => (
-        <HistoryCard item={item} key={item.userId} />
-      ))}
-    </div>
-  );
-};
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 mt-5  ">
+    {infolist?.map((item) => (
+      <HistoryCard item={item} key={item.userId} />
+    ))}
+  </div>
+);

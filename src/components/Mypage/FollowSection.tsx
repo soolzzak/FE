@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { HistoryCard } from './HistoryCard';
 import { TabSection } from './TabSection';
 import { MypageProfileRooms } from '../../api/mypage';
 
@@ -25,7 +24,7 @@ export const FollowSection = ({
   }, [myinfo]);
 
   useEffect(() => {
-    console.log(myinfolist); // myinfolist 값 콘솔에 출력
+    // console.log(myinfolist); // myinfolist 값 콘솔에 출력
   }, [myinfolist]);
 
   const tabList = ['방문기록', '팔로우 목록', '차단 목록'];

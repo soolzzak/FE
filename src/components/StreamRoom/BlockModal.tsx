@@ -24,7 +24,7 @@ export const BlockModal = ({
         await queryClient.invalidateQueries('detailUserInfo');
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
     onClose();
   };

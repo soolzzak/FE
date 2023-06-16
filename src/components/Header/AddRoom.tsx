@@ -8,7 +8,6 @@ import { ImageUploadAndView } from '../common/ImageUploadAndView';
 import { ModalInput } from '../common/ModalInput';
 import { OptionalFieldChange } from '../common/OptionalFieldChange';
 import { AddRoomButton } from './AddRoomButton';
-import { Modify } from '../../assets/svgs/Modify';
 
 export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const [, handleTitleChange] = useAtom(handleTitleChangeAtom);

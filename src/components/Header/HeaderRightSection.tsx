@@ -30,7 +30,7 @@ export const HeaderRightSection = () => {
     }
   }, [user]);
   let eventSource: EventSource;
-  console.log(userAtom);
+  // console.log(userAtom);
   useEffect(() => {
     if (user) {
       eventSource = new EventSource(
@@ -38,11 +38,11 @@ export const HeaderRightSection = () => {
       );
     }
     if (eventSource) {
-      eventSource.onmessage = (event) => {
-        console.log('Received SSE event:', event.data);
+      eventSource.onmessage = () => {
+        // console.log('Received SSE event:', event.data);
       };
-      eventSource.onerror = (error) => {
-        console.error('SSE connection error:', error);
+      eventSource.onerror = () => {
+        // console.error('SSE connection error:', error);
       };
     }
     return () => {
