@@ -13,6 +13,7 @@ import {
   titleAtom,
 } from '../../store/addRoomStore';
 import { CommonButton } from '../common/CommonButton';
+import { errorMessageConvert } from '../../utils/switchSelections';
 
 export type CreateRoomData = {
   title: string;
@@ -40,8 +41,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
       toast.success('방 반들기 성공!');
     },
     onError: (error: { response: { data: { message: string } } }) => {
-      console.log(error);
-      toast.error(error?.response.data.message);
+      toast.error(errorMessageConvert(error?.response.data.message));
     },
   });
 
@@ -60,7 +60,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
     <CommonButton
       buttonText="혼술짝 방만들기"
       clickHandler={onSubmit}
-      dimensions="text-xl py-6 mt-7 mb-[34px] w-2/3 self-center"
+      dimensions="text-xl py-5 mt-10 mb-[34px] rounded-[16px] w-2/3 self-center"
     />
   );
 };

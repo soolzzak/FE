@@ -38,6 +38,28 @@ export const getMypageProfile = async (): Promise<ApiResponse | undefined> => {
 };
 
 // 마이페이지 수정
+// export interface UpdateMypageData {
+//   userImage: File | null;
+//   username: string;
+// }
+
+// export const updateMypageProfile = async ({
+//   userImage,
+//   username,
+// }: UpdateMypageData) => {
+//   try {
+//     const formData = new FormData();
+
+//     if (userImage) formData.append('userImage', userImage);
+//     formData.append('username', username);
+
+//     const response = await axiosInstance.put('/mypage', formData);
+//     return response;
+//   } catch (error) {
+//     throw error as Error;
+//   }
+// };
+
 export interface UpdateMypageData {
   userImage: File | null;
   username: string;
@@ -49,11 +71,14 @@ export const updateMypageProfile = async ({
 }: UpdateMypageData) => {
   try {
     const formData = new FormData();
-    // console.log(userImage);
-    if (userImage) formData.append('userImage', userImage);
-    formData.append('username', username);
 
-    const response = await axiosInstance.put('/mypage', formData);
+    if (userImage) formData.append('userImage', userImage);
+    if (username) formData.append('username', username);
+
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.put(
+      '/mypage',
+      formData
+    );
     return response;
   } catch (error) {
     throw error as Error;

@@ -127,7 +127,7 @@ export const HomeBodySection = () => {
           </div>
 
           {!chatListMutation.isLoading && !chatList?.length && (
-            <div className="f-jic w-full h-[70vh]">
+            <div className="f-jic w-full min-w-[80px] h-[100vh]">
               {' '}
               <NoRoom />
             </div>
