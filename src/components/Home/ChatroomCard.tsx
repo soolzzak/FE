@@ -84,7 +84,7 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
           </span>
         </div>
         <span
-          className={`mt-2.5 text-sm absolute right-1 font-semibold px-2 rounded
+          className={`mt-2.5 text-sm absolute right-1 font-semibold px-2 py-0.5 rounded
           ${
             chatRoom.roomCapacity === 2
               ? 'text-red-600 bg-secondary-50'
@@ -104,7 +104,7 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
           <img
             alt="Profile Pic"
             src={chatRoom.userImage}
-            className="w-10 min-w-[40px] h-10 rounded-full object-cover shadow"
+            className="w-10 min-w-[50px] h-[50px] rounded-full object-cover shadow"
           />
         ) : (
           <div className="w-10 min-w-[40px] h-10 rounded-full bg-gray-300 shadow-sm" />

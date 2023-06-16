@@ -143,6 +143,10 @@ export const SignupInput = () => {
         'The username contains forbidden words. Please choose a different username.'
       ) {
         toast.error('사용할 수 없는 닉네임 입니다');
+      } else if (
+        error.response.data.message === 'The username already exist.'
+      ) {
+        toast.error('중복된 닉네임 입니다');
       }
     },
   });
@@ -313,7 +317,7 @@ export const SignupInput = () => {
             className="absolute w-16 h-7 top-11 right-3 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
             onClick={confirmUsernameHandler}
           >
-            인증하기
+            중복확인
           </button>
         </div>
         <div className="signupError">{usernameErr}</div>

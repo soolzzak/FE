@@ -23,6 +23,7 @@ export const HeaderRightSection = () => {
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
+
   useEffect(() => {
     if (user) {
       setUserAtom(jwtDecode(user));
@@ -87,7 +88,7 @@ export const HeaderRightSection = () => {
             buttonText="혼술짝 방만들기"
             enabled
             clickHandler={() => setIsOpenRoomCreate(true)}
-            dimensions="mr-7 min-w-[185px]"
+            dimensions="mr-7 min-w-[185px] rounded-lg"
           />
           <Notifications />
           <ProfileMenu user={userAtom.sub} />
@@ -109,8 +110,8 @@ export const HeaderRightSection = () => {
           <CommonButton
             buttonText="로그인"
             enabled
-            clickHandler={() => setIsOpenAuth(true)}
-            dimensions="mr-7 text-lg min-w-[70px]"
+            clickHandler={() => setIsOpenLogin(true)}
+            dimensions="mr-7 text-lg min-w-[70px] rounded-lg"
           />
         </motion.div>
       )}

@@ -103,7 +103,8 @@ export const HeroSection = () => {
             variants={staggerVariants}
           >
             술이 <motion.span variants={letterVariants}>술</motion.span>
-            <motion.span variants={letterVariants}>술풀</motion.span>
+            <motion.span variants={letterVariants}>술</motion.span>{' '}
+            <motion.span variants={letterVariants}>풀</motion.span>
             <motion.span variants={letterVariants}>리</motion.span>
             <motion.span variants={letterVariants}>는</motion.span>{' '}
             <motion.span variants={letterVariants}>우</motion.span>

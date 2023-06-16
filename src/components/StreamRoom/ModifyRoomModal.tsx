@@ -1,4 +1,6 @@
 import { useAtom } from 'jotai';
+import { useQuery, useQueryClient } from 'react-query';
+import { getRoom } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { useModal } from '../../hooks/useModal';
 import {
@@ -6,7 +8,6 @@ import {
   streamRoomInfoAtom,
 } from '../../store/addRoomStore';
 import { isOpenModifyRoomAtom } from '../../store/modalStore';
-import { AddRoomButton } from '../Header/AddRoomButton';
 import { CustomSelector } from '../common/CustomSelector';
 import { DropdownSelector } from '../common/DropdownSelector';
 import { ImageUploadAndView } from '../common/ImageUploadAndView';
@@ -25,7 +26,7 @@ export const ModifyRoomModal = () => {
   return (
     <div className="relative f-col bg-white py-8 px-12 rounded-[20px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="w-[356px] h-[236px] mt-5 rounded-2xl bg-slate-400">
+        <div className="w-[356px] h-[300px] rounded-2xl bg-slate-400">
           <ImageUploadAndView roomImageUrl={roomInfo?.roomImageUrl} />
         </div>
         <div className="f-col gap-5">

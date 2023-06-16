@@ -65,7 +65,7 @@ export const RemoteUserSection = ({
       />
       <div className="flex flex-col gap-2">
         <div className="xl:text-3xl font-semibold mr-4">
-          {guestProfile.username}과 따로 또 같이 혼술하는 중!
+          {guestProfile.username}님과 따로 또 같이 혼술하는 중!
         </div>
         <div className="h-2 rounded-lg bg-secondary-100 z-0 shadow-sm">
           <div
