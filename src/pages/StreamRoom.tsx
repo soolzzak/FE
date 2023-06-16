@@ -6,7 +6,7 @@ import jwtDecode from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
 import { LuMic, LuMicOff } from 'react-icons/lu';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
 import { Toast } from '../components/StreamRoom/Toast';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
@@ -73,12 +73,14 @@ const PeerConnectionConfig = {
 export const StreamRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const secondScreenVideoRef = useRef<HTMLVideoElement>(null);
-  const thirdScreenVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteWebcamVideoRef = useRef<HTMLVideoElement>(null);
+  const myWebcamVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
+
+  const navigate = useNavigate();
+  const [peerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
   const [peerConnection1] = useState<RTCPeerConnection>(
@@ -92,11 +94,21 @@ export const StreamRoom = () => {
   const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
+  const [isMyScreenShare, setIsMyScreenShare] = useState<boolean>(false);
+  const [isRemoteScreenShare, setIsRemoteScreenShare] =
+    useState<boolean>(false);
 
-  let mediaStream: MediaStream;
+  let mediaStream: MediaStream | null = null;
+  let remoteMediaStream: MediaStream | null = null;
+
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
-  const [remoteMediaStream, setRemoteMediaStream] =
-    useState<MediaStream | null>(null);
+
+  const [micHover, setMicHover] = useState(false);
+  const [cameraHover, setCameraHover] = useState(false);
+  const [screenHover, setScreenHover] = useState(false);
+  const [settingHover, setSettingHover] = useState(false);
+  const [closeHover, setCloseHover] = useState(false);
+
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
 
@@ -293,7 +305,7 @@ export const StreamRoom = () => {
 
     console.log('adding media stream to track', mediaStream);
     mediaStream?.getTracks().forEach((track) => {
-      peerConnection.addTrack(track, mediaStream);
+      peerConnection.addTrack(track, mediaStream as MediaStream);
     });
   };
 
@@ -306,13 +318,11 @@ export const StreamRoom = () => {
       });
       console.log('stream담기나?', stream);
       mediaStream = stream;
-      setMyMediaStream(() => stream);
+      setMyMediaStream(stream);
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
-      if (thirdScreenVideoRef.current) {
-        thirdScreenVideoRef.current.srcObject = stream;
-      }
+
       console.log('this media stream', mediaStream);
     } catch (error) {
       console.log('Error accessing media devices:', error);
@@ -346,37 +356,29 @@ export const StreamRoom = () => {
     peerConnection1.ontrack = (event) => {
       console.log('응', peerConnection1.getSenders());
       console.log('got remote stream', event.streams[0]);
+      console.log(isRemoteScreenShare, remoteWebcamVideoRef.current);
       const stream = event.streams[0];
-      setRemoteMediaStream(stream);
-      if (secondScreenVideoRef.current) {
-        console.log('adding screenshare video element');
-        secondScreenVideoRef.current.srcObject = stream;
-        console.log('stream?', stream);
-      }
-      console.log('remote ref', secondScreenVideoRef.current);
-      console.log(
-        'secondScreenVideoRef.current.srcObject',
-        secondScreenVideoRef.current?.srcObject
-      );
+      remoteMediaStream = stream;
     };
     peerConnection1.oniceconnectionstatechange = () => {
+      console.log(' remote media', remoteMediaStream);
       console.log('opposing user disconnect event');
       if (
         peerConnection1.iceConnectionState === 'disconnected' ||
         peerConnection1.iceConnectionState === 'closed'
       ) {
         console.log('Opposing peer disconnected');
-        if (secondScreenVideoRef.current) {
-          if (secondScreenVideoRef.current.srcObject) {
-            const stream = secondScreenVideoRef.current
+        if (remoteWebcamVideoRef.current) {
+          if (remoteWebcamVideoRef.current.srcObject) {
+            const stream = remoteWebcamVideoRef.current
               .srcObject as MediaStream;
             // stream.getTracks().forEach((track) => track.stop());
           }
-          secondScreenVideoRef.current.srcObject = null;
+          remoteWebcamVideoRef.current.srcObject = null;
         }
         console.log(
-          'secondScreenVideoRef.current.srcObject',
-          secondScreenVideoRef.current?.srcObject
+          'remoteWebcamVideoRef.current.srcObject',
+          remoteWebcamVideoRef.current?.srcObject
         );
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
@@ -387,7 +389,7 @@ export const StreamRoom = () => {
 
     console.log('adding media stream to track', mediaStream);
     mediaStream?.getTracks().forEach((track) => {
-      peerConnection1.addTrack(track, mediaStream);
+      peerConnection1.addTrack(track, mediaStream as MediaStream);
     });
   };
   useEffect(() => {
@@ -415,24 +417,46 @@ export const StreamRoom = () => {
             break;
           case 'offer':
             console.log('received offer message', message);
+            console.log('offerMessage remote media', remoteMediaStream);
+
             await handleOfferMessage(message);
             break;
           case 'answer':
             console.log('received answer message', message);
+            console.log('answer remote media', remoteMediaStream);
             setGuestIn(() => true);
+
             await handleAnswerMessage(message);
+            break;
+          case 'ice':
+            guestProfileMutation.mutate(message.from);
+            console.log('received ice message', message);
+            console.log('ice remote media', remoteMediaStream);
+            await handleCandidateMessage(message);
             break;
           case 'toast':
             console.log('received toast message', message);
             showToastHandler();
             break;
-          case 'ice':
-            guestProfileMutation.mutate(message.from);
-            console.log('received ice message', message);
-            await handleCandidateMessage(message);
+          case 'startShare':
+            console.log('received startShare message', message);
+            setIsRemoteScreenShare(true);
+            setTimeout(() => {
+              if (remoteWebcamVideoRef.current) {
+                console.log(' remote media', remoteMediaStream);
+                console.log('adding screenshare video element');
+                remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
+              }
+            }, 300);
+            break;
+          case 'stopShare':
+            console.log('received stopShare message', message);
+            console.log('startshare remote media', remoteMediaStream);
+            setIsRemoteScreenShare(() => false);
             break;
           case 'join':
             console.log('received join message');
+            console.log('join remote media', remoteMediaStream);
             setSocketIsOnline(true);
             message.data = await getRoom(params as string, roomPassword);
             setRoomInfo(message.data);
@@ -465,7 +489,7 @@ export const StreamRoom = () => {
       }
     };
   }, []);
-
+  console.log('base remote media', remoteMediaStream);
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
     if (audio && myMediaStream) {
@@ -493,6 +517,30 @@ export const StreamRoom = () => {
       });
       console.log('toast sent', message);
       showToastHandler();
+      socket.send(message);
+    }
+  };
+  const sendShareOnMessage = () => {
+    console.log('click share On');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'startShare',
+        data: roomNum,
+      });
+      console.log('startShare sent', message);
+      socket.send(message);
+    }
+  };
+  const sendShareOffMessage = () => {
+    console.log('click share Off');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'stopShare',
+        data: roomNum,
+      });
+      console.log('stopeShare sent', message);
       socket.send(message);
     }
   };
@@ -535,7 +583,7 @@ export const StreamRoom = () => {
 
   // 화면공유
   const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
-  console.log('shareView', shareView);
+  // console.log('shareView', shareView);
 
   useEffect(() => {
     // shareView가 변경되면 localVideoRef에 스트림을 설정합니다.
@@ -584,8 +632,6 @@ export const StreamRoom = () => {
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
-    startShare();
-    console.log('mediaStream start', myMediaStream);
     console.log('히히', peerConnection.getSenders());
     try {
       if (!navigator.mediaDevices.getDisplayMedia) {
@@ -594,8 +640,14 @@ export const StreamRoom = () => {
 
       // 화면 공유 스트림 가져오기
       const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+      sendShareOnMessage();
       setShareView(stream); // 화면 공유 스트림 상태 업데이트
-
+      setIsMyScreenShare(true);
+      await startShare();
+      console.log('mediaStream start', myMediaStream);
+      if (myWebcamVideoRef.current) {
+        myWebcamVideoRef.current.srcObject = myMediaStream;
+      }
       // 화면 공유 스트림으로 트랙 교체
       peerConnection.getSenders().forEach((sender) => {
         if (sender.track?.kind === 'video') {
@@ -610,7 +662,10 @@ export const StreamRoom = () => {
       // 화면 공유 스트림 종료
       console.log('sender stream', stream);
       stream.getVideoTracks()[0].onended = () => {
+        sendShareOffMessage();
         if (localVideoRef.current) {
+          setShareView(null);
+          setIsMyScreenShare(false);
           localVideoRef.current.srcObject = myMediaStream;
           console.log('mediastream 바꾸자0', myMediaStream);
         }
@@ -635,7 +690,44 @@ export const StreamRoom = () => {
       console.error('Error starting screen share:', error);
     }
   };
-  console.log(peerConnection, peerConnection1);
+
+  const closeMediaStream = () => {
+    console.log('closing');
+    if (localVideoRef.current) {
+      if (localVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = localVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    if (remoteVideoRef.current) {
+      if (remoteVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = remoteVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    if (remoteWebcamVideoRef.current) {
+      if (remoteWebcamVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = remoteWebcamVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    if (myWebcamVideoRef.current) {
+      if (myWebcamVideoRef.current.srcObject) {
+        console.log('closing');
+        const stream = myWebcamVideoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+    peerConnection.close();
+  };
+
+  window.onpopstate = () => {
+    closeMediaStream();
+  };
+  console.log('share', shareView);
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
@@ -698,22 +790,28 @@ export const StreamRoom = () => {
                 className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
               />
             </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
-              <video
-                ref={thirdScreenVideoRef}
-                autoPlay
-                muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
-              />
-            </div>
-            <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
-              <video
-                ref={secondScreenVideoRef}
-                autoPlay
-                muted
-                className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
-              />
-            </div>
+
+            {isMyScreenShare && (
+              <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+                <video
+                  ref={myWebcamVideoRef}
+                  autoPlay
+                  muted
+                  className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
+                />
+              </div>
+            )}
+
+            {isRemoteScreenShare && (
+              <div className="xl:relative xl:col-span-2 xl:row-span-2 rounded-2xl  xl:h-full xl:right-0 xl:top-0 absolute min-w-[300px] w-[30%] h-auto right-10 top-52">
+                <video
+                  ref={remoteWebcamVideoRef}
+                  autoPlay
+                  muted
+                  className="w-full h-full xl:max-h-64 max-h-56 object-contain rounded-2xl"
+                />
+              </div>
+            )}
 
             {/* <div className="xl:col-span-2 xl:row-span-3 row-start-4 f-col gap-4 w-full">
               <div className="border border-[#D9D9D9] h-1/3 f-jic xl:text-xl font-semibold gap-4 rounded-2xl">
