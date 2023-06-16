@@ -10,7 +10,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { getRoom } from '../api/streamRoom';
-import { Camera } from '../assets/svgs/Camera';
 import { Game } from '../assets/svgs/Game';
 import { Youtube } from '../assets/svgs/Youtube';
 import { KickoutModal } from '../components/StreamRoom/KickoutModal';
@@ -19,8 +18,6 @@ import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { Toast } from '../components/StreamRoom/Toast';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { Modal } from '../components/common/Modal';
-import { useModal } from '../hooks/useModal';
-
 import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
 import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
@@ -74,7 +71,7 @@ export const StreamRoom = () => {
   const remoteWebcamVideoRef = useRef<HTMLVideoElement>(null);
   const myWebcamVideoRef = useRef<HTMLVideoElement>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
-  const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
+  const [, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
 
   const navigate = useNavigate();
@@ -88,7 +85,7 @@ export const StreamRoom = () => {
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
   const [, micOnChange] = useAtom(micOnChangeAtom);
   const [, monitorOnChange] = useAtom(monitorOnChangeAtom);
-  const [remoteMonitorOn, setRemoteMonitorOn] = useState<boolean>(false);
+  const [, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
   const [isMyScreenShare, setIsMyScreenShare] = useState<boolean>(false);
@@ -134,15 +131,15 @@ export const StreamRoom = () => {
   const roomNum = params;
 
   const handleOfferMessage = async (message: RTCSessionMessage) => {
-    console.log('accepting offer', message);
+    // console.log('accepting offer', message);
     const answerSDP = new RTCSessionDescription(message.sdp);
     setGuestIn(true);
     try {
-      console.log('setRemoteDescription', message.sdp);
+      // console.log('setRemoteDescription', message.sdp);
       if (peerConnection.connectionState !== 'connected') {
         await peerConnection.setRemoteDescription(answerSDP);
         const answer = await peerConnection.createAnswer();
-        console.log('setLocalDescription', answer);
+        // console.log('setLocalDescription', answer);
         await peerConnection.setLocalDescription(answer);
 
         const response = {
@@ -152,14 +149,14 @@ export const StreamRoom = () => {
           sdp: peerConnection.localDescription,
         };
 
-        console.log('sending sdp', peerConnection.localDescription);
-        console.log('added answer to peerConnection', peerConnection);
-        console.log('sending answer to received offer', response);
+        // console.log('sending sdp', peerConnection.localDescription);
+        // console.log('added answer to peerConnection', peerConnection);
+        // console.log('sending answer to received offer', response);
         socket.send(JSON.stringify(response));
       } else {
         await peerConnection1.setRemoteDescription(answerSDP);
         const answer = await peerConnection1.createAnswer();
-        console.log('setLocalDescription', answer);
+        // console.log('setLocalDescription', answer);
         await peerConnection1.setLocalDescription(answer);
 
         const response = {
@@ -169,37 +166,37 @@ export const StreamRoom = () => {
           sdp: peerConnection1.localDescription,
         };
 
-        console.log('sending sdp', peerConnection1.localDescription);
-        console.log('added answer to peerConnection', peerConnection1);
-        console.log('sending answer to received offer', response);
+        // console.log('sending sdp', peerConnection1.localDescription);
+        // console.log('added answer to peerConnection', peerConnection1);
+        // console.log('sending answer to received offer', response);
         socket.send(JSON.stringify(response));
       }
     } catch (error) {
-      console.error('Error handling offer:', error);
+      // console.error('Error handling offer:', error);
     }
   };
 
   const handleAnswerMessage = async (message: RTCSessionMessage) => {
-    console.log('have received answer', message.sdp);
+    // console.log('have received answer', message.sdp);
 
     try {
-      console.log('setRemotelDescription', message.sdp);
+      // console.log('setRemotelDescription', message.sdp);
 
       if (peerConnection.connectionState !== 'connected') {
-        console.log(
-          'using received answer for Remote peer description',
-          peerConnection
-        );
+        // console.log(
+        //   'using received answer for Remote peer description',
+        //   peerConnection
+        // );
         await peerConnection.setRemoteDescription(message.sdp);
       } else {
-        console.log(
-          'using received answer for Remote peer description1',
-          peerConnection1
-        );
+        // console.log(
+        //   'using received answer for Remote peer description1',
+        //   peerConnection1
+        // );
         await peerConnection1.setRemoteDescription(message.sdp);
       }
     } catch (error) {
-      console.error('Error handling answer:', error);
+      // console.error('Error handling answer:', error);
     }
   };
 
@@ -211,15 +208,15 @@ export const StreamRoom = () => {
         await peerConnection1.addIceCandidate(message.candidate);
       }
     } catch (error) {
-      console.error('Error handling candidate:', error);
+      // console.error('Error handling candidate:', error);
     }
   };
 
   const startCall = async () => {
     try {
-      console.log('sending offer using peer: ', peerConnection);
+      // console.log('sending offer using peer: ', peerConnection);
       const offer = await peerConnection.createOffer();
-      console.log('setLocalDescription', offer);
+      // console.log('setLocalDescription', offer);
       await peerConnection.setLocalDescription(offer);
 
       const message = {
@@ -228,21 +225,21 @@ export const StreamRoom = () => {
         data: Number(roomNum),
         sdp: peerConnection.localDescription,
       };
-      console.log('sending sdp', peerConnection.localDescription);
-      console.log('sending offer', message);
+      // console.log('sending sdp', peerConnection.localDescription);
+      // console.log('sending offer', message);
       socket.send(JSON.stringify(message));
     } catch (error) {
-      console.error('Error creating offer:', error);
+      // toast.error('Error creating offer:', error);
     }
   };
 
   const createPeerConnection = async () => {
-    console.log('created peer connection: ', peerConnection);
+    // console.log('created peer connection: ', peerConnection);
 
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         // Send ICE candidate to the remote peer via signaling channel
-        console.log('sending ice candidate', event.candidate);
+        // console.log('sending ice candidate', event.candidate);
         const message = {
           from: userId,
           data: Number(roomNum),
@@ -255,47 +252,47 @@ export const StreamRoom = () => {
     peerConnection.ontrack = (event) => {
       // Add remote stream to the video element
       setRemoteMonitorOn(() => true);
-      console.log('응', peerConnection.getSenders());
+      // console.log('응', peerConnection.getSenders());
 
-      console.log('got remote stream', event.streams[0]);
+      // console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
       if (remoteVideoRef.current) {
-        console.log('adding remote stream to video element');
+        // console.log('adding remote stream to video element');
         remoteVideoRef.current.srcObject = stream;
-        console.log('stream?', stream);
+        // console.log('stream?', stream);
       }
-      console.log('remote ref', remoteVideoRef.current);
-      console.log(
-        'remoteVideoRef.current.srcObject',
-        remoteVideoRef.current?.srcObject
-      );
+      // console.log('remote ref', remoteVideoRef.current);
+      // console.log(
+      //   'remoteVideoRef.current.srcObject',
+      //   remoteVideoRef.current?.srcObject
+      // );
     };
     peerConnection.oniceconnectionstatechange = () => {
-      console.log('opposing user disconnect event');
+      // console.log('opposing user disconnect event');
       if (
         peerConnection.iceConnectionState === 'disconnected' ||
         peerConnection.iceConnectionState === 'closed'
       ) {
-        console.log('Opposing peer disconnected');
+        // console.log('Opposing peer disconnected');
         if (remoteVideoRef.current) {
           if (remoteVideoRef.current.srcObject) {
-            const stream = remoteVideoRef.current.srcObject as MediaStream;
+            remoteVideoRef.current.srcObject as MediaStream;
             // stream.getTracks().forEach((track) => track.stop());
           }
           remoteVideoRef.current.srcObject = null;
         }
-        console.log(
-          'remoteVideoRef.current.srcObject',
-          remoteVideoRef.current?.srcObject
-        );
+        // console.log(
+        //   'remoteVideoRef.current.srcObject',
+        //   remoteVideoRef.current?.srcObject
+        // );
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
         setGuestProfile(() => undefined);
-        console.log('peerConnection', peerConnection);
+        // console.log('peerConnection', peerConnection);
       }
     };
 
-    console.log('adding media stream to track', mediaStream);
+    // console.log('adding media stream to track', mediaStream);
     mediaStream?.getTracks().forEach((track) => {
       peerConnection.addTrack(track, mediaStream as MediaStream);
     });
@@ -308,16 +305,16 @@ export const StreamRoom = () => {
         video: true,
         audio: true,
       });
-      console.log('stream담기나?', stream);
+      // console.log('stream담기나?', stream);
       mediaStream = stream;
       setMyMediaStream(stream);
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
 
-      console.log('this media stream', mediaStream);
+      // console.log('this media stream', mediaStream);
     } catch (error) {
-      console.log('Error accessing media devices:', error);
+      // console.log('Error accessing media devices:', error);
     }
   };
 
@@ -328,15 +325,15 @@ export const StreamRoom = () => {
       data: roomNum,
     });
     socket.send(message);
-    console.log('send join message');
+    // console.log('send join message');
   };
 
   const createScreenSharePeerConnection = async () => {
-    console.log('created peer connection: ', peerConnection1);
+    // console.log('created peer connection: ', peerConnection1);
 
     peerConnection1.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log('sending ice candidate', event.candidate);
+        // console.log('sending ice candidate', event.candidate);
         const message = {
           from: userId,
           data: Number(roomNum),
@@ -347,71 +344,70 @@ export const StreamRoom = () => {
       }
     };
     peerConnection1.ontrack = (event) => {
-      console.log('응', peerConnection1.getSenders());
-      console.log('got remote stream', event.streams[0]);
-      console.log(isRemoteScreenShare, remoteWebcamVideoRef.current);
+      // console.log('응', peerConnection1.getSenders());
+      // console.log('got remote stream', event.streams[0]);
+      // console.log(isRemoteScreenShare, remoteWebcamVideoRef.current);
       const stream = event.streams[0];
       remoteMediaStream = stream;
     };
     peerConnection1.oniceconnectionstatechange = () => {
-      console.log(' remote media', remoteMediaStream);
-      console.log('opposing user disconnect event');
+      // console.log(' remote media', remoteMediaStream);
+      // console.log('opposing user disconnect event');
       if (
         peerConnection1.iceConnectionState === 'disconnected' ||
         peerConnection1.iceConnectionState === 'closed'
       ) {
-        console.log('Opposing peer disconnected');
+        // console.log('Opposing peer disconnected');
         if (remoteWebcamVideoRef.current) {
           if (remoteWebcamVideoRef.current.srcObject) {
-            const stream = remoteWebcamVideoRef.current
-              .srcObject as MediaStream;
+            remoteWebcamVideoRef.current.srcObject as MediaStream;
             // stream.getTracks().forEach((track) => track.stop());
           }
           remoteWebcamVideoRef.current.srcObject = null;
         }
-        console.log(
-          'remoteWebcamVideoRef.current.srcObject',
-          remoteWebcamVideoRef.current?.srcObject
-        );
+        // console.log(
+        //   'remoteWebcamVideoRef.current.srcObject',
+        //   remoteWebcamVideoRef.current?.srcObject
+        // );
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
         setGuestProfile(() => undefined);
-        console.log('peerConnection', peerConnection1);
+        // console.log('peerConnection', peerConnection1);
       }
     };
 
-    console.log('adding media stream to track', mediaStream);
+    // console.log('adding media stream to track', mediaStream);
     mediaStream?.getTracks().forEach((track) => {
       peerConnection1.addTrack(track, mediaStream as MediaStream);
     });
   };
 
   const closeMediaStream = () => {
-    console.log('closing');
+    // console.log('closing');
     if (localVideoRef.current) {
       if (localVideoRef.current.srcObject) {
-        console.log('closing');
+        // console.log('closing');
         const stream = localVideoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach((track) => track.stop());
       }
     }
     if (remoteVideoRef.current) {
       if (remoteVideoRef.current.srcObject) {
-        console.log('closing');
+        // console.log('closing');
         const stream = remoteVideoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach((track) => track.stop());
       }
     }
     if (remoteWebcamVideoRef.current) {
       if (remoteWebcamVideoRef.current.srcObject) {
-        console.log('closing');
+        // console.log('closing');
         const stream = remoteWebcamVideoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach((track) => track.stop());
       }
     }
     if (myWebcamVideoRef.current) {
       if (myWebcamVideoRef.current.srcObject) {
-        console.log('closing');
+        // console.log('closing');
         const stream = myWebcamVideoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach((track) => track.stop());
       }
@@ -426,17 +422,17 @@ export const StreamRoom = () => {
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
-        console.log('WebSocket connection opened');
+        // console.log('WebSocket connection opened');
       };
 
       socket.onclose = () => {
-        console.log('WebSocket connection closed');
+        // console.log('WebSocket connection closed');
         closeMediaStream();
         navigate('/');
       };
 
-      socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
+      socket.onerror = () => {
+        // console.error('WebSocket error:', error);
       };
 
       socket.onmessage = async (event) => {
@@ -444,72 +440,72 @@ export const StreamRoom = () => {
 
         switch (message.type) {
           case 'info':
-            console.log('received info message', message);
+            // console.log('received info message', message);
             await startLocalStream();
             await sendJoinMessage();
             break;
           case 'offer':
-            console.log('received offer message', message);
-            console.log('offerMessage remote media', remoteMediaStream);
+            // console.log('received offer message', message);
+            // console.log('offerMessage remote media', remoteMediaStream);
 
             await handleOfferMessage(message);
             break;
           case 'answer':
-            console.log('received answer message', message);
-            console.log('answer remote media', remoteMediaStream);
+            // console.log('received answer message', message);
+            // console.log('answer remote media', remoteMediaStream);
             setGuestIn(() => true);
 
             await handleAnswerMessage(message);
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
-            console.log('received ice message', message);
-            console.log('ice remote media', remoteMediaStream);
+            // console.log('received ice message', message);
+            // console.log('ice remote media', remoteMediaStream);
             await handleCandidateMessage(message);
             break;
           case 'toast':
-            console.log('received toast message', message);
+            // console.log('received toast message', message);
             showToastHandler();
             break;
           case 'startShare':
-            console.log('received startShare message', message);
+            // console.log('received startShare message', message);
             setIsRemoteScreenShare(true);
             setNumberShare((prev) => prev + 0.5);
             setTimeout(() => {
               if (remoteWebcamVideoRef.current) {
-                console.log(' remote media', remoteMediaStream);
-                console.log('adding screenshare video element');
+                // console.log(' remote media', remoteMediaStream);
+                // console.log('adding screenshare video element');
                 remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
               }
             }, 300);
             break;
           case 'stopShare':
-            console.log('received stopShare message', message);
-            console.log('startshare remote media', remoteMediaStream);
+            // console.log('received stopShare message', message);
+            // console.log('startshare remote media', remoteMediaStream);
             setIsRemoteScreenShare(() => false);
             setNumberShare((prev) => prev - 1);
             break;
           case 'join':
-            console.log('received join message');
-            console.log('join remote media', remoteMediaStream);
+            // console.log('received join message');
+            // console.log('join remote media', remoteMediaStream);
             setSocketIsOnline(true);
             message.data = await getRoom(params as string);
             setHostIdcheck(message.data.hostId);
             setRoomInfo(message.data);
             setRoomPassword(null);
-            console.log('get room? ', message.data);
+            // console.log('get room? ', message.data);
             // setGuestIn(prev => true);
             await createPeerConnection();
             await createScreenSharePeerConnection();
             // console.log(message.data.data.hostId);
             if (message.data?.hostId !== userId) {
-              console.log('starting call');
+              // console.log('starting call');
               await startCall();
             }
 
             break;
           default:
-            console.warn('Invalid message type:', message.type);
+            toast.error('Invalid message type:', message.type);
         }
       };
     };
@@ -525,7 +521,7 @@ export const StreamRoom = () => {
       }
     };
   }, []);
-  console.log('base remote media', remoteMediaStream);
+  // console.log('base remote media', remoteMediaStream);
   const micToggleHandler = () => {
     const audio = localVideoRef.current;
     if (audio && myMediaStream) {
@@ -545,39 +541,39 @@ export const StreamRoom = () => {
   };
 
   const sendToastMessage = () => {
-    console.log('click toast');
+    // console.log('click toast');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
         type: 'toast',
         data: roomNum,
       });
-      console.log('toast sent', message);
+      // console.log('toast sent', message);
       showToastHandler();
       socket.send(message);
     }
   };
   const sendShareOnMessage = () => {
-    console.log('click share On');
+    // console.log('click share On');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
         type: 'startShare',
         data: roomNum,
       });
-      console.log('startShare sent', message);
+      // console.log('startShare sent', message);
       socket.send(message);
     }
   };
   const sendShareOffMessage = () => {
-    console.log('click share Off');
+    // console.log('click share Off');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
         type: 'stopShare',
         data: roomNum,
       });
-      console.log('stopeShare sent', message);
+      // console.log('stopeShare sent', message);
       socket.send(message);
     }
   };
@@ -589,21 +585,21 @@ export const StreamRoom = () => {
       data: roomNum,
     });
     socket.send(message);
-    console.log('send kick message');
+    // console.log('send kick message');
   };
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
 
     if (socket) {
-      console.log('timer started');
+      // console.log('timer started');
       intervalId = setInterval(() => {
         const message = JSON.stringify({
           from: userId,
           type: 'ping',
           data: roomNum,
         });
-        console.log('sending ping', message);
+        // console.log('sending ping', message);
         socket.send(message);
       }, 30000);
     }
@@ -616,7 +612,7 @@ export const StreamRoom = () => {
   }, [socketIsOnline]);
 
   useEffect(() => {
-    if (guestIn) console.log('remote ref2', remoteVideoRef);
+    // if (guestIn) console.log('remote ref2', remoteVideoRef);
   }, [guestIn]);
 
   // const sendToastMessage = () => {
@@ -638,11 +634,11 @@ export const StreamRoom = () => {
       localVideoRef.current.srcObject = shareView;
     } else if (localVideoRef.current) {
       localVideoRef.current.srcObject = myMediaStream;
-      console.log('다시주입되니', myMediaStream);
+      // console.log('다시주입되니', myMediaStream);
     }
     if (shareView) {
       shareView.onremovetrack = () => {
-        console.log('removeTrack');
+        // console.log('removeTrack');
       };
     }
   }, [shareView]);
@@ -658,9 +654,9 @@ export const StreamRoom = () => {
   };
   const startShare = async () => {
     try {
-      console.log('sending offer using peer11111111: ', peerConnection1);
+      // console.log('sending offer using peer11111111: ', peerConnection1);
       const offer = await peerConnection1.createOffer();
-      console.log('setLocalDescription', offer);
+      // console.log('setLocalDescription', offer);
       await peerConnection1.setLocalDescription(offer);
 
       const message = {
@@ -669,17 +665,17 @@ export const StreamRoom = () => {
         data: Number(roomNum),
         sdp: peerConnection1.localDescription,
       };
-      console.log('sending sdp', peerConnection1.localDescription);
-      console.log('sending offer', message);
+      // console.log('sending sdp', peerConnection1.localDescription);
+      // console.log('sending offer', message);
       socket.send(JSON.stringify(message));
     } catch (error) {
-      console.error('Error creating offer:', error);
+      // console.error('Error creating offer:', error);
     }
   };
 
   // 화면 공유를 시작
   const startScreenShare = async () => {
-    console.log('히히', peerConnection.getSenders());
+    // console.log('히히', peerConnection.getSenders());
     try {
       if (!navigator.mediaDevices.getDisplayMedia) {
         throw new Error('Screen sharing is not supported.');
@@ -692,23 +688,23 @@ export const StreamRoom = () => {
       setIsMyScreenShare(true);
       setNumberShare((prev) => prev + 1);
       await startShare();
-      console.log('mediaStream start', myMediaStream);
+      // console.log('mediaStream start', myMediaStream);
       if (myWebcamVideoRef.current) {
         myWebcamVideoRef.current.srcObject = myMediaStream;
       }
       // 화면 공유 스트림으로 트랙 교체
       peerConnection.getSenders().forEach((sender) => {
         if (sender.track?.kind === 'video') {
-          console.log('화면공유스트림', stream);
+          // console.log('화면공유스트림', stream);
           sender.replaceTrack(stream.getVideoTracks()[0]);
-          console.log('겟비디오', stream.getVideoTracks());
+          // console.log('겟비디오', stream.getVideoTracks());
         }
       });
 
-      console.log('트랙교체', peerConnection.getSenders());
+      // console.log('트랙교체', peerConnection.getSenders());
 
       // 화면 공유 스트림 종료
-      console.log('sender stream', stream);
+      // console.log('sender stream', stream);
       stream.getVideoTracks()[0].onended = () => {
         sendShareOffMessage();
         if (localVideoRef.current) {
@@ -716,15 +712,15 @@ export const StreamRoom = () => {
           setIsMyScreenShare(false);
           setNumberShare((prev) => prev - 1);
           localVideoRef.current.srcObject = myMediaStream;
-          console.log('mediastream 바꾸자0', myMediaStream);
+          // console.log('mediastream 바꾸자0', myMediaStream);
         }
-        console.log('mediastream 바꾸자1', myMediaStream);
+        // console.log('mediastream 바꾸자1', myMediaStream);
         peerConnection.getSenders().forEach((sender) => {
-          console.log('mediastream 바꾸자2', myMediaStream);
+          // console.log('mediastream 바꾸자2', myMediaStream);
           if (sender.track?.kind === 'video' && myMediaStream) {
-            console.log('mediastream 바꾸자3', myMediaStream);
+            // console.log('mediastream 바꾸자3', myMediaStream);
             sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
-            console.log('if mediaStream', myMediaStream);
+            // console.log('if mediaStream', myMediaStream);
           }
         });
       };
@@ -736,11 +732,11 @@ export const StreamRoom = () => {
       //   });
       // });
     } catch (error) {
-      console.error('Error starting screen share:', error);
+      // toast.error('Error starting screen share:', error);
     }
   };
 
-  console.log('share', shareView);
+  // console.log('share', shareView);
 
   // className 추가
   let firstVideoClassName = 'w-full h-full rounded-2xl';
@@ -811,7 +807,7 @@ export const StreamRoom = () => {
     toast.error('추후 서비스 예정입니다');
   };
 
-  console.log('numbershare', numberShare);
+  // console.log('numbershare', numberShare);
 
   return (
     <div className="w-full h-full min-w-[660px]">
@@ -914,7 +910,11 @@ export const StreamRoom = () => {
                 onClick={startScreenShare}
                 whileHover={{ scale: 1.02 }}
               >
-                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
+                <div
+                  className={`${
+                    numberShare >= 1 ? '' : 'xl:min-w-[200px] xl:f-ic xl:gap-4'
+                  }`}
+                >
                   <div className="iconStyle bg-[#E0F5E6]">
                     <ScreenShare />
                   </div>
@@ -933,7 +933,11 @@ export const StreamRoom = () => {
                 className={activityBtnSubClassName}
                 onClick={delayServiceMessage}
               >
-                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
+                <div
+                  className={`${
+                    numberShare >= 1 ? '' : 'xl:min-w-[200px] xl:f-ic xl:gap-4'
+                  }`}
+                >
                   <Game />
                   <span
                     className={`${
@@ -950,7 +954,11 @@ export const StreamRoom = () => {
                 className={activityBtnSubClassName}
                 onClick={delayServiceMessage}
               >
-                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
+                <div
+                  className={`${
+                    numberShare >= 1 ? '' : 'xl:min-w-[200px] xl:f-ic xl:gap-4'
+                  }`}
+                >
                   <Youtube />
                   <span
                     className={`${

@@ -33,7 +33,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
       queryClient.invalidateQueries('profile');
     },
     onError: (error: { response: { data: { message: string } } }) => {
-      console.log(error.response.data.message);
+      // console.log(error.response.data.message);
       toast.error(errorMessageConvert(error.response.data.message));
     },
   });
@@ -60,12 +60,12 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
     // ----------- Image validation -------------
     if (!file) return;
     if (fileType !== 'image') {
-      alert('The selected file is not an image.');
+      toast.error('The selected file is not an image.');
       return;
     }
     const maxSize = 3 * 1024 * 1024;
     if (file.size > maxSize) {
-      alert('File size is too large. Please select a file under 3 MB.');
+      toast.error('File size is too large. Please select a file under 3 MB.');
       return;
     }
     // ---------------------------------------
@@ -80,11 +80,11 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   };
 
   // 얘가 사진업로드
-  const handleModifyClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click(); // 파일 업로드 input 클릭
-    }
-  };
+  // const handleModifyClick = () => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click(); // 파일 업로드 input 클릭
+  //   }
+  // };
 
   const editUserInfo = (): void => {
     if (editMode) {

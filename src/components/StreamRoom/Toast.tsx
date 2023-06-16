@@ -7,7 +7,7 @@ import { toastAtom } from '../../store/modalStore';
 export const Toast = () => {
   const [showToast] = useAtom(toastAtom);
   useEffect(() => {
-    console.log(showToast);
+    // console.log(showToast);
   }, [showToast]);
   return (
     <div className="fixed f-jic inset-0 w-full h-full z-30">

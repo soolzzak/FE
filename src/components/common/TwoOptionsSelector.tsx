@@ -16,8 +16,8 @@ export const TwoOptionsSelector = ({
   roomPassword,
 }: InputProps) => {
   const [selectedOption, setSelectedOption] = useAtom(publicOrPrivateAtom);
-  const selections = [false, true];
-  console.log(selectedOption);
+  // const selections = [false, true];
+  // console.log(selectedOption);
 
   useEffect(() => {
     setSelectedOption(isPrivate || leftRightSelect[0]);
