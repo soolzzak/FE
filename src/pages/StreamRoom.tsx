@@ -914,7 +914,7 @@ export const StreamRoom = () => {
                 onClick={startScreenShare}
                 whileHover={{ scale: 1.02 }}
               >
-                <div className="min-w-[200px] f-ic gap-4">
+                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
                   <div className="iconStyle bg-[#E0F5E6]">
                     <ScreenShare />
                   </div>
@@ -933,7 +933,7 @@ export const StreamRoom = () => {
                 className={activityBtnSubClassName}
                 onClick={delayServiceMessage}
               >
-                <div className="min-w-[200px] f-ic gap-4">
+                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
                   <Game />
                   <span
                     className={`${
@@ -950,14 +950,14 @@ export const StreamRoom = () => {
                 className={activityBtnSubClassName}
                 onClick={delayServiceMessage}
               >
-                <div className="min-w-[200px] f-ic gap-4">
-                  <Camera />
+                <div className={`${numberShare >= 1 ? "" : "xl:min-w-[200px] xl:f-ic xl:gap-4"}`}>
+                  <Youtube />
                   <span
                     className={`${
                       numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
                     }`}
                   >
-                    함께 사진찍기
+                    유튜브
                   </span>
                 </div>
               </div>
