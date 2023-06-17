@@ -502,10 +502,11 @@ export const StreamRoom = () => {
               // console.log('starting call');
               await startCall();
             }
-
+            break;
+          case 'ping':
             break;
           default:
-            toast.error('Invalid message type:', message.type);
+            break;
         }
       };
     };
