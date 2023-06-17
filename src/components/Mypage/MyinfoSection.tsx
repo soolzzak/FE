@@ -96,7 +96,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   };
 
   return (
-    <div className="bg-[#ffffff] basis-2/5 rounded-3xl flex flex-col gap-y-6 pb-10 shadow">
+    <div className="bg-[#ffffff] basis-2/5 rounded-3xl flex flex-col w-full gap-y-6 pb-10 shadow">
       <div className="relative">
         <div className="absolute top-4 right-4 ">
           {editMode ? (

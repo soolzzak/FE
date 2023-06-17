@@ -72,7 +72,7 @@ export const NoRoom = () => {
             initial="hidden"
             animate="visible"
             variants={item}
-            className="absolute md:left-40 left-36 ml-8 transform -translate-x-1/2 -translate-y-1/2"
+            className="absolute md:left-40 left-36 transform -translate-x-1/2 -translate-y-1/2"
           >
             <NoroomSoju />
           </motion.div>
@@ -109,14 +109,15 @@ export const NoRoom = () => {
               <p className="md:text-[32px] text-[24px] font-semibold  text-[#646464]">
                 혼술짝 방 만들고 가볍게 술 한잔 할까요?
               </p>
+
+              <button
+                type="button"
+                className="bg-primary-300 hover:bg-primary-400 transition duration-300 text-[#FFFFFF] rounded-xl md:w-[525px] md:h-[75px] w-[320px] h-[60px] mt-12 md:text-3xl text-xl font-bold"
+                onClick={handleButtonClick}
+              >
+                혼술짝 방만들기
+              </button>
             </div>
-            <button
-              type="button"
-              className="bg-[#179638] text-[#FFFFFF] rounded-xl md:w-[525px] md:h-[75px] w-[320px] h-[60px] mt-12 md:text-3xl text-xl font-bold"
-              onClick={handleButtonClick}
-            >
-              혼술짝 방만들기
-            </button>
           </motion.div>
         )}
 
