@@ -142,7 +142,7 @@ export const HomeBodySection = () => {
               ))}
           </div>
         </div>
-        <div className="fixed sm:right-14 md:right-20 lg:right-28 xl:right-36 bottom-12">
+        <div className="fixed right-5  xl:right-14 bottom-24">
           {isVisible && <BackToTop />}
         </div>
       </div>
