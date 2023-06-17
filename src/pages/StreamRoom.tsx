@@ -430,8 +430,8 @@ export const StreamRoom = () => {
 
       socket.onclose = () => {
         // console.log('WebSocket connection closed');
-        // closeMediaStream();
-        // navigate('/');
+        closeMediaStream();
+        navigate('/');
       };
 
       socket.onerror = () => {
@@ -932,7 +932,11 @@ export const StreamRoom = () => {
                   <span className="text-white text-lg">
                     {isMyScreenShare && isRemoteScreenShare
                       ? guestProfile?.username
-                      : '나'}
+                      : `${
+                          !isMyScreenShare && isRemoteScreenShare
+                            ? guestProfile?.username
+                            : '나'
+                        }`}
                   </span>
                 </div>
               </div>
