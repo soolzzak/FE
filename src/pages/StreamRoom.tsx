@@ -430,8 +430,8 @@ export const StreamRoom = () => {
 
       socket.onclose = () => {
         // console.log('WebSocket connection closed');
-        // closeMediaStream();
-        // navigate('/');
+        closeMediaStream();
+        navigate('/');
       };
 
       socket.onerror = () => {
