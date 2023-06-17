@@ -63,7 +63,7 @@ export const HomeBodySection = () => {
   const debouncedHandleScroll = debounce(() => {
     const scrollPosition = window.innerHeight + window.pageYOffset;
     const documentHeight = document.documentElement.offsetHeight;
-    const isNearBottom = scrollPosition > documentHeight - 500;
+    const isNearBottom = scrollPosition > documentHeight - 50;
 
     if (isNearBottom) {
       setPageNum((prevPageNum) => prevPageNum + 1);
@@ -71,6 +71,7 @@ export const HomeBodySection = () => {
   }, 100);
 
   useEffect(() => {
+    if (pageNum >= 0 && pageableDetail[1] === 0) return setPageNum(0);
     if (pageNum >= pageableDetail[1]) return;
     if (pageNum !== pageableDetail[1])
       if (tab === 'SEARCH') {
@@ -87,6 +88,7 @@ export const HomeBodySection = () => {
         );
       }
   }, [pageNum]);
+
   useEffect(() => {
     window.addEventListener('scroll', debouncedHandleScroll);
     return () => {
@@ -128,7 +130,6 @@ export const HomeBodySection = () => {
 
           {!chatListMutation.isLoading && !chatList?.length && (
             <div className="f-jic w-full min-w-[660px] h-[100vh]">
-              {' '}
               <NoRoom />
             </div>
           )}
