@@ -24,7 +24,7 @@ export const ModifyRoomModal = () => {
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
 
   return (
-    <div className="relative f-col bg-white py-8 px-12 rounded-[20px]">
+    <div className="relative f-col bg-white px-12 rounded-[20px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="w-[356px] h-[300px] rounded-2xl bg-slate-400">
           <ImageUploadAndView roomImageUrl={roomInfo?.roomImageUrl} />
