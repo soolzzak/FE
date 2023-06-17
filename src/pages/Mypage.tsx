@@ -23,9 +23,9 @@ export const Mypage = () => {
   }, [data]);
 
   return (
-    <div className="flex-grow w-full gap-10 h-screen">
-      <div className="f-ic-col min-w-[80px]">
-        <div className="flex md:flex-row flex-col px-8 w-full mt-32 max-w-[1200px] mx-auto gap-10">
+    <div className="flex-grow w-full gap-10 min-w-[660px] bg-[#f6fff9] min-h-screen">
+      <div className="f-ic-col relative">
+        <div className="flex md:flex-row flex-col px-6 w-full mt-32 max-w-[1230px] mx-auto gap-10">
           {myinfo && (
             <div className="basis-2/5">
               <MyinfoSection myinfo={myinfo} />
