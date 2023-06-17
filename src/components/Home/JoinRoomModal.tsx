@@ -78,11 +78,28 @@ export const JoinRoomModal = () => {
 
   return (
     <div className="bg-white px-12 py-8 rounded-2xl min-w-[350px]">
-      <div className="w-full text-3xl font-bold truncate">
-        &apos;{chatRoomInfo?.title}&apos;
+      <div className="f-ic">
+        <div className="w-full text-3xl font-bold truncate">
+          &quot;{chatRoomInfo?.title}&quot;
+        </div>
+        <div className="bg-primary-50 f-jic rounded-2xl px-3 py-1">
+          <img
+            alt="userImg"
+            src={data?.data.userImage}
+            className="w-14 min-w-[56px] h-14 rounded-full mr-2"
+          />
+          <div className="flex flex-col">
+            <p className="font-bold lg:text-base text-xs truncate">
+              {data?.data.username}님
+            </p>
+            <p className="font-bold lg:text-base text-xs truncate">
+              {data?.data.alcohol}%
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-10">
         <div className="col-span-2">
           {mediaStreamMutation.isLoading && (
             <div className="w-full h-full max-w-[640px] rounded-2xl bg-black">
@@ -99,25 +116,11 @@ export const JoinRoomModal = () => {
 
         <div className="col-span-1 w-full">
           <div className="grid grid-cols-2 grid-rows-6">
-            <div className="col-span-2 rounded-2xl w-full">
+            {/* <div className="col-span-2 rounded-2xl w-full">
               <div className="flex w-full flex-row-reverse">
-                <div className="bg-primary-100 f-jic rounded-2xl px-3 py-1">
-                  <img
-                    alt="userImg"
-                    src={data?.data.userImage}
-                    className="w-14 min-w-[56px] h-14 rounded-full mr-2"
-                  />
-                  <div className="flex flex-col">
-                    <p className="font-bold lg:text-base text-xs truncate">
-                      {data?.data.username}님
-                    </p>
-                    <p className="font-bold lg:text-base text-xs truncate">
-                      {data?.data.alcohol}%
-                    </p>
-                  </div>
-                </div>
+                d
               </div>
-            </div>
+            </div> */}
 
             <div
               className={`col-span-2 ${
@@ -160,7 +163,7 @@ export const JoinRoomModal = () => {
 
             <button
               type="button"
-              className="col-span-2 row-start-6 bg-primary-300 text-white lg:text-xl text-lg rounded-2xl font-bold hover:bg-primary-400"
+              className="col-span-2 row-start-6 bg-primary-300 text-white lg:text-xl text-lg rounded-2xl font-bold hover:bg-primary-400 mt-3"
               onClick={enterRoomHandler}
             >
               혼술짝 방 입장하기

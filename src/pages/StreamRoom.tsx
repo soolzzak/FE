@@ -285,6 +285,8 @@ export const StreamRoom = () => {
         //   'remoteVideoRef.current.srcObject',
         //   remoteVideoRef.current?.srcObject
         // );
+        setNumberShare((prev) => prev - 1);
+        setIsRemoteScreenShare(() => false);
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
         setGuestProfile(() => undefined);
@@ -369,6 +371,7 @@ export const StreamRoom = () => {
         //   'remoteWebcamVideoRef.current.srcObject',
         //   remoteWebcamVideoRef.current?.srcObject
         // );
+        setNumberShare((prev) => prev - 1);
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
         setGuestProfile(() => undefined);
@@ -740,7 +743,7 @@ export const StreamRoom = () => {
   // console.log('share', shareView);
 
   // className 추가
-  let firstVideoClassName = 'w-full h-full rounded-2xl';
+  let firstVideoClassName = 'w-full rounded-2xl';
   if (numberShare === 0) {
     firstVideoClassName +=
       ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[300px] h-fit';
@@ -749,10 +752,10 @@ export const StreamRoom = () => {
       ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[250px] h-fit';
   } else if (numberShare === 2) {
     firstVideoClassName +=
-      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[200px] h-fit';
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[40px] right-5 max-w-[200px] h-fit';
   }
 
-  let secondVideoClassName = 'w-full h-full rounded-2xl';
+  let secondVideoClassName = 'w-full rounded-2xl';
   if (numberShare === 0) {
     secondVideoClassName += ' hidden';
   } else if (numberShare === 1) {
@@ -763,14 +766,14 @@ export const StreamRoom = () => {
       ' xl:absolute xl:top-5 xl:left-5 xl:max-w-[250px] xl:h-auto absolute top-[360px] right-5 max-w-[200px] h-fit';
   }
 
-  let thirdVideoClassName = 'w-full h-full rounded-2xl';
+  let thirdVideoClassName = 'w-full rounded-2xl';
   if (numberShare === 0) {
     thirdVideoClassName += ' hidden';
   } else if (numberShare === 1) {
     thirdVideoClassName += ' hidden';
   } else if (numberShare === 2) {
     thirdVideoClassName +=
-      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[190px] right-5 max-w-[200px] h-fit';
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[220px] right-5 max-w-[200px] h-fit';
   }
 
   let controlBtnClassName = 'flex items-center gap-4 relative';
@@ -832,15 +835,24 @@ export const StreamRoom = () => {
           <div className="relative w-full h-full grid xl:grid-cols-6 xl:grid-rows-6 grid-cols-2 grid-rows-6 gap-4">
             {/* 메인비디오 화면 */}
             <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
-              {guestIn ? (
-                <video
-                  ref={remoteVideoRef}
-                  autoPlay
-                  className="bg-black w-full h-full object-contain rounded-2xl max-h-[600px] min-h-[600px]"
-                />
-              ) : (
-                <WaitingGuestRef />
-              )}
+              <div className="relative w-full">
+                {guestIn ? (
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    className="bg-black w-full h-full object-contain rounded-2xl max-h-[600px] min-h-[600px]"
+                  />
+                ) : (
+                  <WaitingGuestRef />
+                )}
+                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                  <span className="text-white text-lg">
+                    {isRemoteScreenShare
+                      ? `${guestProfile?.username}님의 공유화면`
+                      : guestProfile?.username}
+                  </span>
+                </div>
+              </div>
               {/* 건배 */}
               <div
                 role="none"
@@ -873,8 +885,13 @@ export const StreamRoom = () => {
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[190px] min-h-[190px]"
+                className="w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[150px] min-h-[190px]"
               />
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                <span className="text-white text-lg">
+                  {isMyScreenShare ? '나의 공유화면' : '나'}
+                </span>
+              </div>
             </div>
 
             {isMyScreenShare && (
@@ -885,6 +902,17 @@ export const StreamRoom = () => {
                   muted
                   className="w-full object-cover rounded-2xl"
                 />
+                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                  <span className="text-white text-lg">
+                    {isMyScreenShare && isRemoteScreenShare
+                      ? '나'
+                      : `${
+                          !isMyScreenShare && isRemoteScreenShare
+                            ? guestProfile?.username
+                            : '나'
+                        }`}
+                  </span>
+                </div>
               </div>
             )}
 
@@ -898,8 +926,19 @@ export const StreamRoom = () => {
                   ref={remoteWebcamVideoRef}
                   autoPlay
                   muted
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full object-cover rounded-2xl"
                 />
+                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                  <span className="text-white text-lg">
+                    {isMyScreenShare && isRemoteScreenShare
+                      ? guestProfile?.username
+                      : `${
+                          !isMyScreenShare && isRemoteScreenShare
+                            ? guestProfile?.username
+                            : '나'
+                        }`}
+                  </span>
+                </div>
               </div>
             )}
 

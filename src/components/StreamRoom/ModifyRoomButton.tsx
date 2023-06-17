@@ -34,7 +34,6 @@ export const ModifyRoomButton = () => {
 
   const [, setIsClose] = useAtom(isOpenModifyRoomAtom);
 
-
   // const [roomInfo] = useAtom(streamRoomInfoAtom);
   const [, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
@@ -73,6 +72,7 @@ export const ModifyRoomButton = () => {
     <CommonButton
       buttonText="혼술짝 방 수정하기"
       clickHandler={onSubmit}
+      enabled
       dimensions="text-xl py-5 mt-10 mb-[34px] rounded-[16px] w-2/3 self-center"
     />
   );

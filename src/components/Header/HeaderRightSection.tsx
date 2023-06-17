@@ -99,6 +99,7 @@ export const HeaderRightSection = () => {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
+          className="min-w-[250px]"
         >
           <button
             type="button"

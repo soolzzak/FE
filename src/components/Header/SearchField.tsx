@@ -36,11 +36,7 @@ export const SearchField = () => {
   };
 
   return (
-    <div
-      className={`f-ic w-[450px] ml-8 py-3.5 pl-4 h-12 bg-[#F4F4F4] rounded-2xl md:flex
-        ${userToken ? 'hidden' : ''} 
-        `}
-    >
+    <div className="f-ic w-[280px] ml-8 py-3.5 pl-4 h-12 bg-[#F4F4F4] rounded-2xl md:flex hidden">
       <Search />
       <input
         type="text"
