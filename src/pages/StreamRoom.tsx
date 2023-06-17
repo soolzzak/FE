@@ -740,7 +740,7 @@ export const StreamRoom = () => {
   // console.log('share', shareView);
 
   // className 추가
-  let firstVideoClassName = 'w-full h-full rounded-2xl';
+  let firstVideoClassName = 'w-full rounded-2xl';
   if (numberShare === 0) {
     firstVideoClassName +=
       ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[300px] h-fit';
@@ -749,10 +749,10 @@ export const StreamRoom = () => {
       ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[250px] h-fit';
   } else if (numberShare === 2) {
     firstVideoClassName +=
-      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-5 right-5 max-w-[200px] h-fit';
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[40px] right-5 max-w-[200px] h-fit';
   }
 
-  let secondVideoClassName = 'w-full h-full rounded-2xl';
+  let secondVideoClassName = 'w-full rounded-2xl';
   if (numberShare === 0) {
     secondVideoClassName += ' hidden';
   } else if (numberShare === 1) {
@@ -763,14 +763,14 @@ export const StreamRoom = () => {
       ' xl:absolute xl:top-5 xl:left-5 xl:max-w-[250px] xl:h-auto absolute top-[360px] right-5 max-w-[200px] h-fit';
   }
 
-  let thirdVideoClassName = 'w-full h-full rounded-2xl';
+  let thirdVideoClassName = 'w-full rounded-2xl';
   if (numberShare === 0) {
     thirdVideoClassName += ' hidden';
   } else if (numberShare === 1) {
     thirdVideoClassName += ' hidden';
   } else if (numberShare === 2) {
     thirdVideoClassName +=
-      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[190px] right-5 max-w-[200px] h-fit';
+      ' xl:col-span-2 xl:row-span-3 xl:relative xl:top-0 xl:right-0 xl:max-w-full xl:max-h-full absolute top-[220px] right-5 max-w-[200px] h-fit';
   }
 
   let controlBtnClassName = 'flex items-center gap-4 relative';
@@ -873,7 +873,7 @@ export const StreamRoom = () => {
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[190px] min-h-[190px]"
+                className="w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[150px] min-h-[190px]"
               />
             </div>
 
@@ -898,7 +898,7 @@ export const StreamRoom = () => {
                   ref={remoteWebcamVideoRef}
                   autoPlay
                   muted
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full object-cover rounded-2xl"
                 />
               </div>
             )}
