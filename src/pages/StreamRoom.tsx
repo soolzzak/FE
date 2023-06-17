@@ -873,7 +873,7 @@ export const StreamRoom = () => {
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="bg-black w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[190px] min-h-[190px]"
+                className="w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[190px] min-h-[190px]"
               />
             </div>
 
@@ -883,7 +883,7 @@ export const StreamRoom = () => {
                   ref={myWebcamVideoRef}
                   autoPlay
                   muted
-                  className="bg-black w-full h-full object-contain rounded-2xl"
+                  className="w-full object-cover rounded-2xl"
                 />
               </div>
             )}
@@ -898,7 +898,7 @@ export const StreamRoom = () => {
                   ref={remoteWebcamVideoRef}
                   autoPlay
                   muted
-                  className="bg-black w-full h-full object-contain rounded-2xl"
+                  className="w-full h-full object-cover rounded-2xl"
                 />
               </div>
             )}
