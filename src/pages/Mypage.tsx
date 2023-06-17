@@ -23,8 +23,8 @@ export const Mypage = () => {
   }, [data]);
 
   return (
-    <div className="flex-grow w-full gap-10 h-screen">
-      <div className="f-ic-col min-w-[80px]">
+    <div className="flex-grow w-full gap-10 h-full min-h-screen">
+      <div className="f-ic-col min-w-[80px] h-full">
         <div className="flex md:flex-row flex-col px-8 w-full mt-32 max-w-[1200px] mx-auto gap-10">
           {myinfo && (
             <div className="basis-2/5">
