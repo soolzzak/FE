@@ -79,7 +79,7 @@ export const JoinRoomModal = () => {
   return (
     <div className="bg-white px-12 py-8 rounded-2xl min-w-[350px]">
       <div className="w-full text-3xl font-bold truncate">
-        &apos;{chatRoomInfo?.title}&apos;
+        &quot;{chatRoomInfo?.title}&quot;
       </div>
 
       <div className="grid grid-cols-3 gap-4">
