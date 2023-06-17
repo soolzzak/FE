@@ -906,8 +906,11 @@ export const StreamRoom = () => {
                   <span className="text-white text-lg">
                     {isMyScreenShare && isRemoteScreenShare
                       ? '나'
-                      : guestProfile?.username}
-                    {isMyScreenShare && !isRemoteScreenShare ? '나' : ''}
+                      : `${
+                          !isMyScreenShare && isRemoteScreenShare
+                            ? guestProfile?.username
+                            : '나'
+                        }`}
                   </span>
                 </div>
               </div>
