@@ -124,7 +124,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             {editMode ? (
               <label
                 htmlFor="imageInput"
-                className="  cursor-pointer f-jic rounded-full object-cover shadow bg-[#B6ECC4]"
+                className="cursor-pointer f-jic rounded-full object-cover shadow bg-[#B6ECC4]"
                 title="Upload Image"
               >
                 <div className="invisible group-hover:visible absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
