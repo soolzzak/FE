@@ -36,11 +36,13 @@ export const LoginModal = () => {
       setUserToken(response?.headers.access_key);
       navigate('/');
     },
-    onError: (error: any) => {
+    onError: (error: { response: { data: { message: string } } }) => {
       if (error.response.data.message === 'The email address does not exist.') {
-        toast.error('일치하는 회원정보가 없습니다')
-      } else if (error.response.data.message === 'The passwords do not match.') {
-        toast.error('비밀번호가 일치하지 않습니다')
+        toast.error('일치하는 회원정보가 없습니다');
+      } else if (
+        error.response.data.message === 'The passwords do not match.'
+      ) {
+        toast.error('비밀번호가 일치하지 않습니다');
       }
     },
   });

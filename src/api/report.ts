@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import axiosInstance from './axios';
 
 interface ApiResponse {
@@ -20,10 +20,8 @@ export const ReportApi = async (
       `/report/${userId}`,
       reportData
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error(error);
     throw error as Error;
   }
 };

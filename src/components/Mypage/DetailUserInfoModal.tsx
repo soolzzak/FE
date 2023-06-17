@@ -20,7 +20,7 @@ export const DetailUserInfoModal = ({
   onClose: () => void;
   item: TabUserList;
 }) => {
-  const { data, isError, error } = useQuery(
+  const { data } = useQuery(
     'detailUserInfo',
     () => getDetailUserProfile(item.userId),
     {
@@ -32,7 +32,7 @@ export const DetailUserInfoModal = ({
 
   const [userinfo, setUserinfo] = useState<DetailUserProfile | undefined>();
 
-  console.log('얘', userinfo);
+  // console.log('얘', userinfo);
 
   useEffect(() => {
     if (data) {
@@ -56,7 +56,7 @@ export const DetailUserInfoModal = ({
           await queryClient.invalidateQueries('detailUserInfo');
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     }
   };

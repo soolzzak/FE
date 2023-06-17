@@ -23,11 +23,32 @@ export const HeaderRightSection = () => {
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
+
   useEffect(() => {
     if (user) {
       setUserAtom(jwtDecode(user));
     }
   }, [user]);
+  let eventSource: EventSource;
+  // console.log(userAtom);
+  useEffect(() => {
+    if (user) {
+      eventSource = new EventSource(
+        `https://api.honsoolzzak.com/events/${userAtom?.auth.id}`
+      );
+    }
+    if (eventSource) {
+      eventSource.onmessage = () => {
+        // console.log('Received SSE event:', event.data);
+      };
+      eventSource.onerror = () => {
+        // console.error('SSE connection error:', error);
+      };
+    }
+    return () => {
+      eventSource.close();
+    };
+  }, []);
   const navigate = useNavigate();
   return (
     <motion.section
@@ -65,8 +86,9 @@ export const HeaderRightSection = () => {
         >
           <CommonButton
             buttonText="혼술짝 방만들기"
+            enabled
             clickHandler={() => setIsOpenRoomCreate(true)}
-            dimensions="mr-7 min-w-[185px]"
+            dimensions="mr-7 min-w-[185px] rounded-lg"
           />
           <Notifications />
           <ProfileMenu user={userAtom.sub} />
@@ -87,8 +109,9 @@ export const HeaderRightSection = () => {
           </button>
           <CommonButton
             buttonText="로그인"
-            clickHandler={() => setIsOpenAuth(true)}
-            dimensions="mr-7 text-lg min-w-[70px]"
+            enabled
+            clickHandler={() => setIsOpenLogin(true)}
+            dimensions="mr-7 text-lg min-w-[70px] rounded-lg"
           />
         </motion.div>
       )}

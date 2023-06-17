@@ -63,3 +63,33 @@ export const genderSelection = (chatCategory: string) => {
   }
   return result;
 };
+
+export const errorMessageConvert = (chatCategory: string) => {
+  let result = null;
+  switch (chatCategory) {
+    case 'The username contains forbidden words. Please choose a different username.':
+      result = '사용할 수 없는 단어가 있습니다';
+      break;
+    case 'The username already exist.':
+      result = '중복된 닉네임입니다.';
+      break;
+    case 'The room title contains forbidden words. Please use different room title.':
+      result = '사용할 수 없는 단어가 있습니다';
+      break;
+    case 'SPORTS_GAME':
+      result = '⚽ 스포츠/게임';
+      break;
+    case 'ABOUT_TODAY':
+      result = '🎈 오늘하루';
+      break;
+    case 'COUNSELING':
+      result = '🔮 고민상담';
+      break;
+    case 'GENERAL':
+      result = '🙌 자유방';
+      break;
+    default:
+      break;
+  }
+  return result;
+};

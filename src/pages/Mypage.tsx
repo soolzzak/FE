@@ -7,13 +7,9 @@ import { BadgeSection } from '../components/Mypage/BadgeSection';
 import { FollowSection } from '../components/Mypage/FollowSection';
 
 export const Mypage = () => {
-  const { data, isLoading, isError, error } = useQuery(
-    'mypageInfo',
-    getMypageProfile,
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
+  const { data } = useQuery('mypageInfo', getMypageProfile, {
+    refetchOnWindowFocus: false,
+  });
   const [myinfo, setMyinfo] = useState<MypageProfileRooms | undefined>();
 
   // if (isLoading) return <div>Loading...</div>;
@@ -22,12 +18,12 @@ export const Mypage = () => {
   useEffect(() => {
     if (data) {
       setMyinfo(data.data);
-      console.log(data);
+      // console.log(data);
     }
   }, [data]);
 
   return (
-    <div className="flex-grow w-full gap-10">
+    <div className="flex-grow w-full gap-10 h-screen">
       <div className="f-ic-col min-w-[80px]">
         <div className="flex md:flex-row flex-col px-8 w-full mt-32 max-w-[1200px] mx-auto gap-10">
           {myinfo && (

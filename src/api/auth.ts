@@ -39,26 +39,28 @@ export const SignupApi = async (signupInfo: SignupInfo) => {
       signupInfo
     );
     return response;
-  } catch (error: any) {
-    throw error as Error
+  } catch (error) {
+    throw error as Error;
   }
 };
 
 export const UsernameConfirm = async (username: string) => {
   try {
-    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/signup?username=${username}`)
-    return response
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+      `/signup?username=${username}`
+    );
+    return response;
   } catch (error) {
-    throw error as Error
+    throw error as Error;
   }
-}
+};
 
 export const EmailSignupConfirm = async (email: EmailInfo) => {
   try {
     const response = await axiosInstance.post('/signup/mailconfirm', email);
     return response.data.code;
   } catch (error) {
-      throw error as Error
+    throw error as Error;
   }
 };
 
@@ -68,7 +70,7 @@ export const EmailLoginConfirm = async (email: EmailInfo) => {
     const response = await axiosInstance.post('/login/mailconfirm', email);
     return response.data.code;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     throw error as Error;
   }
 };
@@ -78,7 +80,7 @@ export const ChangePassword = async (changePwdInfo: ChangePwdInfo) => {
     const response = await axiosInstance.put('/change_password', changePwdInfo);
     return response;
   } catch (error) {
-    throw error as Error
+    throw error as Error;
   }
 };
 
@@ -103,7 +105,7 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
       expires: refreshExpireDate,
     });
     return response;
-  } catch (error: any) {
+  } catch (error) {
     throw error as Error;
   }
 };
@@ -139,12 +141,10 @@ export const getNewAccessKey = async () => {
     );
     const accessKey = response.headers.access_key;
     Cookies.set('accessKey', accessKey);
-    console.log(response);
+    // console.log(response);
     return response;
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      console.log(error);
-    }
+  } catch (error) {
+    return error as Error
   }
 };
 
