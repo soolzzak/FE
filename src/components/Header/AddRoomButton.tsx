@@ -37,7 +37,7 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
       queryClient.invalidateQueries('chatrooms');
       closeModal();
       navigate(`/room/${data.data.roomId}`);
-      toast.success('방 반들기 성공!');
+      toast.success('방 만들기 성공!');
     },
     onError: (error: { response: { data: { message: string } } }) => {
       toast.error(errorMessageConvert(error?.response.data.message));

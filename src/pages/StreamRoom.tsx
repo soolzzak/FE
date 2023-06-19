@@ -481,7 +481,7 @@ export const StreamRoom = () => {
           case 'startShare':
             // console.log('received startShare message', message);
             setIsRemoteScreenShare(true);
-            setNumberShare((prev) => prev + 0.5);
+            setNumberShare((prev) => prev + 1);
             setTimeout(() => {
               if (remoteWebcamVideoRef.current) {
                 // console.log(' remote media', remoteMediaStream);
@@ -924,7 +924,8 @@ export const StreamRoom = () => {
                 ref={localVideoRef}
                 autoPlay
                 muted
-                className="w-full h-full object-contain rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[150px] min-h-[190px]"
+                className={`w-full rounded-2xl xl:min-h-[360px] xl:max-h-[360px] max-h-[150px] min-h-[190px] bg-black
+                ${isMyScreenShare ? 'object-contain' : 'object-cover'}`}
               />
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
                 <span className="text-white text-lg">
