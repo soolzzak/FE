@@ -1,29 +1,81 @@
-import React from 'react';
-import YouTube, { YouTubeProps } from 'react-youtube';
+import React, { useRef } from 'react';
+import YouTube, { YouTubeProps, YouTubeEvent } from 'react-youtube';
 
-export const YoutubeContent = () => {
+declare global {
+  interface Window {
+    YT: any;
+  }
+}
+
+export const YoutubeContent = ({
+  videoLink,
+  socket,
+  userId,
+  playerRef,
+  roomNum,
+  isHost,
+}: {
+  videoLink: string;
+  socket: WebSocket;
+  userId: number;
+  roomNum: number;
+  isHost: boolean;
+  playerRef: React.RefObject<YouTube>;
+}) => {
   const onPlayerReady: YouTubeProps['onReady'] = (event) => {
-    // access to player in all event handlers via event.target
-    event.target.pauseVideo();
+    event.target.playVideo();
   };
-  const onVideoStatechange = (e: any) => {
-    console.log(e.data);
+  const onVideoStatechange = (event: YouTubeEvent) => {
+    if (event.data === 1 && isHost) {
+      const currentTime = event.target.getCurrentTime();
+      console.log('Seeked to:', currentTime);
+
+      const roundedTime = parseFloat(currentTime.toFixed(10)) + 0.3;
+      const message = {
+        from: userId,
+        type: 'startYoutube',
+        data: roomNum,
+        time: roundedTime,
+      };
+      console.log('send youtube time', message);
+      socket.send(JSON.stringify(message));
+    }
+    if (event.data === 2 && isHost) {
+      const message = {
+        from: userId,
+        type: 'pauseYoutube',
+        data: roomNum,
+      };
+      console.log('send pause', message);
+      socket.send(JSON.stringify(message));
+    }
   };
-  const opts: YouTubeProps['opts'] = {
+
+  const guestOpts: YouTubeProps['opts'] = {
     height: '100%',
     width: '100%',
     playerVars: {
-      // https://developers.google.com/youtube/player_parameters
+      autoplay: 1,
+      controls: 0,
+      disablekb: 1,
+    },
+  };
+  const hostOpts: YouTubeProps['opts'] = {
+    height: '100%',
+    width: '100%',
+    playerVars: {
       autoplay: 1,
     },
   };
+  console.log('videolink', videoLink);
   return (
     <YouTube
       className="h-full"
-      videoId="rWkKG4IeTNY"
-      opts={opts}
+      videoId={videoLink}
+      opts={isHost ? hostOpts : guestOpts}
       onStateChange={onVideoStatechange}
       onReady={onPlayerReady}
+      ref={playerRef}
     />
   );
 };
