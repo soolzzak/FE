@@ -473,7 +473,7 @@ export const StreamRoom = () => {
           case 'startShare':
             // console.log('received startShare message', message);
             setIsRemoteScreenShare(true);
-            setNumberShare((prev) => prev + 0.5);
+            setNumberShare((prev) => prev + 1);
             setTimeout(() => {
               if (remoteWebcamVideoRef.current) {
                 // console.log(' remote media', remoteMediaStream);
