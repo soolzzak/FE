@@ -58,22 +58,22 @@ export const HeroSection = () => {
   return (
     <div className="w-full">
       <section className="relative w-full h-[580px] min-w-[660px]">
-        <AnimatePresence initial={false}>
+        {images.map((imageUrl, index) => (
           <motion.div
-            key={currentImageIndex}
-            className="absolute w-full h-full bg-cover max-w-[100]"
+            key={imageUrl}
+            className="absolute top-0 left-0 w-full h-full bg-cover bg-no-repeat bg-center"
             style={{
-              backgroundImage: `url('${images[currentImageIndex]}')`,
+              backgroundImage: `url('${imageUrl}')`,
             }}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            variants={swipeVariants}
-            transition={{
-              x: { type: 'spring', stiffness: 300, damping: 30, duration: 3 },
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: currentImageIndex === index ? 1 : 0,
             }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
           />
-        </AnimatePresence>
+        ))}
+
         <div className="absolute bg-black w-full h-full opacity-[0.4] z-10" />
         <div className="f-jic-col text-[#494949] min-w-[660px]">
           <motion.h1

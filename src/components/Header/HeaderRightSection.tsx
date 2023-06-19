@@ -23,7 +23,7 @@ export const HeaderRightSection = () => {
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
-
+  console.log(userAtom);
   useEffect(() => {
     if (user) {
       setUserAtom(jwtDecode(user));
