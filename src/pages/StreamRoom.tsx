@@ -36,6 +36,10 @@ import {
   monitorOnChangeAtom,
 } from '../store/streamControlStore';
 import { ScreenShare } from '../assets/svgs/ScreenShare';
+import { GameNote } from '../assets/svgs/GameNote';
+import { GameScissors } from '../assets/svgs/GameScissors';
+import { GameApple } from '../assets/svgs/GameApple';
+import { GamePencil } from '../assets/svgs/GamePencil';
 
 export interface JwtPayload {
   auth: {
@@ -467,8 +471,12 @@ export const StreamRoom = () => {
             await handleCandidateMessage(message);
             break;
           case 'toast':
-            // console.log('received toast message', message);
+            console.log('received toast message', message);
             showToastHandler();
+            break;
+          case 'game':
+            // console.log('received toast message', message);
+
             break;
           case 'startShare':
             // console.log('received startShare message', message);
@@ -557,6 +565,20 @@ export const StreamRoom = () => {
       socket.send(message);
     }
   };
+
+  const startGame = () => {
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'game',
+        data: roomNum,
+      });
+      // console.log('toast sent', message);
+      showToastHandler();
+      socket.send(message);
+    }
+  };
+
   const sendShareOnMessage = () => {
     // console.log('click share On');
     if (socket) {
@@ -835,8 +857,8 @@ export const StreamRoom = () => {
           <div className="relative w-full h-full grid xl:grid-cols-6 xl:grid-rows-6 grid-cols-2 grid-rows-6 gap-4">
             {/* 메인비디오 화면 */}
             <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
-              <div className="relative w-full">
-                {guestIn ? (
+              <div className="h-full relative w-full">
+                {/* {guestIn ? (
                   <video
                     ref={remoteVideoRef}
                     autoPlay
@@ -851,6 +873,23 @@ export const StreamRoom = () => {
                       ? `${guestProfile?.username}님의 공유화면`
                       : guestProfile?.username}
                   </span>
+                </div> */}
+
+                {/* 게임하기 */}
+
+                <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl max-h-[600px] min-h-[600px]">
+                  <div className="relative rounded-lg">
+                    <GameNote />
+                    <div className="absolute left-0 top-0">
+                      <GameScissors />
+                    </div>
+                    <div className="absolute bottom-0 left-0">
+                      <GameApple />
+                    </div>
+                    <div className="absolute bottom-0 right-0">
+                      <GamePencil />
+                    </div>
+                  </div>
                 </div>
               </div>
               {/* 건배 */}
@@ -971,7 +1010,8 @@ export const StreamRoom = () => {
               <div
                 role="none"
                 className={activityBtnSubClassName}
-                onClick={delayServiceMessage}
+                // onClick={delayServiceMessage}
+                onClick={startGame}
               >
                 <div
                   className={`${
