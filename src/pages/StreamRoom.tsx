@@ -1012,7 +1012,7 @@ export const StreamRoom = () => {
             )}
 
             {isRemoteScreenShare ||
-              (youtubeIsOn && (
+              (youtubeIsOn && guestIn && (
                 <div
                   className={
                     numberShare === 1
@@ -1116,7 +1116,7 @@ export const StreamRoom = () => {
                       numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
                     }`}
                   >
-                    유튜브
+                    유튜브 동시시청
                   </span>
                 </div>
               </motion.div>
