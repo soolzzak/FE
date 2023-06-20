@@ -16,6 +16,7 @@ export interface MypageProfileRooms {
   metUser: TabUserList[];
   blockListedUser: TabUserList[];
   followingUser: TabUserList[];
+  introduction: string;
 }
 
 export interface TabUserList {

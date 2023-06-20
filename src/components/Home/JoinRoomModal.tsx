@@ -13,6 +13,7 @@ import {
   tabList,
 } from '../../utils/switchSelections';
 import { chatRoomInfoAtom } from './ChatroomCard';
+import { ChooseAlcoholType } from '../../utils/ChooseAlcoholType';
 
 export const JoinRoomModal = () => {
   const myVideoRef = useRef<HTMLVideoElement>(null);
@@ -76,27 +77,11 @@ export const JoinRoomModal = () => {
     };
   }, []);
 
+  console.log(data);
   return (
     <div className="bg-white px-12 py-8 rounded-2xl min-w-[350px]">
-      <div className="f-ic">
-        <div className="w-full text-3xl font-bold truncate">
-          &quot;{chatRoomInfo?.title}&quot;
-        </div>
-        <div className="bg-primary-50 f-jic rounded-2xl px-3 py-1">
-          <img
-            alt="userImg"
-            src={data?.data.userImage}
-            className="w-14 min-w-[56px] h-14 rounded-full mr-2"
-          />
-          <div className="flex flex-col">
-            <p className="font-bold lg:text-base text-xs truncate">
-              {data?.data.username}님
-            </p>
-            <p className="font-bold lg:text-base text-xs truncate">
-              {data?.data.alcohol}%
-            </p>
-          </div>
-        </div>
+      <div className="w-full text-3xl mb-3 font-bold truncate">
+        &quot;{chatRoomInfo?.title}&quot;
       </div>
 
       <div className="grid grid-cols-3 gap-10">
@@ -113,41 +98,75 @@ export const JoinRoomModal = () => {
             muted
           />
         </div>
-
         <div className="col-span-1 w-full">
-          <div className="grid grid-cols-2 grid-rows-6">
-            {/* <div className="col-span-2 rounded-2xl w-full">
-              <div className="flex w-full flex-row-reverse">
-                d
-              </div>
-            </div> */}
-
+          <div className="grid grid-cols-2 grid-rows-5">
             <div
-              className={`col-span-2 ${
-                chatRoomInfo?.isPrivate ? 'row-start-3' : 'row-start-4'
+              className={`flex flex-col-reverse col-span-2 ${
+                chatRoomInfo?.isPrivate ? 'row-start-1' : 'row-start-2'
               }`}
             >
-              <p className="text-[#454545] font-semibold text-base">카테고리</p>
-              <div className="join-room-modal-tag">
-                {selections.map((tab, index) =>
-                  tab === category ? tabList[index] : null
+              <span className="">방장 프로필</span>
+            </div>
+            <div
+              className={`col-span-2 ${
+                chatRoomInfo?.isPrivate ? 'row-start-2' : 'row-start-3'
+              }`}
+            >
+              <div className="f-ic rounded-xl bg-[#FAFAFA] px-2 py-1 mb-2">
+                <img
+                  alt="userImg"
+                  src={data?.data.userImage}
+                  className="w-14 min-w-[56px] h-14 rounded-full mr-2"
+                />
+                <div className="w-full overflow-hidden truncate">
+                  <div className="text-[#5F5F5F] font-semibold text-base">
+                    {data?.data.username}
+                  </div>
+                  <div className="text-[#5F5F5F] font-semibold text-base">
+                    {data?.data.introduction}
+                  </div>
+                </div>
+                {data && (
+                  <div className="f-ic">
+                    <span className="text-primary-300 font-semibold self-end pb-1">
+                      {data?.data.alcohol}%
+                    </span>
+                    <ChooseAlcoholType
+                      alcohol={data?.data.alcohol}
+                      height={0.6}
+                      width={0.6}
+                    />
+                  </div>
                 )}
               </div>
             </div>
-
             <div
-              className={`col-span-2 ${
-                chatRoomInfo?.isPrivate ? 'row-start-4' : 'row-start-5'
+              className={`flex gap-6 col-span-2 ${
+                chatRoomInfo?.isPrivate ? 'row-start-3' : 'row-start-4'
               }`}
             >
-              <p className="text-[#454545] font-semibold text-base">성별</p>
-              <div className="join-room-modal-tag">{gender}</div>
+              <div>
+                <p className="text-[#454545] font-semibold text-base mb-4">
+                  카테고리
+                </p>
+                <div className="join-room-modal-tag">
+                  {selections.map((tab, index) =>
+                    tab === category ? tabList[index] : null
+                  )}
+                </div>
+              </div>
+              <div>
+                <p className="text-[#454545] font-semibold text-base mb-4">
+                  성별
+                </p>
+                <div className="join-room-modal-tag">{gender}</div>
+              </div>
             </div>
 
             {chatRoomInfo?.isPrivate ? (
               <div
                 className={`col-span-2 ${
-                  chatRoomInfo?.isPrivate ? 'row-start-5' : ''
+                  chatRoomInfo?.isPrivate ? 'row-start-4' : ''
                 }`}
               >
                 <p className="text-[#454545] font-semibold text-base">
@@ -163,7 +182,7 @@ export const JoinRoomModal = () => {
 
             <button
               type="button"
-              className="col-span-2 row-start-6 bg-primary-300 text-white lg:text-xl text-lg rounded-2xl font-bold hover:bg-primary-400 mt-3"
+              className="col-span-2 row-start-5 bg-primary-300 text-white lg:text-xl text-lg rounded-2xl font-bold hover:bg-primary-400 mt-3"
               onClick={enterRoomHandler}
             >
               혼술짝 방 입장하기

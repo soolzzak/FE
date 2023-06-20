@@ -15,14 +15,14 @@ import { CancelButton } from '../common/CancelButton';
 
 export const DetailUserInfoModal = ({
   onClose,
-  item,
+  userId,
 }: {
   onClose: () => void;
-  item: TabUserList;
+  userId: string;
 }) => {
   const { data } = useQuery(
     'detailUserInfo',
-    () => getDetailUserProfile(item.userId),
+    () => getDetailUserProfile(userId),
     {
       refetchOnWindowFocus: false,
     }

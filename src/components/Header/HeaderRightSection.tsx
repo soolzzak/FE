@@ -16,11 +16,17 @@ import { LoginModal } from '../login/LoginModal';
 import { AddRoom } from './AddRoom';
 import { AuthModal } from './AuthModal';
 import { ProfileMenu } from './ProfileMenu';
+import { handleTitleChangeAtom } from '../../store/addRoomStore';
 
 export const HeaderRightSection = () => {
   const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
   const [isOpenLogin, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
+  const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
+  const onCloseRoomCreateModal = () => {
+    handleTitleChange('');
+    onCloseRoomCreate();
+  };
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
   console.log(userAtom);
@@ -73,8 +79,12 @@ export const HeaderRightSection = () => {
           <LoginModal />
         </Modal>
       </AnimatePresence>
-      <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
-        <AddRoom onClose={onCloseRoomCreate} />
+      <Modal
+        isOpen={isOpenRoomCreate}
+        onClose={onCloseRoomCreateModal}
+        hasOverlay
+      >
+        <AddRoom onClose={onCloseRoomCreateModal} />
       </Modal>
       {userAtom && user ? (
         <motion.div

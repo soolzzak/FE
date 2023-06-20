@@ -31,6 +31,8 @@ export const ModifyRoomModal = () => {
         </div>
         <div className="f-col gap-5">
           <ModalInput
+            constraint={25}
+            inputValue
             title="방 제목"
             // placeholderText="예시 : 분노의 질주 얘기하면서 같이 소주마셔요"
             placeholderText={

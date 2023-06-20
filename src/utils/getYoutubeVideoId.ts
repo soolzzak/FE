@@ -1,4 +1,6 @@
 export const convertUrltoVideoId = (url: string) => {
-  const params = new URLSearchParams(new URL(url).search);
-  return params.get('v');
+  const urlObject = new URL(url);
+  const searchParams = new URLSearchParams(urlObject.search);
+  console.log(searchParams.get('v'));
+  return searchParams.get('v');
 };
