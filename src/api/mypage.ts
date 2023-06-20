@@ -12,6 +12,7 @@ export interface MypageProfileRooms {
   username: string;
   alcohol: number;
   kakaoId: string | null;
+  introduction: string;
   email: string;
   metUser: TabUserList[];
   blockListedUser: TabUserList[];
@@ -62,17 +63,20 @@ export const getMypageProfile = async (): Promise<ApiResponse | undefined> => {
 export interface UpdateMypageData {
   userImage: File | null;
   username: string;
+  introduction: string | null;
 }
 
 export const updateMypageProfile = async ({
   userImage,
   username,
+  introduction,
 }: UpdateMypageData) => {
   try {
     const formData = new FormData();
 
     if (userImage) formData.append('userImage', userImage);
     if (username) formData.append('username', username);
+    if (introduction) formData.append('introduction', introduction);
 
     const response: AxiosResponse<ApiResponse1> = await axiosInstance.put(
       '/mypage',
@@ -95,6 +99,7 @@ export interface DetailUserProfile {
   userId: string;
   userImage: string | undefined;
   username: string;
+  introduction: string;
   email: string;
   alcohol: number;
   alcoholUp: boolean;
@@ -171,6 +176,18 @@ export const BlockHandler = async (
   try {
     const response: AxiosResponse<ApiResponse1> = await axiosInstance.put(
       `/blockList/${targetId}`
+    );
+    return response.data as ApiResponse1; // PUT 요청의 응답 데이터 처리
+  } catch (error) {
+    throw error as Error;
+  }
+};
+
+// 유저찾기
+export const FindUser = async (username: string) => {
+  try {
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.get(
+      `/mypage/search?username=${username}`
     );
     return response.data as ApiResponse1; // PUT 요청의 응답 데이터 처리
   } catch (error) {

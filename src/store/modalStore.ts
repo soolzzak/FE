@@ -11,4 +11,7 @@ export const isOpenLoginModalAtom = atom<boolean>(false);
 export const isOpenKickoutModalAtom = atom<boolean>(false);
 export const isOpenYoutubeVideoModalAtom = atom<boolean>(false);
 
+export const isOpenLevelInfoModalAtom = atom<boolean>(false);
+
+
 export const toastAtom = atom(false);
