@@ -9,6 +9,7 @@ import {
 import { Modify } from '../../assets/svgs/Modify';
 import { Kakao } from '../../assets/svgs/Kakao';
 import { errorMessageConvert } from '../../utils/switchSelections';
+import { MypageLine } from '../../assets/svgs/MypageLine';
 
 // 얘가 원래꺼
 export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
@@ -19,11 +20,30 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [editMode, setEditMode] = useState(false);
 
-  const [modifyUserName, setmodifyUserName] = useState<string | undefined>(
+  const MAX_CHARACTERS = 10;
+  // const [modifyUserName, setmodifyUserName] = useState<string | undefined>(
+  //   myinfo?.username
+  // );
+
+  const [modifyUserName, setmodifyUserName] = useState<string>(
     myinfo?.username
   );
-  const modifyUserNameHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setmodifyUserName(event.target.value);
+
+  const modifyUserNameHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const inputValue = event.target.value;
+    if (inputValue.length <= MAX_CHARACTERS) {
+      setmodifyUserName(inputValue);
+    }
+  };
+
+  const [modifyUserInfo, setmodifyUserInfo] = useState<string | undefined>(
+    myinfo.introduction
+  );
+
+  const modifyUserInfoHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setmodifyUserInfo(event.target.value);
 
   // 수정 ,,,
   const updateMyProfileMutation = useMutation(updateMypageProfile, {
@@ -47,6 +67,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
       userImage: image || null,
       username:
         myinfo.username === modifyUserName ? '' : (modifyUserName as string),
+      introduction: modifyUserInfo || null,
     };
     await updateMyProfileMutation.mutate(updateMypageData);
   };
@@ -78,13 +99,6 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
       setView(reader.result as string);
     };
   };
-
-  // 얘가 사진업로드
-  // const handleModifyClick = () => {
-  //   if (fileInputRef.current) {
-  //     fileInputRef.current.click(); // 파일 업로드 input 클릭
-  //   }
-  // };
 
   const editUserInfo = (): void => {
     if (editMode) {
@@ -124,7 +138,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             {editMode ? (
               <label
                 htmlFor="imageInput"
-                className="  cursor-pointer f-jic rounded-full object-cover shadow bg-[#B6ECC4]"
+                className="cursor-pointer f-jic rounded-full object-cover shadow bg-[#B6ECC4]"
                 title="Upload Image"
               >
                 <div className="invisible group-hover:visible absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -155,19 +169,49 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
         </div>
-        <div className="md:flex-row flex-col md:block f-jc">
-          <div className="flex md:justify-center md:mb-10 items-center md:flex md:items-start">
+
+        <div className="flex-col">
+          <div className="flex justify-center md:justify-center md:mb-5 items-center md:flex md:items-start">
+            {editMode ? (
+              <div className="flex justify-center items-center">
+                <input
+                  className="md:w-[211px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
+                  type="text"
+                  onChange={modifyUserNameHandler}
+                  value={modifyUserName}
+                  placeholder={myinfo?.username}
+                />
+
+                {modifyUserName?.length >= MAX_CHARACTERS && (
+                  <p className="text-red-500">10글자 이내로 작성해주세요.</p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <p className="text-xl font-bold text-center">
+                  {modifyUserName || myinfo?.username}
+                </p>
+              </div>
+            )}
+          </div>
+          <div className="f-jic">
+            <div className="border-t border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
+          </div>
+          <div className="md:ml-10 ml-5">
+            <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
             {editMode ? (
               <input
-                className="md:w-[211px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
+                className="md:w-[280px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
                 type="text"
-                onChange={modifyUserNameHandler}
-                value={modifyUserName}
-                placeholder={myinfo?.username}
+                onChange={modifyUserInfoHandler}
+                value={modifyUserInfo}
+                placeholder={myinfo.introduction}
               />
             ) : (
-              <p className="text-xl font-bold">
-                {modifyUserName || myinfo?.username}
+              <p className="font-normal mt-2">
+                {modifyUserInfo ||
+                  myinfo?.introduction ||
+                  '한 줄 소개를 작성해주세요'}
               </p>
             )}
           </div>

@@ -44,6 +44,11 @@ import { CommonButton } from '../components/common/CommonButton';
 import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
 import { DetailUserInfoModal } from '../components/Mypage/DetailUserInfoModal';
 
+import { GameNote } from '../assets/svgs/GameNote';
+import { GameScissors } from '../assets/svgs/GameScissors';
+import { GameApple } from '../assets/svgs/GameApple';
+import { GamePencil } from '../assets/svgs/GamePencil';
+
 export interface JwtPayload {
   auth: {
     email: string;
@@ -118,7 +123,11 @@ export const StreamRoom = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const [numberShare, setNumberShare] = useState(0);
   const [, setHostIdcheck] = useAtom(hostIdAtom);
+  const [idiom, setIdiom] = useState('');
+  const [gamecount, setgameCount] = useState('');
 
+  const [isGamePaused, setGamePaused] = useState(false);
+  const [gameHasStarted, setGameHasStarted] = useState(false);
   const [youtubeIsOn, setYoutubeIsOn] = useState(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
@@ -503,20 +512,35 @@ export const StreamRoom = () => {
     }
   }, [isRemoteScreenShare, remoteWebcamStream]);
   console.log('outside', remoteWebcamStream);
+
+  useEffect(() => {
+    if (!gameHasStarted) {
+      console.log('recover');
+      if (remoteVideoRef.current) {
+        console.log('recover', remoteMediaStream);
+        remoteVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+    if (gameHasStarted) {
+      if (remoteWebcamVideoRef.current) {
+        remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+  }, [gameHasStarted]);
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
-        // console.log('WebSocket connection opened');
+        console.log('WebSocket connection opened');
       };
 
       socket.onclose = () => {
         // console.log('WebSocket connection closed');
-        closeMediaStream();
-        navigate('/');
+        // closeMediaStream();
+        // navigate('/');
       };
 
       socket.onerror = () => {
-        // console.error('WebSocket error:', error);
+        console.error('WebSocket error:', Error);
       };
 
       socket.onmessage = async (event) => {
@@ -524,18 +548,18 @@ export const StreamRoom = () => {
 
         switch (message.type) {
           case 'info':
-            // console.log('received info message', message);
+            console.log('received info message', message);
             await startLocalStream();
             await sendJoinMessage();
             break;
           case 'offer':
-            // console.log('received offer message', message);
+            console.log('received offer message', message);
             // console.log('offerMessage remote media', remoteMediaStream);
 
             await handleOfferMessage(message);
             break;
           case 'answer':
-            // console.log('received answer message', message);
+            console.log('received answer message', message);
             // console.log('answer remote media', remoteMediaStream);
             setGuestIn(() => true);
 
@@ -543,12 +567,13 @@ export const StreamRoom = () => {
             break;
           case 'ice':
             guestProfileMutation.mutate(message.from);
-            // console.log('received ice message', message);
+            console.log('received ice message', message);
             // console.log('ice remote media', remoteMediaStream);
             await handleCandidateMessage(message);
             break;
+
           case 'toast':
-            // console.log('received toast message', message);
+            console.log('received toast message', message);
             showToastHandler();
             break;
           case 'youtube':
@@ -572,18 +597,40 @@ export const StreamRoom = () => {
             console.log('received pauseYoutube message', message);
             pauseYoutubeVideo();
             break;
+
+          case 'startGame':
+            console.log('received startgame message', message);
+            setGameHasStarted(true);
+            // console.log(message.idiom);
+            // console.log(typeof message.idiom);
+            setIdiom(message.idiom);
+            setgameCount(message.count);
+            break;
+
+          case 'pauseGame':
+            console.log('received pausegame message', message);
+            setIdiom(message.idiom);
+            break;
+
+          case 'stopGame':
+            console.log('received stopgame message', message);
+            setIdiom(message.idiom);
+            break;
+
           case 'startShare':
             // console.log('received startShare message', message);
             setIsRemoteScreenShare(true);
             setNumberShare((prev) => prev + 1);
 
             break;
+
           case 'stopShare':
-            // console.log('received stopShare message', message);
+            console.log('received stopShare message', message);
             // console.log('startshare remote media', remoteMediaStream);
             setIsRemoteScreenShare(() => false);
             setNumberShare((prev) => prev - 1);
             break;
+
           case 'join':
             setSocketIsOnline(true);
             message.data = await getRoom(params as string);
@@ -648,6 +695,49 @@ export const StreamRoom = () => {
       socket.send(message);
     }
   };
+
+  const sendstartGameMessage = () => {
+    setGameHasStarted(true);
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'startGame',
+        data: roomNum,
+      });
+      console.log('toast sent', message);
+      // showToastHandler();
+      socket.send(message);
+    }
+  };
+
+  const sendpauseGameMessage = () => {
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'pauseGame',
+        data: roomNum,
+      });
+      console.log('toast sent', message);
+      // showToastHandler();
+      socket.send(message);
+      setGamePaused(!isGamePaused);
+    }
+  };
+
+  const sendstopGameMessage = () => {
+    setGameHasStarted(false);
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'stopGame',
+        data: roomNum,
+      });
+      console.log('toast sent', message);
+      // showToastHandler();
+      socket.send(message);
+    }
+  };
+
   const sendShareOnMessage = () => {
     // console.log('click share On');
     if (socket) {
@@ -938,7 +1028,8 @@ export const StreamRoom = () => {
                     userId={userId}
                   />
                 )}
-                {guestIn && !youtubeIsOn && (
+
+                {guestIn && !youtubeIsOn && !gameHasStarted && (
                   <>
                     <video
                       ref={remoteVideoRef}
@@ -955,7 +1046,53 @@ export const StreamRoom = () => {
                   </>
                 )}
                 {!guestIn && !youtubeIsOn && <WaitingGuestRef />}
+
+                {/* 게임하기 */}
+                {gameHasStarted && (
+                  <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl max-h-[600px] min-h-[600px]">
+                    <div
+                      role="none"
+                      onClick={sendpauseGameMessage}
+                      className="absolute left-0 top-0 drop-shadow-xl flex items-center justify-center ml-8 mt-5 bg-[#FF8A00] text-2xl text-[#FFFFFF] rounded-[71px] w-[119.73px] h-[42.27px]"
+                      style={{ fontFamily: 'KBO Dia Gothic' }}
+                    >
+                      {isGamePaused ? '게임재시작' : '게임중지'}
+                    </div>
+
+                    <div role="none" onClick={sendstopGameMessage}>
+                      게임 끝
+                    </div>
+                    <div className="relative flex justify-center items-center">
+                      <div className="relative flex justify-center items-center">
+                        <GameNote />
+
+                        {idiom && (
+                          <div className="absolute top-50 right-50 text-8xl">
+                            {idiom}
+                          </div>
+                        )}
+                        {gamecount && (
+                          <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 left-[270px] ml-80 flex justify-center items-center">
+                            <div className="text-6xl text-[#FF6700]">
+                              {gamecount}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="absolute -left-10 -top-2">
+                        <GameScissors />
+                      </div>
+                      <div className="absolute -bottom-5 -left-7">
+                        <GameApple />
+                      </div>
+                      <div className="absolute left-[250px] ml-80 -bottom-12">
+                        <GamePencil />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
+
               {/* 건배 */}
               {youtubeIsOn ? null : (
                 <div
@@ -1022,30 +1159,35 @@ export const StreamRoom = () => {
               </div>
             )}
 
-            {isRemoteScreenShare || youtubeIsOn ? (
-              <div
-                className={
-                  numberShare === 1 ? secondVideoClassName : thirdVideoClassName
-                }
-              >
-                <video
-                  ref={remoteWebcamVideoRef}
-                  autoPlay
-                  className="w-full object-cover rounded-2xl"
-                />
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
-                  <span className="text-white text-lg">
-                    {isMyScreenShare && isRemoteScreenShare
-                      ? guestProfile?.username
-                      : `${
-                          !isMyScreenShare && isRemoteScreenShare
-                            ? guestProfile?.username
-                            : `${youtubeIsOn ? guestProfile?.username : '나'}`
-                        }`}
-                  </span>
+            {isRemoteScreenShare ||
+              (guestIn && gameHasStarted) ||
+              (youtubeIsOn && guestIn && (
+                <div
+                  className={
+                    numberShare === 1
+                      ? secondVideoClassName
+                      : thirdVideoClassName
+                  }
+                >
+                  <video
+                    ref={remoteWebcamVideoRef}
+                    autoPlay
+                    muted
+                    className="w-full object-cover rounded-2xl"
+                  />
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                    <span className="text-white text-lg">
+                      {isMyScreenShare && isRemoteScreenShare
+                        ? guestProfile?.username
+                        : `${
+                            !isMyScreenShare && isRemoteScreenShare
+                              ? guestProfile?.username
+                              : `${youtubeIsOn ? guestProfile?.username : '나'}`
+                          }`}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ) : null}
+              ))}
 
             {/* activity button */}
             <div className={activityBtnClassName}>
@@ -1076,8 +1218,9 @@ export const StreamRoom = () => {
               <motion.div
                 role="none"
                 className={activityBtnSubClassName}
-                onClick={delayServiceMessage}
+                // onClick={delayServiceMessage}
                 whileHover={{ scale: 1.02 }}
+                onClick={sendstartGameMessage}
               >
                 <div
                   className={`${
