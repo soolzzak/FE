@@ -65,9 +65,9 @@ export const ProfileMenu = ({ user }: { user: string }) => {
           transition={{ duration: 0.15 }}
           className="absolute border top-full right-3 z-10 mt-1 bg-white rounded-lg shadow-lg"
         >
-          <div className="rounded-t-md px-4 py-1 text-lg border-b border-green-200 text-black ">
-            <div>Signed in as</div>
-            <div className="font-bold text-lg">{user}</div>
+          <div className="rounded-t-md px-4 py-1 text-lg border-b border-green-200 text-black whitespace-nowrap">
+            <div>안녕하세요,</div>
+            <span className="font-bold text-lg">{`${user}님`}</span>
           </div>
           <div
             role="none"
@@ -77,14 +77,14 @@ export const ProfileMenu = ({ user }: { user: string }) => {
             }}
             className="dropdownItemStyle"
           >
-            <div>Mypage</div>
+            <div>마이페이지</div>
           </div>
           <div
             role="none"
             onClick={handleLogout}
             className="  rounded-b-md border-t border-green-200 dropdownItemStyle"
           >
-            <div>Logout</div>
+            <div>로그아웃</div>
           </div>
         </motion.div>
       )}

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
-import jwtDecode from 'jwt-decode';
+import YouTube from 'react-youtube';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,6 +26,7 @@ import {
   isOpenKickoutModalAtom,
   isOpenLeaveRoomAtom,
   isOpenModifyRoomAtom,
+  isOpenYoutubeVideoModalAtom,
   toastAtom,
 } from '../store/modalStore';
 import {
@@ -36,6 +37,11 @@ import {
   monitorOnChangeAtom,
 } from '../store/streamControlStore';
 import { ScreenShare } from '../assets/svgs/ScreenShare';
+import { YoutubeContent } from '../components/StreamRoom/YoutubeContent';
+import { userTokenAtom } from '../store/mainpageStore';
+import { ModalInput } from '../components/common/ModalInput';
+import { CommonButton } from '../components/common/CommonButton';
+import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
 import { GameNote } from '../assets/svgs/GameNote';
 import { GameScissors } from '../assets/svgs/GameScissors';
 import { GameApple } from '../assets/svgs/GameApple';
@@ -74,6 +80,7 @@ export const StreamRoom = () => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const remoteWebcamVideoRef = useRef<HTMLVideoElement>(null);
   const myWebcamVideoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<YouTube>(null);
   const signalingServerUrl = 'wss://api.honsoolzzak.com/signal';
   const [, setRoomPassword] = useAtom(roomPasswordAtom);
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
@@ -97,17 +104,28 @@ export const StreamRoom = () => {
     useState<boolean>(false);
 
   let mediaStream: MediaStream | null = null;
-  let remoteMediaStream: MediaStream | null = null;
-
+  const [userInfo] = useAtom(userTokenAtom);
+  const [userId, setUserId] = useState(userInfo?.auth.id);
+  const [isHost, setIsHost] = useState(false);
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
+  const [remoteMediaStream, setRemoteMediaStream] =
+    useState<MediaStream | null>(null);
   const [toastHover, setToastHover] = useState(false);
   const [modifyRoomIsOpen, setModiftRoomIsOpen] = useAtom(isOpenModifyRoomAtom);
+  const [youtubeModalIsOpen, setYoutubeModalIsOpen] = useAtom(
+    isOpenYoutubeVideoModalAtom
+  );
+  const [videoUrl, setVideoUrl] = useState('');
   const [numberShare, setNumberShare] = useState(0);
   const [, setHostIdcheck] = useAtom(hostIdAtom);
   const [idiom, setIdiom] = useState('');
   const [gamecount, setgameCount] = useState('');
 
   const [isGamePaused, setGamePaused] = useState(false);
+
+  const [youtubeIsOn, setYoutubeIsOn] = useState(false); 
+
+  const [youtubeIsOn, setYoutubeIsOn] = useState(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
     onSuccess: (data) => {
@@ -130,11 +148,6 @@ export const StreamRoom = () => {
 
   const getCookie = Cookies.get('refreshKey');
   const params = useParams().id;
-
-  let userId: string;
-  if (getCookie) {
-    userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
-  }
 
   const roomNum = params;
 
@@ -264,6 +277,7 @@ export const StreamRoom = () => {
 
       // console.log('got remote stream', event.streams[0]);
       const stream = event.streams[0];
+      setRemoteMediaStream(stream);
       if (remoteVideoRef.current) {
         // console.log('adding remote stream to video element');
         remoteVideoRef.current.srcObject = stream;
@@ -358,7 +372,7 @@ export const StreamRoom = () => {
       // console.log('got remote stream', event.streams[0]);
       // console.log(isRemoteScreenShare, remoteWebcamVideoRef.current);
       const stream = event.streams[0];
-      remoteMediaStream = stream;
+      setRemoteMediaStream(stream);
     };
     peerConnection1.oniceconnectionstatechange = () => {
       // console.log(' remote media', remoteMediaStream);
@@ -425,6 +439,61 @@ export const StreamRoom = () => {
     }
     peerConnection.close();
   };
+  const seekToTime = (time: number) => {
+    console.log('seek to time', time);
+    if (playerRef.current) {
+      playerRef.current.internalPlayer.seekTo(time, true);
+      playerRef.current.internalPlayer.playVideo();
+    }
+  };
+
+  const onYoutubeWatchalongClick = () => {
+    if (youtubeIsOn) {
+      setNumberShare((prev) => prev - 1);
+      const message = {
+        from: userId,
+        type: 'stopYoutube',
+        data: roomNum,
+      };
+      console.log('youtube start', message);
+      socket.send(JSON.stringify(message));
+      setYoutubeIsOn(false);
+      return;
+    }
+    setNumberShare((prev) => prev + 1);
+    setYoutubeModalIsOpen(false);
+    const message = {
+      from: userId,
+      type: 'youtube',
+      data: roomNum,
+      youtubeUrl: videoUrl,
+    };
+    console.log('youtube start', message);
+    socket.send(JSON.stringify(message));
+    setYoutubeIsOn(true);
+    seekToTime(0);
+  };
+
+  const pauseYoutubeVideo = () => {
+    console.log('pause');
+    if (playerRef.current) {
+      playerRef.current.internalPlayer.pauseVideo();
+    }
+  };
+  useEffect(() => {
+    if (!youtubeIsOn) {
+      console.log('recover');
+      if (remoteVideoRef.current) {
+        console.log('recover', remoteMediaStream);
+        remoteVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+    if (youtubeIsOn) {
+      if (remoteWebcamVideoRef.current) {
+        remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+  }, [youtubeIsOn]);
 
   window.onpopstate = () => {
     closeMediaStream();
@@ -479,6 +548,27 @@ export const StreamRoom = () => {
             console.log('received toast message', message);
             showToastHandler();
             break;
+          case 'youtube':
+            setNumberShare((prev) => prev + 1);
+            console.log('received youtube message', message);
+            setVideoUrl(message.youtubeUrl);
+            setYoutubeIsOn(true);
+            seekToTime(0);
+
+            break;
+          case 'startYoutube':
+            console.log('received startYoutube message', message);
+            if (message.data?.hostId !== userId) seekToTime(message.time);
+            break;
+          case 'stopYoutube':
+            setNumberShare((prev) => prev - 1);
+            console.log('received stopYoutube message', message);
+            setYoutubeIsOn(false);
+            break;
+          case 'pauseYoutube':
+            console.log('received pauseYoutube message', message);
+            pauseYoutubeVideo();
+            break;
 
           case 'startGame':
             console.log('received startgame message', message);
@@ -519,20 +609,15 @@ export const StreamRoom = () => {
             break;
 
           case 'join':
-            console.log('received join message');
-            // console.log('join remote media', remoteMediaStream);
             setSocketIsOnline(true);
             message.data = await getRoom(params as string);
             setHostIdcheck(message.data.hostId);
             setRoomInfo(message.data);
             setRoomPassword(null);
-            // console.log('get room? ', message.data);
-            // setGuestIn(prev => true);
             await createPeerConnection();
             await createScreenSharePeerConnection();
-            // console.log(message.data.data.hostId);
+            setIsHost(message.data?.hostId === userId);
             if (message.data?.hostId !== userId) {
-              // console.log('starting call');
               await startCall();
             }
             break;
@@ -882,8 +967,6 @@ export const StreamRoom = () => {
     toast.error('추후 서비스 예정입니다');
   };
 
-  // console.log('numbershare', numberShare);
-
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
@@ -906,23 +989,31 @@ export const StreamRoom = () => {
           <div className="relative w-full h-full grid xl:grid-cols-6 xl:grid-rows-6 grid-cols-2 grid-rows-6 gap-4">
             {/* 메인비디오 화면 */}
             <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
-              <div className="h-full relative w-full">
-                {/* {guestIn ? (
-                  <video
-                    ref={remoteVideoRef}
-                    autoPlay
-                    className="bg-black w-full h-full object-contain rounded-2xl max-h-[600px] min-h-[600px]"
+              <div className="h-full relative w-full h-full">
+                {/* {youtubeIsOn && userId && (
+                  <YoutubeContent
+                    isHost={isHost}
+                    roomNum={Number(roomNum)}
+                    playerRef={playerRef}
+                    videoLink={convertUrltoVideoId(videoUrl) as string}
+                    socket={socket}
+                    userId={userId}
                   />
-                ) : (
-                  <WaitingGuestRef />
                 )}
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
-                  <span className="text-white text-lg">
-                    {isRemoteScreenShare
-                      ? `${guestProfile?.username}님의 공유화면`
-                      : guestProfile?.username}
-                  </span>
-                </div> */}
+                {guestIn && !youtubeIsOn && (
+                  <>
+                    <video
+                      ref={remoteVideoRef}
+                      autoPlay
+                      className="bg-black w-full h-full object-contain rounded-2xl max-h-[600px] min-h-[600px]"
+                    />
+                    <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                      <span className="text-white text-lg">
+                        {isRemoteScreenShare
+                          ? `${guestProfile?.username}님의 공유화면`
+                          : guestProfile?.username}
+                      </span>
+                    </div> */}
 
                 {/* 게임하기 */}
 
@@ -935,6 +1026,9 @@ export const StreamRoom = () => {
                   >
                     {isGamePaused ? '게임재시작' : '게임중지'}
                   </div>
+                  </>
+                )}
+                {!guestIn && !youtubeIsOn && <WaitingGuestRef />}
                   <div role="none" onClick={sendstopGameMessage}>
                     게임 끝
                   </div>
@@ -970,20 +1064,22 @@ export const StreamRoom = () => {
               </div>
 
               {/* 건배 */}
-              <div
-                role="none"
-                onClick={sendToastMessage}
-                onMouseOver={() => setToastHover(true)}
-                onMouseOut={() => setToastHover(false)}
-                className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
-              >
-                <ToastIcon />
-                {toastHover ? (
-                  <div className="absolute w-48 h-10 top-16 xl:right-0 ml-36 bg-white text-lg font-semibold rounded-xl f-jic">
-                    건배할 때 눌러보세요!
-                  </div>
-                ) : null}
-              </div>
+              {youtubeIsOn ? null : (
+                <div
+                  role="none"
+                  onClick={sendToastMessage}
+                  onMouseOver={() => setToastHover(true)}
+                  onMouseOut={() => setToastHover(false)}
+                  className="w-14 h-14 f-jic absolute xl:right-5 top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
+                >
+                  <ToastIcon />
+                  {toastHover ? (
+                    <div className="absolute w-48 h-10 top-16 xl:right-0 ml-36 bg-white text-lg font-semibold rounded-xl f-jic">
+                      건배할 때 눌러보세요!
+                    </div>
+                  ) : null}
+                </div>
+              )}
             </div>
 
             {/* 메인버튼 */}
@@ -1033,31 +1129,34 @@ export const StreamRoom = () => {
               </div>
             )}
 
-            {isRemoteScreenShare && (
-              <div
-                className={
-                  numberShare === 1 ? secondVideoClassName : thirdVideoClassName
-                }
-              >
-                <video
-                  ref={remoteWebcamVideoRef}
-                  autoPlay
-                  muted
-                  className="w-full object-cover rounded-2xl"
-                />
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
-                  <span className="text-white text-lg">
-                    {isMyScreenShare && isRemoteScreenShare
-                      ? guestProfile?.username
-                      : `${
-                          !isMyScreenShare && isRemoteScreenShare
-                            ? guestProfile?.username
-                            : '나'
-                        }`}
-                  </span>
+            {isRemoteScreenShare ||
+              (youtubeIsOn && guestIn && (
+                <div
+                  className={
+                    numberShare === 1
+                      ? secondVideoClassName
+                      : thirdVideoClassName
+                  }
+                >
+                  <video
+                    ref={remoteWebcamVideoRef}
+                    autoPlay
+                    muted
+                    className="w-full object-cover rounded-2xl"
+                  />
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                    <span className="text-white text-lg">
+                      {isMyScreenShare && isRemoteScreenShare
+                        ? guestProfile?.username
+                        : `${
+                            !isMyScreenShare && isRemoteScreenShare
+                              ? guestProfile?.username
+                              : `${youtubeIsOn ? guestProfile?.username : '나'}`
+                          }`}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
 
             {/* activity button */}
             <div className={activityBtnClassName}>
@@ -1085,10 +1184,11 @@ export const StreamRoom = () => {
                 </div>
               </motion.div>
 
-              <div
+              <motion.div
                 role="none"
                 className={activityBtnSubClassName}
                 // onClick={delayServiceMessage}
+                whileHover={{ scale: 1.02 }}
                 onClick={sendstartGameMessage}
               >
                 <div
@@ -1105,28 +1205,40 @@ export const StreamRoom = () => {
                     게임하기
                   </span>
                 </div>
-              </div>
+              </motion.div>
 
-              <div
+              <motion.div
                 role="none"
                 className={activityBtnSubClassName}
-                onClick={delayServiceMessage}
+                onClick={
+                  youtubeIsOn
+                    ? onYoutubeWatchalongClick
+                    : () => setYoutubeModalIsOpen(true)
+                }
+                whileHover={{ scale: 1.02 }}
               >
                 <div
                   className={`${
-                    numberShare >= 1 ? '' : 'xl:min-w-[200px] xl:f-ic xl:gap-4'
+                    numberShare >= 1
+                      ? 'f-jic cursor-pointer p-3'
+                      : 'xl:min-w-[200px] xl:f-ic xl:gap-4'
                   }`}
                 >
                   <Youtube />
+                  {youtubeIsOn && (
+                    <span className="ml-2 text-lg font-medium text-red-600">
+                      YouTube 끄기
+                    </span>
+                  )}
                   <span
                     className={`${
                       numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
                     }`}
                   >
-                    유튜브
+                    유튜브 동시시청
                   </span>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -1155,6 +1267,26 @@ export const StreamRoom = () => {
         hasOverlay
       >
         <ModifyRoomModal />
+      </Modal>
+      <Modal
+        isOpen={youtubeModalIsOpen}
+        onClose={() => setYoutubeModalIsOpen(false)}
+        hasOverlay
+      >
+        <div className="f-jic-col px-5 py-3 rounded-2xl bg-white">
+          <ModalInput
+            title="YouTube 링크 입력"
+            inputType="text"
+            placeholderText="유튜브 링크를 입력해주세요"
+            handleInputChange={setVideoUrl}
+          />
+          <CommonButton
+            enabled
+            clickHandler={onYoutubeWatchalongClick}
+            buttonText="PLAY"
+            dimensions="mt-3"
+          />
+        </div>
       </Modal>
     </div>
   );
