@@ -1172,7 +1172,6 @@ export const StreamRoom = () => {
                   <video
                     ref={remoteWebcamVideoRef}
                     autoPlay
-                    muted
                     className="w-full object-cover rounded-2xl"
                   />
                   <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
