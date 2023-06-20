@@ -42,10 +42,12 @@ import { userTokenAtom } from '../store/mainpageStore';
 import { ModalInput } from '../components/common/ModalInput';
 import { CommonButton } from '../components/common/CommonButton';
 import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
+
 import { GameNote } from '../assets/svgs/GameNote';
 import { GameScissors } from '../assets/svgs/GameScissors';
 import { GameApple } from '../assets/svgs/GameApple';
 import { GamePencil } from '../assets/svgs/GamePencil';
+
 
 export interface JwtPayload {
   auth: {
@@ -123,6 +125,8 @@ export const StreamRoom = () => {
 
   const [isGamePaused, setGamePaused] = useState(false);
   const [gameHasStarted, setGameHasStarted] = useState(false);
+  const [youtubeIsOn, setYoutubeIsOn] = useState(false);
+
   const [youtubeIsOn, setYoutubeIsOn] = useState(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
@@ -583,6 +587,7 @@ export const StreamRoom = () => {
             pauseYoutubeVideo();
             break;
 
+
           case 'startGame':
             console.log('received startgame message', message);
             setGameHasStarted(true);
@@ -601,6 +606,7 @@ export const StreamRoom = () => {
             console.log('received stopgame message', message);
             setIdiom(message.idiom);
             break;
+
 
           case 'startShare':
             // console.log('received startShare message', message);
@@ -1005,7 +1011,9 @@ export const StreamRoom = () => {
           <div className="relative w-full h-full grid xl:grid-cols-6 xl:grid-rows-6 grid-cols-2 grid-rows-6 gap-4">
             {/* 메인비디오 화면 */}
             <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
-              <div className="h-full relative w-full h-full">
+
+              <div className="relative w-full h-full">
+
                 {youtubeIsOn && userId && (
                   <YoutubeContent
                     isHost={isHost}
@@ -1016,7 +1024,9 @@ export const StreamRoom = () => {
                     userId={userId}
                   />
                 )}
+
                 {guestIn && !youtubeIsOn && !gameHasStarted && (
+
                   <>
                     <video
                       ref={remoteVideoRef}
@@ -1033,6 +1043,7 @@ export const StreamRoom = () => {
                   </>
                 )}
                 {!guestIn && !youtubeIsOn && <WaitingGuestRef />}
+
 
                 {/* 게임하기 */}
                 {gameHasStarted && (
@@ -1079,6 +1090,7 @@ export const StreamRoom = () => {
                   </div>
                 )}
               </div>
+
 
               {/* 건배 */}
               {youtubeIsOn ? null : (
@@ -1147,7 +1159,9 @@ export const StreamRoom = () => {
             )}
 
             {isRemoteScreenShare ||
+
               (guestIn && gameHasStarted) ||
+
               (youtubeIsOn && guestIn && (
                 <div
                   className={
@@ -1205,9 +1219,11 @@ export const StreamRoom = () => {
               <motion.div
                 role="none"
                 className={activityBtnSubClassName}
+
                 // onClick={delayServiceMessage}
                 whileHover={{ scale: 1.02 }}
                 onClick={sendstartGameMessage}
+
               >
                 <div
                   className={`${
