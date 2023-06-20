@@ -30,7 +30,7 @@ export const YoutubeContent = ({
       const currentTime = event.target.getCurrentTime();
       console.log('Seeked to:', currentTime);
 
-      const roundedTime = parseFloat(currentTime.toFixed(10)) + 0.3;
+      const roundedTime = parseFloat(currentTime.toFixed(10)) + 0.4;
       const message = {
         from: userId,
         type: 'startYoutube',
@@ -72,7 +72,7 @@ export const YoutubeContent = ({
     <YouTube
       className="h-full"
       videoId={videoLink}
-      opts={isHost ? hostOpts : guestOpts}
+      opts={hostOpts}
       onStateChange={onVideoStatechange}
       onReady={onPlayerReady}
       ref={playerRef}

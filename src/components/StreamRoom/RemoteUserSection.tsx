@@ -18,6 +18,7 @@ export interface ApiResponse1 {
 export const RemoteUserSection = ({
   guestProfile,
   guestProfileMutation,
+  onOpen,
 }: {
   guestProfile: DetailUserProfile;
   guestProfileMutation: UseMutationResult<
@@ -26,6 +27,7 @@ export const RemoteUserSection = ({
     string,
     unknown
   >;
+  onOpen: () => void;
 }) => {
   const thumbsUpMutation = useMutation(ThumbUpHandler, {
     onSuccess: () => {
@@ -60,6 +62,7 @@ export const RemoteUserSection = ({
   return (
     <section className="flex flex-row justify-center items-center">
       <CategoryDropDown
+        onOpenUserDetails={onOpen}
         guestProfile={guestProfile}
         guestProfileMutation={guestProfileMutation}
       />
