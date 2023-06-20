@@ -105,7 +105,9 @@ export const JoinRoomModal = () => {
                 chatRoomInfo?.isPrivate ? 'row-start-1' : 'row-start-2'
               }`}
             >
-              <span className="">방장 프로필</span>
+              <p className="text-[#454545] font-semibold text-base mb-4">
+                방장 프로필
+              </p>
             </div>
             <div
               className={`col-span-2 ${
