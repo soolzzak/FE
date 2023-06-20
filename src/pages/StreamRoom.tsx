@@ -122,9 +122,7 @@ export const StreamRoom = () => {
   const [gamecount, setgameCount] = useState('');
 
   const [isGamePaused, setGamePaused] = useState(false);
-
-  const [youtubeIsOn, setYoutubeIsOn] = useState(false); 
-
+  const [gameHasStarted, setGameHasStarted] = useState(false);
   const [youtubeIsOn, setYoutubeIsOn] = useState(false);
 
   const guestProfileMutation = useMutation(getDetailUserProfile, {
@@ -500,6 +498,21 @@ export const StreamRoom = () => {
   };
 
   useEffect(() => {
+    if (!gameHasStarted) {
+      console.log('recover');
+      if (remoteVideoRef.current) {
+        console.log('recover', remoteMediaStream);
+        remoteVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+    if (gameHasStarted) {
+      if (remoteWebcamVideoRef.current) {
+        remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+  }, [gameHasStarted]);
+
+  useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
         console.log('WebSocket connection opened');
@@ -572,6 +585,7 @@ export const StreamRoom = () => {
 
           case 'startGame':
             console.log('received startgame message', message);
+            setGameHasStarted(true);
             // console.log(message.idiom);
             // console.log(typeof message.idiom);
             setIdiom(message.idiom);
@@ -674,6 +688,7 @@ export const StreamRoom = () => {
   };
 
   const sendstartGameMessage = () => {
+    setGameHasStarted(true);
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -701,6 +716,7 @@ export const StreamRoom = () => {
   };
 
   const sendstopGameMessage = () => {
+    setGameHasStarted(false);
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -990,7 +1006,7 @@ export const StreamRoom = () => {
             {/* 메인비디오 화면 */}
             <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
               <div className="h-full relative w-full h-full">
-                {/* {youtubeIsOn && userId && (
+                {youtubeIsOn && userId && (
                   <YoutubeContent
                     isHost={isHost}
                     roomNum={Number(roomNum)}
@@ -1000,7 +1016,7 @@ export const StreamRoom = () => {
                     userId={userId}
                   />
                 )}
-                {guestIn && !youtubeIsOn && (
+                {guestIn && !youtubeIsOn && !gameHasStarted && (
                   <>
                     <video
                       ref={remoteVideoRef}
@@ -1013,54 +1029,55 @@ export const StreamRoom = () => {
                           ? `${guestProfile?.username}님의 공유화면`
                           : guestProfile?.username}
                       </span>
-                    </div> */}
-
-                {/* 게임하기 */}
-
-                <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl max-h-[600px] min-h-[600px]">
-                  <div
-                    role="none"
-                    onClick={sendpauseGameMessage}
-                    className="absolute left-0 top-0 drop-shadow-xl flex items-center justify-center ml-8 mt-5 bg-[#FF8A00] text-2xl text-[#FFFFFF] rounded-[71px] w-[119.73px] h-[42.27px]"
-                    style={{ fontFamily: 'KBO Dia Gothic' }}
-                  >
-                    {isGamePaused ? '게임재시작' : '게임중지'}
-                  </div>
+                    </div>
                   </>
                 )}
                 {!guestIn && !youtubeIsOn && <WaitingGuestRef />}
-                  <div role="none" onClick={sendstopGameMessage}>
-                    게임 끝
-                  </div>
-                  <div className="relative flex justify-center items-center">
+
+                {/* 게임하기 */}
+                {gameHasStarted && (
+                  <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl max-h-[600px] min-h-[600px]">
+                    <div
+                      role="none"
+                      onClick={sendpauseGameMessage}
+                      className="absolute left-0 top-0 drop-shadow-xl flex items-center justify-center ml-8 mt-5 bg-[#FF8A00] text-2xl text-[#FFFFFF] rounded-[71px] w-[119.73px] h-[42.27px]"
+                      style={{ fontFamily: 'KBO Dia Gothic' }}
+                    >
+                      {isGamePaused ? '게임재시작' : '게임중지'}
+                    </div>
+
+                    <div role="none" onClick={sendstopGameMessage}>
+                      게임 끝
+                    </div>
                     <div className="relative flex justify-center items-center">
-                      <GameNote />
+                      <div className="relative flex justify-center items-center">
+                        <GameNote />
 
-                      {idiom && (
-                        <div className="absolute top-50 right-50 text-8xl">
-                          {idiom}
-                        </div>
-                      )}
-
-                      {gamecount && (
-                        <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 left-[270px] ml-80 flex justify-center items-center">
-                          <div className="text-6xl text-[#FF6700]">
-                            {gamecount}
+                        {idiom && (
+                          <div className="absolute top-50 right-50 text-8xl">
+                            {idiom}
                           </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="absolute -left-10 -top-2">
-                      <GameScissors />
-                    </div>
-                    <div className="absolute -bottom-5 -left-7">
-                      <GameApple />
-                    </div>
-                    <div className="absolute left-[250px] ml-80 -bottom-12">
-                      <GamePencil />
+                        )}
+                        {gamecount && (
+                          <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 left-[270px] ml-80 flex justify-center items-center">
+                            <div className="text-6xl text-[#FF6700]">
+                              {gamecount}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="absolute -left-10 -top-2">
+                        <GameScissors />
+                      </div>
+                      <div className="absolute -bottom-5 -left-7">
+                        <GameApple />
+                      </div>
+                      <div className="absolute left-[250px] ml-80 -bottom-12">
+                        <GamePencil />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* 건배 */}
@@ -1130,6 +1147,7 @@ export const StreamRoom = () => {
             )}
 
             {isRemoteScreenShare ||
+              (guestIn && gameHasStarted) ||
               (youtubeIsOn && guestIn && (
                 <div
                   className={

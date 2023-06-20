@@ -170,8 +170,8 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           </div>
         </div>
 
-        <div className="md:flex-row flex-col md:block f-jc">
-          <div className="flex justify-center md:justify-center md:mb-10 items-center md:flex md:items-start">
+        <div className="flex-col">
+          <div className="flex justify-center md:justify-center md:mb-5 items-center md:flex md:items-start">
             {editMode ? (
               <div className="flex justify-center items-center">
                 <input
@@ -185,18 +185,18 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
                 {modifyUserName?.length >= MAX_CHARACTERS && (
                   <p className="text-red-500">10글자 이내로 작성해주세요.</p>
                 )}
-                <div>
-                  <MypageLine />
-                </div>
               </div>
             ) : (
-              <p className="text-xl font-bold">
-                {modifyUserName || myinfo?.username}
-                <MypageLine />
-              </p>
+              <div>
+                <p className="text-xl font-bold text-center">
+                  {modifyUserName || myinfo?.username}
+                </p>
+              </div>
             )}
           </div>
-
+          <div className="f-jic">
+            <div className="border-t border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
+          </div>
           <div className="md:ml-10 ml-5">
             <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
             {editMode ? (
