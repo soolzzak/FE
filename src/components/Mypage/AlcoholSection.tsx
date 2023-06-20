@@ -17,10 +17,11 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
       <p>다양한 사람들과 교류하고 도수레벨을 올려보세요!</p>
     </div>
     <div className="px-8 ">
-      <div className="flex flex-row items-end justify-end mr-5 mb-2">
-        <p className="place-items-end font-bold text-4xl mr-2 text-[#179638]">
+      <div className="flex flex-row items-end justify-end mr-5">
+        <p className="place-items-end font-bold text-4xl mr-2 mb-2 text-[#179638]">
           {alcohol}%
         </p>
+
         {(() => {
           if (alcohol === 0) {
             return <AlcoholWater />;
@@ -62,7 +63,7 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => (
         />
       </div>
       <div className="flex flex-row items-center justify-self-end mb-5 mt-5">
-        <div className="w-4 h-4 rounded-full bg-[#179638] mr-2 " />
+        <div className="w-4 h-4 rounded-full bg-[#179638] mr-2" />
         <p>
           당신은 지금{' '}
           {(() => {

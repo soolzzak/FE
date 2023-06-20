@@ -5,6 +5,7 @@ export const GameNote = () => (
     viewBox="0 0 708 458"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius: '8%' }}
   >
     <path
       d="M707.946 0.135742H0.946289V457.136H707.946V0.135742Z"
