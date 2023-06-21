@@ -1,14 +1,17 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { Notifications } from '../../assets/svgs/Notifications';
+import { DetailUserProfile, FindUser, FindUserName } from '../../api/mypage';
 import { useModal } from '../../hooks/useModal';
+import { handleTitleChangeAtom } from '../../store/addRoomStore';
 import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
 import {
   isOpenAuthModalAtom,
   isOpenLoginModalAtom,
+  isOpenSearchUsernameModalAtom,
 } from '../../store/modalStore';
 import { CommonButton } from '../common/CommonButton';
 import { Modal } from '../common/Modal';
@@ -17,7 +20,9 @@ import { AddRoom } from './AddRoom';
 import { AuthModal } from './AuthModal';
 import { ProfileMenu } from './ProfileMenu';
 import { UserAlert } from './UserAlert';
-import { handleTitleChangeAtom } from '../../store/addRoomStore';
+import { Search } from '../../assets/svgs/Search';
+import { SearchUserCard } from './SearchUserCard';
+import { SearchUserField } from './SearchUserField';
 
 export const HeaderRightSection = () => {
   const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
@@ -29,9 +34,13 @@ export const HeaderRightSection = () => {
     onCloseRoomCreate();
   };
 
+  const [searchUsernameModalIsOpen, setSearchUsernameModalIsOpen] = useAtom(
+    isOpenSearchUsernameModalAtom
+  );
+
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
-  console.log(userAtom);
+  // console.log(userAtom);
   useEffect(() => {
     if (user) {
       setUserAtom(jwtDecode(user));
@@ -63,6 +72,14 @@ export const HeaderRightSection = () => {
       className={`f-ic justify-end mr-4 md:min-w-[200px]
       ${user ? 'min-w-[490px]' : 'min-w-[180px]'}`}
     >
+      <Modal
+        isOpen={searchUsernameModalIsOpen}
+        onClose={() => setSearchUsernameModalIsOpen(false)}
+        hasOverlay
+      >
+        <SearchUserField />
+      </Modal>
+
       <AnimatePresence>
         <Modal
           key={1}
@@ -96,6 +113,13 @@ export const HeaderRightSection = () => {
           transition={{ duration: 0.3 }}
           className="f-jic"
         >
+          <button
+            type="button"
+            className="text-primary-300 hover:text-primary-400 text-lg mr-7 font-semibold"
+            onClick={() => setSearchUsernameModalIsOpen(true)}
+          >
+            유저 찾기
+          </button>
           <CommonButton
             buttonText="혼술짝 방만들기"
             enabled

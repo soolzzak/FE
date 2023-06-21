@@ -21,28 +21,6 @@ import { MypageInfo } from '../../assets/svgs/MypageInfo';
 export const AlcoholSection = ({ alcohol }: { alcohol: number }) => {
   const [toastHover, setToastHover] = useState(false);
 
-  // 여기부터테스트
-  const [searchUserName, setsearchUserName] = useState<string>('');
-
-  const usernameSearchMutation = useMutation(FindUser, {
-    onSuccess: (response: any) => {
-      console.log('응', response.data);
-    },
-  });
-
-  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      usernameSearchMutation.mutate(searchUserName);
-    }
-  };
-
-  // console.log(data);
-  // console.log(setsearchUserName);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setsearchUserName(e.target.value);
-  };
-
   return (
     <div className="basis-1/2 bg-[#ffffff] rounded-3xl flex flex-col gap-y-2 shadow">
       <div className="p-8">
@@ -74,15 +52,6 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => {
         </div>
         <p>다양한 사람들과 교류하고 도수레벨을 올려보세요!</p>
       </div>
-      {/* 여기부터테스트 */}
-      <input
-        type="text"
-        value={searchUserName}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        className="xl:w-full px-3 bg-transparent outline-none text-lg font-medium text-[#323232] placeholder-[#9A9A9A]"
-        placeholder="이름 검색하기"
-      />
 
       <div className="px-8 ">
         <div className="flex flex-row items-end justify-end mr-5">
