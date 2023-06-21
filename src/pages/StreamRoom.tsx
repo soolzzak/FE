@@ -89,10 +89,10 @@ export const StreamRoom = () => {
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
 
   const navigate = useNavigate();
-  const [peerConnection] = useState<RTCPeerConnection>(
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
-  const [peerConnection1] = useState<RTCPeerConnection>(
+  const [peerConnection1, setPeerConnection1] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
   const [socket] = useState<WebSocket>(new WebSocket(signalingServerUrl));
@@ -128,7 +128,7 @@ export const StreamRoom = () => {
   const [, setHostIdcheck] = useAtom(hostIdAtom);
   const [idiom, setIdiom] = useState('');
   const [gamecount, setgameCount] = useState('');
-
+  const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
   const [isGamePaused, setGamePaused] = useState(false);
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [youtubeIsOn, setYoutubeIsOn] = useState(false);
@@ -418,6 +418,79 @@ export const StreamRoom = () => {
     });
   };
 
+  const sendShareOffMessage = () => {
+    // console.log('click share Off');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'stopShare',
+        data: roomNum,
+      });
+      // console.log('stopeShare sent', message);
+      socket.send(message);
+    }
+  };
+
+  const stopShare = () => {
+    if (localVideoRef.current) {
+      if (localVideoRef.current.srcObject) {
+        const stream = localVideoRef.current.srcObject as MediaStream;
+        console.log('stream share', stream);
+        stream.getTracks().forEach((track) => track.stop());
+
+        sendShareOffMessage();
+        if (localVideoRef.current) {
+          setShareView(null);
+          setIsMyScreenShare(false);
+          setNumberShare((prev) => prev - 1);
+          localVideoRef.current.srcObject = myMediaStream;
+          // console.log('mediastream 바꾸자0', myMediaStream);
+        }
+        // console.log('mediastream 바꾸자1', myMediaStream);
+        peerConnection.getSenders().forEach((sender) => {
+          // console.log('mediastream 바꾸자2', myMediaStream);
+          if (sender.track?.kind === 'video' && myMediaStream) {
+            // console.log('mediastream 바꾸자3', myMediaStream);
+            sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
+            // console.log('if mediaStream', myMediaStream);
+          }
+        });
+      }
+    }
+  };
+
+  const sendstopGameMessage = () => {
+    setGameHasStarted(false);
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'stopGame',
+        data: roomNum,
+      });
+      console.log('toast sent', message);
+      // showToastHandler();
+      socket.send(message);
+    }
+  };
+  const closePreviousSession = async () => {
+    if (remoteVideoRef.current) {
+      if (remoteVideoRef.current.srcObject) {
+        remoteVideoRef.current.srcObject as MediaStream;
+        // stream.getTracks().forEach((track) => track.stop());
+      }
+      remoteVideoRef.current.srcObject = null;
+    }
+    if (isMyScreenShare) stopShare();
+    setRemoteMediaStream(null);
+    setIsRemoteScreenShare(() => false);
+    setRemoteMonitorOn(() => false);
+    setGuestIn(() => false);
+    setGuestProfile(() => undefined);
+    setGameHasStarted(() => false);
+    setYoutubeIsOn(() => false);
+    // await createPeerConnection();
+    // await createScreenSharePeerConnection();
+  };
   const closeMediaStream = () => {
     // console.log('closing');
     if (localVideoRef.current) {
@@ -448,7 +521,10 @@ export const StreamRoom = () => {
         stream.getTracks().forEach((track) => track.stop());
       }
     }
+    myWebcamMediaStream?.getTracks().forEach((track) => track.stop());
+    myMediaStream?.getTracks().forEach((track) => track.stop());
     peerConnection.close();
+    peerConnection1.close();
     socket.close();
   };
   const seekToTime = (time: number) => {
@@ -613,7 +689,7 @@ export const StreamRoom = () => {
 
           case 'startGame':
             console.log('received startgame message', message);
-            setGameHasStarted(true);
+            if (guestIn) setGameHasStarted(true);
             // console.log(message.idiom);
             // console.log(typeof message.idiom);
             setIdiom(message.idiom);
@@ -635,6 +711,28 @@ export const StreamRoom = () => {
             setIsRemoteScreenShare(true);
             setNumberShare((prev) => prev + 1);
 
+            break;
+          case 'kick':
+            console.log('received kick message', message);
+            closeMediaStream();
+            toast.error('강퇴되었습니다.');
+            navigate('/');
+            break;
+          case 'hostDisconnect':
+            console.log('received host disconnect message', message);
+            console.log(gameHasStarted);
+            if (gameHasStarted) sendstopGameMessage();
+            closeMediaStream();
+            toast('방장이 퇴장하였습니다.');
+            navigate('/');
+            break;
+          case 'guestDisconnect':
+            setPeerConnection(new RTCPeerConnection(PeerConnectionConfig));
+            setPeerConnection1(new RTCPeerConnection(PeerConnectionConfig));
+            console.log('received guest disconnect message', message);
+            if (gameHasStarted) sendstopGameMessage();
+            toast('상대방이 퇴장하였습니다');
+            closePreviousSession();
             break;
 
           case 'stopShare':
@@ -741,20 +839,6 @@ export const StreamRoom = () => {
     }
   };
 
-  const sendstopGameMessage = () => {
-    setGameHasStarted(false);
-    if (socket) {
-      const message = JSON.stringify({
-        from: userId,
-        type: 'stopGame',
-        data: roomNum,
-      });
-      console.log('toast sent', message);
-      // showToastHandler();
-      socket.send(message);
-    }
-  };
-
   const sendShareOnMessage = () => {
     // console.log('click share On');
     if (socket) {
@@ -764,18 +848,6 @@ export const StreamRoom = () => {
         data: roomNum,
       });
       // console.log('startShare sent', message);
-      socket.send(message);
-    }
-  };
-  const sendShareOffMessage = () => {
-    // console.log('click share Off');
-    if (socket) {
-      const message = JSON.stringify({
-        from: userId,
-        type: 'stopShare',
-        data: roomNum,
-      });
-      // console.log('stopeShare sent', message);
       socket.send(message);
     }
   };
@@ -827,7 +899,7 @@ export const StreamRoom = () => {
   //   socket.send(message);
 
   // 화면공유
-  const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
+
   // console.log('shareView', shareView);
 
   useEffect(() => {
@@ -872,34 +944,6 @@ export const StreamRoom = () => {
       socket.send(JSON.stringify(message));
     } catch (error) {
       // console.error('Error creating offer:', error);
-    }
-  };
-
-  const stopShare = () => {
-    if (localVideoRef.current) {
-      if (localVideoRef.current.srcObject) {
-        const stream = localVideoRef.current.srcObject as MediaStream;
-        console.log('stream share', stream);
-        stream.getTracks().forEach((track) => track.stop());
-
-        sendShareOffMessage();
-        if (localVideoRef.current) {
-          setShareView(null);
-          setIsMyScreenShare(false);
-          setNumberShare((prev) => prev - 1);
-          localVideoRef.current.srcObject = myMediaStream;
-          // console.log('mediastream 바꾸자0', myMediaStream);
-        }
-        // console.log('mediastream 바꾸자1', myMediaStream);
-        peerConnection.getSenders().forEach((sender) => {
-          // console.log('mediastream 바꾸자2', myMediaStream);
-          if (sender.track?.kind === 'video' && myMediaStream) {
-            // console.log('mediastream 바꾸자3', myMediaStream);
-            sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
-            // console.log('if mediaStream', myMediaStream);
-          }
-        });
-      }
     }
   };
 

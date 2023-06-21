@@ -2,7 +2,11 @@ import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { toast } from 'react-toastify';
-import { getMypageProfile } from '../../api/mypage';
+import {
+  DetailUserProfile,
+  getDetailUserProfile,
+  getMypageProfile,
+} from '../../api/mypage';
 import { checkRoomPassword } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { roomPasswordAtom } from '../../store/addRoomStore';
@@ -23,7 +27,15 @@ export const JoinRoomModal = () => {
   const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
   const [, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom);
   const [chatRoomInfo] = useAtom(chatRoomInfoAtom);
-  const { data } = useQuery('userProfile', getMypageProfile);
+  const [hostInfo, setHostInfo] = useState<DetailUserProfile>();
+  const hostProfileMutation = useMutation(getDetailUserProfile, {
+    onSuccess: (data) => {
+      if (data) setHostInfo(data.data);
+    },
+  });
+  const { data } = useQuery('userProfile', () =>
+    getDetailUserProfile(chatRoomInfo?.hostId.toString() as string)
+  );
   const [roomPassword, setRoomPassword] = useAtom(roomPasswordAtom);
   const roomNum = chatRoomInfo?.roomId;
 
@@ -69,7 +81,8 @@ export const JoinRoomModal = () => {
     }
 
     mediaStreamMutation.mutate();
-
+    if (chatRoomInfo)
+      hostProfileMutation.mutate(chatRoomInfo.hostId.toString());
     return () => {
       if (mediaStream) {
         mediaStream.getTracks().forEach((track) => track.stop());
@@ -122,19 +135,19 @@ export const JoinRoomModal = () => {
                 />
                 <div className="w-full overflow-hidden truncate max-w-[150px]">
                   <div className="text-[#5F5F5F] font-semibold text-base truncate">
-                    {data?.data.username}
+                    {hostInfo?.username}
                   </div>
                   <div className="text-[#5F5F5F] font-semibold text-base truncate">
-                    {data?.data.introduction}
+                    {hostInfo?.introduction}
                   </div>
                 </div>
-                {data && (
+                {hostInfo && (
                   <div className="f-ic">
                     <span className="text-primary-300 font-semibold self-end pb-1">
-                      {data?.data.alcohol}%
+                      {hostInfo?.alcohol}%
                     </span>
                     <ChooseAlcoholType
-                      alcohol={data?.data.alcohol}
+                      alcohol={hostInfo.alcohol}
                       height={0.6}
                       width={0.6}
                     />

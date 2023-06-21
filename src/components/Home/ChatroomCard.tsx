@@ -107,7 +107,10 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
         </span>
       </div>
       <div className="self-start mt-1 text-xl font-bold text-left overflow-hidden w-full">
-        <div className="h-[52px] mt-2 overflow-ellipsis overflow-hidden w-full text-[#1A1C20]">
+        <div
+          className="h-[52px] mt-2 overflow-ellipsis overflow-hidden w-full text-[#1A1C20]"
+          style={{ wordWrap: 'break-word', wordBreak: 'keep-all' }}
+        >
           {chatRoom.title}
         </div>
       </div>
