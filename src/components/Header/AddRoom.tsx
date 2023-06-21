@@ -11,8 +11,10 @@ import { AddRoomButton } from './AddRoomButton';
 
 export const AddRoom = ({ onClose }: { onClose: () => void }) => {
   const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
-  const [isOpenExit, onCloseExit] = useModal();
-
+  const handleClose = () => {
+    handleTitleChange('');
+    onClose();
+  };
   return (
     <div className="relative f-col bg-white px-12 rounded-[20px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-7">
@@ -21,6 +23,8 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="f-col gap-3">
           <ModalInput
+            inputValue
+            constraint={25}
             title="방 제목"
             placeholderText="예시 : 분노의 질주 얘기하면서 같이 소주마셔요"
             inputType="text"
@@ -32,26 +36,13 @@ export const AddRoom = ({ onClose }: { onClose: () => void }) => {
           <OptionalFieldChange />
         </div>
       </div>
-      <AddRoomButton closeModal={onClose} />
+      <AddRoomButton closeModal={handleClose} />
       <div
         role="none"
         className="absolute right-3 top-3 hover:cursor-pointer"
-        onClick={onClose}
+        onClick={handleClose}
       >
         <DeleteBtn />
-      </div>
-
-      <div>
-        {isOpenExit && (
-          <div className="fixed inset-0 z-50 f-jic-col">
-            <div
-              role="none"
-              className="fixed inset-0"
-              onClick={() => onCloseExit()}
-            />
-            <div className="fixed">sss</div>
-          </div>
-        )}
       </div>
     </div>
   );

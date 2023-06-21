@@ -1,7 +1,13 @@
-export const AlcoholWater = () => (
+export const AlcoholWater = ({
+  height,
+  width,
+}: {
+  height?: number;
+  width?: number;
+}) => (
   <svg
-    width="76"
-    height="98"
+    width={width ? (width * 76).toString() : '76'}
+    height={height ? (height * 98).toString() : '98'}
     viewBox="0 0 76 98"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

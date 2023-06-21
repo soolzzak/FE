@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { UseMutationResult, useQueryClient } from 'react-query';
 import { DetailUserProfile, FollowHandler } from '../../api/mypage';
 import { useModal } from '../../hooks/useModal';
@@ -16,6 +16,7 @@ export interface ApiResponse1 {
 export const CategoryDropDown = ({
   guestProfile,
   guestProfileMutation,
+  onOpenUserDetails,
 }: {
   guestProfile: DetailUserProfile;
   guestProfileMutation: UseMutationResult<
@@ -24,10 +25,11 @@ export const CategoryDropDown = ({
     string,
     unknown
   >;
+  onOpenUserDetails: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpenReport, onCloseReport, setIsOpenReport] = useModal();
   const [isOpenRoomFollow, onCloseRoomFollow, setIsOpenRoomFollow] = useModal();
 
@@ -61,6 +63,23 @@ export const CategoryDropDown = ({
     setIsOpenReport(true);
   };
 
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
   return (
     <div className="f-jic">
       <div
@@ -89,11 +108,11 @@ export const CategoryDropDown = ({
         />
       </Modal>
 
-      <div className="relative mt-3 font-semibold z-20">
+      <div className="relative mt-3 font-semibold z-20" ref={dropdownRef}>
         {isOpen && (
-          <div className="bg-white rounded-lg w-[130px] h-[100px] border flex flex-col justify-center items-center absolute -right-14 top-8">
+          <div className="bg-white rounded-lg w-[130px] h-[150px] border flex flex-col justify-between items-center absolute -right-14 top-8">
             <div
-              className="border-b-2 w-full basis-1/2 flex items-center justify-center relative z-20"
+              className="border-b-2 w-full h-full flex items-center justify-center relative z-20"
               onClick={handleFollowClick}
               onKeyDown={handleKeyDown}
               role="button"
@@ -101,9 +120,19 @@ export const CategoryDropDown = ({
             >
               {guestProfile.follow ? '팔로우취소' : '팔로우하기'}
             </div>
+            <div
+              className="cursor-pointer border-b-2 w-full h-full  flex items-center justify-center relative z-20"
+              onClick={() => {
+                onOpenUserDetails();
+                setIsOpen(false);
+              }}
+              role="none"
+            >
+              게스트 정보
+            </div>
 
             <div
-              className=" basis-1/2 flex items-center justify-center relative z-20 text-[#F81C1C]"
+              className="flex items-center h-full justify-center relative z-20 text-[#F81C1C]"
               onClick={handleReportClick}
               onKeyDown={handleKeyDown}
               role="button"

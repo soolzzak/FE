@@ -15,6 +15,8 @@ import {
 import { checkIfRoomIsEmpty } from '../../api/streamRoom';
 import { Modal } from '../common/Modal';
 import { AuthModal } from '../Header/AuthModal';
+import { calculateTimeAgo } from '../../utils/calculateTimeAgo';
+import { Lock } from '../../assets/svgs/Lock';
 
 export const chatRoomInfoAtom = atom<MainpageRooms | null>(null);
 export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
@@ -62,17 +64,27 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.02 }}
       role="none"
       className="cursor-pointer w-full f-ic-col rounded-2xl bg-white h-[366px] py-5 px-3.5 relative shadow-sm"
       onClick={handleCardClick}
     >
       {/* image */}
-      <img
-        alt={chatRoom.title}
-        src={chatRoom.roomImageUrl}
-        className="w-full h-44 bg-[#D9D9D9] rounded-xl"
-      />
+      <div className={`${chatRoom.isPrivate ? 'relative ' : ''}`}>
+        {chatRoom.isPrivate && (
+          <>
+            <div className="absolute w-full h-full bg-black opacity-60 rounded-2xl" />
+            <div className="absolute f-jic right-2 top-2 bg-secondary-100 rounded-full w-10 h-10">
+              <Lock />
+            </div>
+          </>
+        )}
+        <img
+          alt={chatRoom.title}
+          src={chatRoom.roomImageUrl}
+          className="w-full h-44 bg-[#D9D9D9] rounded-xl"
+        />
+      </div>
       {/* body */}
       <div className="flex mt-0.5 self-start w-full relative">
         <div className="flex self-start gap-2">
@@ -99,23 +111,22 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
           {chatRoom.title}
         </div>
       </div>
-      <div className="absolute bottom-5 f-ic w-full px-3.5 pr-4">
+      <div className="absolute bottom-4 f-ic w-full px-3.5 pr-4">
         {chatRoom.userImage ? (
           <img
             alt="Profile Pic"
             src={chatRoom.userImage}
-            className="w-10 min-w-[50px] h-[50px] rounded-full object-cover shadow"
+            className="w-10 min-w-[40px] h-[40px] rounded-full object-cover shadow"
           />
         ) : (
           <div className="w-10 min-w-[40px] h-10 rounded-full bg-gray-300 shadow-sm" />
         )}
-        <div className="f-col ml-3 w-5/6">
-          <div className="text-md mb-1">{chatRoom.username}</div>
-          <div className="h-2 rounded-lg bg-primary-100 z-0 shadow-sm">
-            <div
-              className="h-2 rounded-full bg-primary-200"
-              style={{ width: `${chatRoom.alcohol}%` }}
-            />
+        <div className="f-ic justify-between ml-2 w-5/6">
+          <div className="text-lg font-semibold text-[#5f5f5f]">
+            {chatRoom.username}
+          </div>
+          <div className="text-[15px] font-normal px-3 py-1 rounded-full bg-secondary-100 text-secondary-300">
+            {calculateTimeAgo(chatRoom.createdAt)}
           </div>
         </div>
       </div>
