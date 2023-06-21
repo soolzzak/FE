@@ -609,11 +609,13 @@ export const StreamRoom = () => {
 
           case 'pauseGame':
             console.log('received pausegame message', message);
+            // setgameCount(message.count);
             setIdiom(message.idiom);
             break;
 
           case 'stopGame':
             console.log('received stopgame message', message);
+            setGameHasStarted(false);
             setIdiom(message.idiom);
             break;
 
@@ -1042,6 +1044,7 @@ export const StreamRoom = () => {
                           ? `${guestProfile?.username}님의 공유화면`
                           : guestProfile?.username}
                       </span>
+                      멈
                     </div>
                   </>
                 )}
@@ -1053,15 +1056,14 @@ export const StreamRoom = () => {
                     <div
                       role="none"
                       onClick={sendpauseGameMessage}
-                      className="absolute left-0 top-0 drop-shadow-xl flex items-center justify-center ml-8 mt-5 bg-[#FF8A00] text-2xl text-[#FFFFFF] rounded-[71px] w-[119.73px] h-[42.27px]"
-                      style={{ fontFamily: 'KBO Dia Gothic' }}
+                      className={`absolute left-0 top-0 drop-shadow-xl flex items-center justify-center ml-8 mt-5 bg-[#FF8A00] text-2xl text-[#FFFFFF] rounded-[71px] 
+                      ${
+                        idiom === '게임 멈춤!' ? 'w-[127px]' : 'w-[119.73px]'
+                      } h-[42.27px]`}
                     >
-                      {isGamePaused ? '게임재시작' : '게임중지'}
+                      {idiom === '게임 멈춤!' ? '게임 재시작' : '게임 중지'}
                     </div>
 
-                    <div role="none" onClick={sendstopGameMessage}>
-                      게임 끝
-                    </div>
                     <div className="relative flex justify-center items-center">
                       <div className="relative flex justify-center items-center">
                         <GameNote />
@@ -1071,15 +1073,15 @@ export const StreamRoom = () => {
                             {idiom}
                           </div>
                         )}
-                        {gamecount && (
-                          <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 left-[270px] ml-80 flex justify-center items-center">
+                        {gamecount !== '0' && (
+                          <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 lg:left-[270px] -left-10 lg:ml-80 ml-32 flex justify-center items-center">
                             <div className="text-6xl text-[#FF6700]">
                               {gamecount}
                             </div>
                           </div>
                         )}
                       </div>
-                      <div className="absolute -left-10 -top-2">
+                      <div className="absolute -left-10 -top-2 hidden lg:block">
                         <GameScissors />
                       </div>
                       <div className="absolute -bottom-5 -left-7">
@@ -1094,7 +1096,7 @@ export const StreamRoom = () => {
               </div>
 
               {/* 건배 */}
-              {youtubeIsOn ? null : (
+              {youtubeIsOn || gameHasStarted ? null : (
                 <div
                   role="none"
                   onClick={sendToastMessage}
@@ -1217,9 +1219,11 @@ export const StreamRoom = () => {
               <motion.div
                 role="none"
                 className={activityBtnSubClassName}
-                // onClick={delayServiceMessage}
+                onClick={
+                  gameHasStarted ? sendstopGameMessage : sendstartGameMessage
+                }
                 whileHover={{ scale: 1.02 }}
-                onClick={sendstartGameMessage}
+                // onClick={sendstartGameMessage}
               >
                 <div
                   className={`${
@@ -1227,6 +1231,12 @@ export const StreamRoom = () => {
                   }`}
                 >
                   <Game />
+                  {gameHasStarted && (
+                    <span className="ml-2 text-lg font-medium text-red-600">
+                      게임 끄기
+                    </span>
+                  )}
+
                   <span
                     className={`${
                       numberShare >= 1 ? 'hidden' : 'xl:inline hidden'
