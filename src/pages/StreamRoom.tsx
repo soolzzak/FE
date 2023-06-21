@@ -48,6 +48,7 @@ import { GameNote } from '../assets/svgs/GameNote';
 import { GameScissors } from '../assets/svgs/GameScissors';
 import { GameApple } from '../assets/svgs/GameApple';
 import { GamePencil } from '../assets/svgs/GamePencil';
+import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
 
 export interface JwtPayload {
   auth: {
@@ -110,6 +111,8 @@ export const StreamRoom = () => {
   const [userId, setUserId] = useState(userInfo?.auth.id);
   const [isHost, setIsHost] = useState(false);
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
+  const [myWebcamMediaStream, setMyWebcamMediaStream] =
+    useState<MediaStream | null>(null);
   const [remoteMediaStream, setRemoteMediaStream] =
     useState<MediaStream | null>(null);
   const [remoteWebcamStream, setRemoteWebcamStream] =
@@ -335,6 +338,7 @@ export const StreamRoom = () => {
       // console.log('stream담기나?', stream);
       mediaStream = stream;
       setMyMediaStream(stream);
+      setMyWebcamMediaStream(stream);
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -441,6 +445,7 @@ export const StreamRoom = () => {
       }
     }
     peerConnection.close();
+    socket.close();
   };
   const seekToTime = (time: number) => {
     console.log('seek to time', time);
@@ -534,7 +539,7 @@ export const StreamRoom = () => {
       };
 
       socket.onclose = () => {
-        // console.log('WebSocket connection closed');
+        console.log('WebSocket connection closed');
         // closeMediaStream();
         // navigate('/');
       };
@@ -1273,6 +1278,10 @@ export const StreamRoom = () => {
           </div>
         </div>
       </div>
+      <TakeSnapshot
+        localVideoRef={localVideoRef}
+        remoteVideoRef={remoteVideoRef}
+      />
       <Modal
         isOpen={isOpenLeaveRoom}
         onClose={() => setIsOpenLeaveRoom(false)}

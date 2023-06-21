@@ -120,11 +120,11 @@ export const JoinRoomModal = () => {
                   src={data?.data.userImage}
                   className="w-14 min-w-[56px] h-14 rounded-full mr-2"
                 />
-                <div className="w-full overflow-hidden truncate">
-                  <div className="text-[#5F5F5F] font-semibold text-base">
+                <div className="w-full overflow-hidden truncate max-w-[150px]">
+                  <div className="text-[#5F5F5F] font-semibold text-base truncate">
                     {data?.data.username}
                   </div>
-                  <div className="text-[#5F5F5F] font-semibold text-base">
+                  <div className="text-[#5F5F5F] font-semibold text-base truncate">
                     {data?.data.introduction}
                   </div>
                 </div>
