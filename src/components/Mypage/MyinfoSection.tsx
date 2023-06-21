@@ -195,7 +195,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
           <div className="f-jic">
-            <div className="border-t border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
+            <div className="border-t mt-2 border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
           </div>
           <div className="md:ml-10 ml-5">
             <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
@@ -216,7 +216,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
 
-          <div className="flex flex-col md:ml-10">
+          <div className="flex flex-col md:ml-10 mt-6">
             <p className="font-semibold text-lg text-[#7C7C7C] hidden sm:block">
               이메일
             </p>

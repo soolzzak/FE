@@ -184,7 +184,9 @@ export const BlockHandler = async (
 };
 
 // 유저찾기
-export const FindUser = async (username: string) => {
+export const FindUser = async (
+  username: string
+): Promise<ApiResponse1 | undefined> => {
   try {
     const response: AxiosResponse<ApiResponse1> = await axiosInstance.get(
       `/mypage/search?username=${username}`
