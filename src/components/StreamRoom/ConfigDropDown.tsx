@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { AiOutlineSetting } from 'react-icons/ai';
 import {
   isOpenKickoutModalAtom,
@@ -54,7 +54,7 @@ export const ConfigDropDown = () => {
   };
 
   return (
-    <div ref={dropdownRef}>
+    <div ref={dropdownRef} className='z-10'>
       <div
         role="button"
         onClick={onToggle}
@@ -71,7 +71,7 @@ export const ConfigDropDown = () => {
 
       <div className="relative font-semibold">
         {isOpen && (
-          <div className="bg-white rounded-lg w-28 h-24 flex flex-col justify-center items-center absolute bottom-[75px] -right-6">
+          <div className="bg-white rounded-lg w-28 h-24 flex flex-col justify-center items-center absolute bottom-[72px] -right-6">
             <div
               className="border-b-2 w-full basis-1/2 flex items-center justify-center relative z-20"
               onClick={handleModifyClick}

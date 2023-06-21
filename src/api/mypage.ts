@@ -10,7 +10,7 @@ interface ApiResponse {
 interface MessageApiResponse {
   status: number;
   msg: string;
-  data: MessageData;
+  data: MessageData[];
 }
 
 export interface MessageData {
@@ -214,9 +214,9 @@ export const sendMessage = async (message: Message) => {
 }
 
 // 쪽지 받기
-export const receivedMessage = async (params: string) => {
+export const receivedMessage = async () => {
   try {
-    const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get(`/message/${params}`)
+    const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get('/message/received')
     return response
   } catch (error: any) {
     throw error as Error
@@ -226,7 +226,7 @@ export const receivedMessage = async (params: string) => {
 // 보낸쪽지
 export const sentMessage = async () => {
   try {
-    const response: AxiosResponse<ApiResponse1> = await axiosInstance.get('/message/sent')
+    const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get('/message/sent')
     return response
   } catch (error: any) {
     throw error as Error
