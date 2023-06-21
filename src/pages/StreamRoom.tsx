@@ -3,25 +3,30 @@
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
-import YouTube from 'react-youtube';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
+import YouTube from 'react-youtube';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { getRoom } from '../api/streamRoom';
 import { Game } from '../assets/svgs/Game';
+import { ToastIcon } from '../assets/svgs/ToastIcon';
 import { Youtube } from '../assets/svgs/Youtube';
+import { DetailUserInfoModal } from '../components/Mypage/DetailUserInfoModal';
+import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
 import { KickoutModal } from '../components/StreamRoom/KickoutModal';
 import { LeaveRoomModal } from '../components/StreamRoom/LeaveRoomModal';
+import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
 import { RemoteUserSection } from '../components/StreamRoom/RemoteUserSection';
 import { Toast } from '../components/StreamRoom/Toast';
 import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
+import { YoutubeContent } from '../components/StreamRoom/YoutubeContent';
+import { CommonButton } from '../components/common/CommonButton';
 import { Modal } from '../components/common/Modal';
-import { ToastIcon } from '../assets/svgs/ToastIcon';
-import { ControlStreamRoom } from '../components/StreamRoom/ControlStreamRoom';
-import { ModifyRoomModal } from '../components/StreamRoom/ModifyRoomModal';
+import { ModalInput } from '../components/common/ModalInput';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
+import { userTokenAtom } from '../store/mainpageStore';
 import {
   isOpenKickoutModalAtom,
   isOpenLeaveRoomAtom,
@@ -32,22 +37,17 @@ import {
 import {
   hostIdAtom,
   micOnAtom,
-  micOnChangeAtom,
   monitorOnAtom,
-  monitorOnChangeAtom,
+  screenShareOnAtom,
 } from '../store/streamControlStore';
-import { ScreenShare } from '../assets/svgs/ScreenShare';
-import { YoutubeContent } from '../components/StreamRoom/YoutubeContent';
-import { userTokenAtom } from '../store/mainpageStore';
-import { ModalInput } from '../components/common/ModalInput';
-import { CommonButton } from '../components/common/CommonButton';
 import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
-import { DetailUserInfoModal } from '../components/Mypage/DetailUserInfoModal';
 
-import { GameNote } from '../assets/svgs/GameNote';
-import { GameScissors } from '../assets/svgs/GameScissors';
 import { GameApple } from '../assets/svgs/GameApple';
+import { GameNote } from '../assets/svgs/GameNote';
 import { GamePencil } from '../assets/svgs/GamePencil';
+import { GameScissors } from '../assets/svgs/GameScissors';
+import { Camera } from '../assets/svgs/Camera';
+import { IceBreaking } from '../assets/svgs/Icebreaking';
 
 export interface JwtPayload {
   auth: {
@@ -96,8 +96,8 @@ export const StreamRoom = () => {
   );
   const [socket] = useState<WebSocket>(new WebSocket(signalingServerUrl));
   const [guestProfile, setGuestProfile] = useState<DetailUserProfile>();
-  const [, micOnChange] = useAtom(micOnChangeAtom);
-  const [, monitorOnChange] = useAtom(monitorOnChangeAtom);
+  const [, setMicOn] = useAtom(micOnAtom);
+  const [, setMonitorOn] = useAtom(monitorOnAtom);
   const [, setRemoteMonitorOn] = useState<boolean>(false);
   const [guestIn, setGuestIn] = useState<boolean>(false);
   const [socketIsOnline, setSocketIsOnline] = useState<boolean>(false);
@@ -322,6 +322,12 @@ export const StreamRoom = () => {
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
         setGuestProfile(() => undefined);
+        setIsMyScreenShare(false);
+        setIsRemoteScreenShare(false);
+        setYoutubeIsOn(false);
+        setGameHasStarted(false);
+        setRemoteMediaStream(null);
+        setRemoteWebcamStream(null);
         // console.log('peerConnection', peerConnection);
       }
     };
@@ -404,9 +410,16 @@ export const StreamRoom = () => {
         //   remoteWebcamVideoRef.current?.srcObject
         // );
         // setNumberShare((prev) => prev - 1);
+        setIsRemoteScreenShare(() => false);
         setRemoteMonitorOn(() => false);
         setGuestIn(() => false);
         setGuestProfile(() => undefined);
+        setIsMyScreenShare(false);
+        setIsRemoteScreenShare(false);
+        setYoutubeIsOn(false);
+        setGameHasStarted(false);
+        setRemoteMediaStream(null);
+        setRemoteWebcamStream(null);
         // console.log('peerConnection', peerConnection1);
       }
     };
@@ -683,7 +696,11 @@ export const StreamRoom = () => {
     if (audio && myMediaStream) {
       const audioTrack = myMediaStream.getAudioTracks()[0];
       audioTrack.enabled = !audioTrack.enabled;
-      micOnChange(micOnAtom);
+      if (audioTrack.enabled) {
+        setMicOn(true);
+      } else {
+        setMicOn(false);
+      }
     }
   };
 
@@ -692,9 +709,29 @@ export const StreamRoom = () => {
     if (video && myMediaStream) {
       const videoTrack = myMediaStream.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
-      monitorOnChange(monitorOnAtom);
+      if (videoTrack.enabled) {
+        setMonitorOn(true);
+      } else {
+        setMonitorOn(false);
+      }
     }
   };
+
+  useEffect(() => {
+    const videoTrack = myMediaStream?.getVideoTracks()[0];
+    if (videoTrack?.enabled) {
+      setMonitorOn(true);
+    } else {
+      setMonitorOn(false);
+    }
+
+    const audioTrack = myMediaStream?.getAudioTracks()[0];
+    if (audioTrack?.enabled) {
+      setMicOn(true);
+    } else {
+      setMicOn(false);
+    }
+  }, [myMediaStream]);
 
   const sendToastMessage = () => {
     // console.log('click toast');
@@ -710,23 +747,23 @@ export const StreamRoom = () => {
     }
   };
 
-  const sendstartGameMessage = () => {
-    if (!guestProfile) {
-      toast.error('짝꿍을 기다려 주세요!');
-    } else {
-      setGameHasStarted(true);
-      if (socket) {
-        const message = JSON.stringify({
-          from: userId,
-          type: 'startGame',
-          data: roomNum,
-        });
-        console.log('toast sent', message);
-        // showToastHandler();
-        socket.send(message);
-      }
-    }
-  };
+  // const sendstartGameMessage = () => {
+  //   if (!guestProfile) {
+  //     toast.error('짝꿍을 기다려 주세요!');
+  //   } else {
+  //     setGameHasStarted(true);
+  //     if (socket) {
+  //       const message = JSON.stringify({
+  //         from: userId,
+  //         type: 'startGame',
+  //         data: roomNum,
+  //       });
+  //       console.log('toast sent', message);
+  //       // showToastHandler();
+  //       socket.send(message);
+  //     }
+  //   }
+  // };
 
   const sendpauseGameMessage = () => {
     if (socket) {
@@ -1308,42 +1345,46 @@ export const StreamRoom = () => {
                 micToggleHandler={micToggleHandler}
                 videoToggleHandler={videoToggleHandler}
                 startScreenShare={startScreenShare}
+                isMyScreenShare={isMyScreenShare}
+                stopShare={stopShare}
+                gameHasStarted={gameHasStarted}
+                youtubeIsOn={youtubeIsOn}
               />
             </div>
 
             <div className={activityButtonStyle}>
-              {!gameHasStarted && !youtubeIsOn && (
-                <motion.div
-                  role="none"
-                  whileHover={{ scale: 1.02 }}
-                  className={activityButtonSubStyle}
-                  onClick={isMyScreenShare ? stopShare : startScreenShare}
-                >
-                  <div
-                    className={`${
-                      shareState === 0
-                        ? 'f-ic text-xl gap-4 font-semibold xl:min-w-[200px]'
-                        : 'f-ic'
-                    }`}
+              {!(isMyScreenShare || isRemoteScreenShare) &&
+                !gameHasStarted &&
+                !youtubeIsOn && (
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    className={activityButtonSubStyle}
                   >
-                    <div className="iconStyle bg-[#E0F5E6]">
-                      <ScreenShare />
-                    </div>
-                    {isMyScreenShare && (
-                      <span className="ml-2 text-lg font-medium text-red-600">
-                        화면공유 끄기
-                      </span>
-                    )}
-                    <span
+                    <div
                       className={`${
-                        shareState > 0 ? 'hidden' : 'xl:inline hidden'
+                        shareState === 0
+                          ? 'f-ic text-xl gap-4 font-semibold xl:min-w-[200px]'
+                          : 'f-ic'
                       }`}
                     >
-                      화면 공유하기
+                      <div className="iconStyle bg-[#E0F5E6] relative">
+                        <IceBreaking />
+                      </div>
+                      {/* {아이스브레이킹 boolean state && (
+                    <span className="hoverActivityButton">
+                      아이스 브레이킹 종료하기
                     </span>
-                  </div>
-                </motion.div>
-              )}
+                  )} */}
+                      <span
+                        className={`${
+                          shareState > 0 ? 'hidden' : 'xl:inline hidden'
+                        }`}
+                      >
+                        아이스 브레이킹
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
               {/* 
               {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
                 <motion.div
@@ -1359,6 +1400,9 @@ export const StreamRoom = () => {
                       sendstopGameMessage();
                     }
                   }}
+                  onClick={
+                    youtubeIsOn ? onYoutubeWatchalongClick : modalOpenHandler
+                  }
                 >
                   <div
                     className={`${
@@ -1367,20 +1411,21 @@ export const StreamRoom = () => {
                         : 'f-ic'
                     }`}
                   >
-                    <div className="iconStyle bg-[#E0F5E6]">
-                      <Game />
+                    <div className="iconStyle bg-[#E0F5E6] relative">
+                      <Youtube />
                     </div>
-                    {gameHasStarted && (
-                      <span className="ml-2 text-lg font-medium text-red-600">
-                        Game 끄기
+                    {youtubeIsOn && (
+                      <span className="hoverActivityButton">
+                        유튜브 종료하기
                       </span>
                     )}
+
                     <span
                       className={`${
                         shareState > 0 ? 'hidden' : 'xl:inline hidden'
                       }`}
                     >
-                      게임하기
+                      유튜브 시청
                     </span>
                   </div>
                 </motion.div>
@@ -1401,24 +1446,88 @@ export const StreamRoom = () => {
                         : 'f-ic'
                     }`}
                   >
-                    <div className="iconStyle bg-[#E0F5E6]">
+                    <div className="iconStyle bg-[#E0F5E6] relative">
                       <Youtube />
                     </div>
                     {youtubeIsOn && (
-                      <span className="ml-2 text-lg font-medium text-red-600">
-                        YouTube 끄기
+                      <span className="hoverActivityButton">
+                        유튜브 종료하기
                       </span>
+                    )}
+
+                    <span
+                      className={`${
+                        shareState > 0 ? 'hidden' : 'xl:inline hidden'
+                      }`}
+                    >
+                      유튜브 시청
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+
+              {!(isMyScreenShare || isRemoteScreenShare) &&
+                !gameHasStarted &&
+                !youtubeIsOn && (
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    className={activityButtonSubStyle}
+                  >
+                    <div
+                      className={`${
+                        shareState === 0
+                          ? 'f-ic text-xl gap-4 font-semibold xl:min-w-[200px]'
+                          : 'f-ic'
+                      }`}
+                    >
+                      <div className="iconStyle bg-[#E0F5E6] relative">
+                        <Camera />
+                      </div>
+                      {/* {사진찍기 boolean state && (
+                    <span className="hoverActivityButton">
+                      사진찍기 종료하기
+                    </span>
+                  )} */}
+                      <span
+                        className={`${
+                          shareState > 0 ? 'hidden' : 'xl:inline hidden'
+                        }`}
+                      >
+                        사진찍기
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
+
+              {/* {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className={activityButtonSubStyle}
+                  onClick={sendstartGameMessage}
+                >
+                  <div
+                    className={`${
+                      shareState === 0
+                        ? 'f-ic text-xl gap-4 font-semibold xl:min-w-[200px]'
+                        : 'f-ic'
+                    }`}
+                  >
+                    <div className="iconStyle bg-[#E0F5E6] relative">
+                      <Game />
+                    </div>
+                    {gameHasStarted && (
+                      <span className="hoverActivityButton">게임 종료하기</span>
                     )}
                     <span
                       className={`${
                         shareState > 0 ? 'hidden' : 'xl:inline hidden'
                       }`}
                     >
-                      유튜브 동시시청
+                      게임하기
                     </span>
                   </div>
                 </motion.div>
-              )}
+              )} */}
             </div>
           </div>
         </div>

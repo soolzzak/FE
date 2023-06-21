@@ -163,7 +163,7 @@ export const deleteAccount = async (password :DeletePwd) => {
 
 export const deleteKakaoAccount = async () => {
   try {
-    const token = Cookies.get('accessKey')
+    const token = Cookies.get('accessKey')?.slice(7)
     const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/kakaoDeleteAccount?code=${token}`)
     return response;
   } catch (error: any) {

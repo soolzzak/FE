@@ -20,8 +20,7 @@ export const UserAlert = () => {
 
       eventSource.addEventListener('roomCreated', (event) => {
         const response = JSON.parse(event.data);
-        const timeStamp = new Date(event.timeStamp)
-        
+        const timeStamp = new Date()
         setUserAlert((prevData) => [
           ...prevData,
           {
