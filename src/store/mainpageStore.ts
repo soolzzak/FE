@@ -13,6 +13,13 @@ export type UserInfo = {
   email: string;
 };
 
+type UserAlert = {
+  username: string;
+  roomId: number;
+  uncheck: boolean;
+  time: Date;
+}
+
 export const usernameAtom = atom('');
 export const handleTokenChangeAtom = atom(null, (get, set, update: string) => {
   set(usernameAtom, () => update);
@@ -55,3 +62,7 @@ export const handleSearchwordTriggerAtom = atom(
     set(searchwordTriggerAtom, () => update);
   }
 );
+
+export const userNicknameAtom = atom('');
+
+export const userAlertAtom = atom([] as UserAlert[]);

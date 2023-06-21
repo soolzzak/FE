@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { getMypageProfile } from '../../api/mypage';
-import { userTokenAtom } from '../../store/mainpageStore';
+import { userNicknameAtom, userTokenAtom } from '../../store/mainpageStore';
 
 export const ProfileMenu = ({ user }: { user: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +14,7 @@ export const ProfileMenu = ({ user }: { user: string }) => {
     refetchOnWindowFocus: false,
   });
   const [, setUserInfo] = useAtom(userTokenAtom);
+  const [userNickname, setUserNickname] = useAtom(userNicknameAtom);
   const navigate = useNavigate();
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
@@ -39,6 +40,12 @@ export const ProfileMenu = ({ user }: { user: string }) => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    if(data) {
+      setUserNickname(data?.data.username as string);
+    }
+  },[data])
 
   return (
     <div className="relative" ref={dropdownRef}>

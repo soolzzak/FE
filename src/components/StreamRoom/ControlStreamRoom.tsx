@@ -58,7 +58,7 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
           <LuMicOff className="text-3xl text-white" />
         )}
         {micHover ? (
-          <div className="absolute -top-[17px] text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute bottom-28 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Microphone
           </div>
         ) : null}
@@ -74,7 +74,7 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
       >
         {monitorOn ? <MonitorOn /> : <MonitorOff />}
         {cameraHover ? (
-          <div className="absolute -top-10 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute -top-11 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Camera
           </div>
         ) : null}
@@ -103,7 +103,7 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
       >
         <ConfigDropDown />
         {settingHover ? (
-          <div className="absolute -top-[17px] text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute bottom-28 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Setting
           </div>
         ) : null}
@@ -118,7 +118,7 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
       >
         <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
         {closeHover ? (
-          <div className="absolute -top-[16.5px] text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
+          <div className="absolute bottom-28 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
             Close
           </div>
         ) : null}
