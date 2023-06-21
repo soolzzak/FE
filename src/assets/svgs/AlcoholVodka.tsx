@@ -1,9 +1,15 @@
 import React from 'react';
 
-export const AlcoholVodka = () => (
+export const AlcoholVodka = ({
+  height,
+  width,
+}: {
+  height?: number;
+  width?: number;
+}) => (
   <svg
-    width="59"
-    height="98"
+    width={width ? ((width) * 59).toString() : '59'}
+    height={height ? ((height) * 98).toString() : '98'}
     viewBox="0 0 59 98"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

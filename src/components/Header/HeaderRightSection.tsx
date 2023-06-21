@@ -17,20 +17,45 @@ import { AddRoom } from './AddRoom';
 import { AuthModal } from './AuthModal';
 import { ProfileMenu } from './ProfileMenu';
 import { UserAlert } from './UserAlert';
+import { handleTitleChangeAtom } from '../../store/addRoomStore';
 
 export const HeaderRightSection = () => {
   const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
   const [isOpenLogin, setIsOpenLogin] = useAtom(isOpenLoginModalAtom);
   const [isOpenRoomCreate, onCloseRoomCreate, setIsOpenRoomCreate] = useModal();
+  const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
+  const onCloseRoomCreateModal = () => {
+    handleTitleChange('');
+    onCloseRoomCreate();
+  };
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
-
+  console.log(userAtom);
   useEffect(() => {
     if (user) {
       setUserAtom(jwtDecode(user));
     }
   }, [user]);
- 
+let eventSource: EventSource;
+  // console.log(userAtom);
+  useEffect(() => {
+    if (user) {
+      eventSource = new EventSource(
+        `https://api.honsoolzzak.com/events/${userAtom?.auth.id}`
+      );
+    }
+    if (eventSource) {
+      eventSource.onmessage = () => {
+        // console.log('Received SSE event:', event.data);
+      };
+      eventSource.onerror = () => {
+        // console.error('SSE connection error:', error);
+      };
+    }
+    return () => {
+      eventSource.close();
+    };
+  }, []);
   const navigate = useNavigate();
   return (
     <motion.section
@@ -55,8 +80,12 @@ export const HeaderRightSection = () => {
           <LoginModal />
         </Modal>
       </AnimatePresence>
-      <Modal isOpen={isOpenRoomCreate} onClose={onCloseRoomCreate} hasOverlay>
-        <AddRoom onClose={onCloseRoomCreate} />
+      <Modal
+        isOpen={isOpenRoomCreate}
+        onClose={onCloseRoomCreateModal}
+        hasOverlay
+      >
+        <AddRoom onClose={onCloseRoomCreateModal} />
       </Modal>
       {userAtom && user ? (
         <motion.div

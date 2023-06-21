@@ -15,14 +15,14 @@ import { CancelButton } from '../common/CancelButton';
 
 export const DetailUserInfoModal = ({
   onClose,
-  item,
+  userId,
 }: {
   onClose: () => void;
-  item: TabUserList;
+  userId: string;
 }) => {
   const { data } = useQuery(
     'detailUserInfo',
-    () => getDetailUserProfile(item.userId),
+    () => getDetailUserProfile(userId),
     {
       refetchOnWindowFocus: false,
     }
@@ -103,7 +103,11 @@ export const DetailUserInfoModal = ({
 
           <div className="flex flex-col md:mt-0 mt-5">
             <div className="text-2xl font-semibold">{userinfo?.username}</div>
-            <div className="font-medium">{userinfo?.email}</div>
+            {userinfo?.introduction ? (
+              <div className="font-medium">{userinfo.introduction}</div>
+            ) : (
+              <div className="text-sm text-gray-400">한줄소개가 없습니다.</div>
+            )}
           </div>
 
           <div className="flex justify-between mt-4">

@@ -16,7 +16,7 @@ export const HistoryCard = ({ item }: { item: TabUserList }) => {
   return (
     <div>
       <Modal isOpen={isOpenDetailUser} onClose={onCloseDetailUser} hasOverlay>
-        <DetailUserInfoModal item={item} onClose={onCloseDetailUser} />
+        <DetailUserInfoModal userId={item.userId} onClose={onCloseDetailUser} />
       </Modal>
 
       <div
