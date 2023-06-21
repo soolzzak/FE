@@ -12,6 +12,7 @@ import { NotFound } from '../pages/NotFound';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
 import { handleTokenChangeAtom } from '../store/mainpageStore';
+import { DeleteAccount } from '../components/login/DeleteAccount';
 
 export const Router = () => {
   const token = Cookies.get('accessKey');
@@ -41,6 +42,7 @@ export const Router = () => {
           <Route path="/pwchange" element={<ChangePassword />} />
           <Route path="/api/login" element={<KakaoCallback />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/tempdeleteaccount" element={<DeleteAccount />} />
         </Routes>
       </AnimatePresence>
     </Layout>
