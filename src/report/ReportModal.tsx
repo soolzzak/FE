@@ -1,10 +1,11 @@
 import { useAtom } from 'jotai';
 import { useState } from 'react';
+import { useMutation } from 'react-query';
 import { toast } from 'react-toastify';
 import { DetailUserProfile } from '../api/mypage';
 import { ReportApi } from '../api/report';
-import { isOpenReportAtom } from '../store/modalStore';
 import { CancelButton } from '../components/common/CancelButton';
+import { isOpenReportAtom } from '../store/modalStore';
 
 export const ReportModal = ({
   onCloseReport,
@@ -50,10 +51,10 @@ export const ReportModal = ({
         response?.message === 'The reason for reporting is not appropriate.'
       )
         toast('신고 이유가 적절하지 않습니다.');
-
-      setErrMsg('');
-      setIsOpenReport(false);
     }
+    setErrMsg('');
+    setIsOpenReport(false);
+    onCloseReport();
   };
 
   return (

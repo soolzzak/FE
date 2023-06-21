@@ -1,3 +1,4 @@
+import { ChangeEvent } from 'react';
 import { useAtom } from 'jotai';
 import { titleAtom } from '../../store/addRoomStore';
 
@@ -23,7 +24,7 @@ export const ModalInput = ({
   handleInputChange,
 }: InputProps) => {
   const [inputTitle] = useAtom(titleAtom);
-  const onInputChange = (e: any) => {
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (constraint) {
       if (e.target.value.length <= constraint)
         handleInputChange(e.target.value);
