@@ -738,23 +738,23 @@ export const StreamRoom = () => {
     }
   };
 
-  const sendstartGameMessage = () => {
-    if (!guestProfile) {
-      toast.error('짝꿍을 기다려 주세요!');
-    } else {
-      setGameHasStarted(true);
-      if (socket) {
-        const message = JSON.stringify({
-          from: userId,
-          type: 'startGame',
-          data: roomNum,
-        });
-        console.log('toast sent', message);
-        // showToastHandler();
-        socket.send(message);
-      }
-    }
-  };
+  // const sendstartGameMessage = () => {
+  //   if (!guestProfile) {
+  //     toast.error('짝꿍을 기다려 주세요!');
+  //   } else {
+  //     setGameHasStarted(true);
+  //     if (socket) {
+  //       const message = JSON.stringify({
+  //         from: userId,
+  //         type: 'startGame',
+  //         data: roomNum,
+  //       });
+  //       console.log('toast sent', message);
+  //       // showToastHandler();
+  //       socket.send(message);
+  //     }
+  //   }
+  // };
 
   const sendpauseGameMessage = () => {
     if (socket) {
@@ -1378,7 +1378,7 @@ export const StreamRoom = () => {
                   </motion.div>
                 )}
 
-              {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
+              {/* {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className={activityButtonSubStyle}
@@ -1406,7 +1406,7 @@ export const StreamRoom = () => {
                     </span>
                   </div>
                 </motion.div>
-              )}
+              )} */}
             </div>
           </div>
         </div>
