@@ -431,7 +431,7 @@ export const StreamRoom = () => {
       socket.onclose = () => {
         // console.log('WebSocket connection closed');
         closeMediaStream();
-        navigate('/');
+        // navigate('/');
       };
 
       socket.onerror = () => {
@@ -677,6 +677,34 @@ export const StreamRoom = () => {
     }
   };
 
+  const stopShare = () => {
+    if (localVideoRef.current) {
+      if (localVideoRef.current.srcObject) {
+        const stream = localVideoRef.current.srcObject as MediaStream;
+        console.log('stream share', stream);
+        stream.getTracks().forEach((track) => track.stop());
+
+        sendShareOffMessage();
+        if (localVideoRef.current) {
+          setShareView(null);
+          setIsMyScreenShare(false);
+          setNumberShare((prev) => prev - 1);
+          localVideoRef.current.srcObject = myMediaStream;
+          // console.log('mediastream 바꾸자0', myMediaStream);
+        }
+        // console.log('mediastream 바꾸자1', myMediaStream);
+        peerConnection.getSenders().forEach((sender) => {
+          // console.log('mediastream 바꾸자2', myMediaStream);
+          if (sender.track?.kind === 'video' && myMediaStream) {
+            // console.log('mediastream 바꾸자3', myMediaStream);
+            sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
+            // console.log('if mediaStream', myMediaStream);
+          }
+        });
+      }
+    }
+  };
+
   // 화면 공유를 시작
   const startScreenShare = async () => {
     // console.log('히히', peerConnection.getSenders());
@@ -811,11 +839,84 @@ export const StreamRoom = () => {
     toast.error('추후 서비스 예정입니다');
   };
 
-  // console.log('numbershare', numberShare);
+  // let shareState: number;
+  // if (!isMyScreenShare && !isRemoteScreenShare) {
+  //   shareState = 0;
+  // } else if (isMyScreenShare && !isRemoteScreenShare) {
+  //   shareState = 1;
+  // } else if (!isMyScreenShare && isRemoteScreenShare) {
+  //   shareState = 2;
+  // } else {
+  //   shareState = 3;
+  // }
+
+  // let localVideoStyle = '';
+  // let myWebcamVideoStyle = '';
+  // let remoteVideoStyle = '';
+  // let remoteWebcamVideoStlye = '';
+  // let controlButtonStyle = '';
+  // let activityButtonStyle = '';
+  // let activityButtonSubStyle = '';
+
+  // if (shareState === 0) {
+  //   localVideoStyle =
+  //     'xl:w-full xl:h-full bg-black rounded-2xl xl:col-start-5 xl:col-span-2 xl:row-start-1 xl:row-span-3 xl:top-0 xl:right-0 absolute top-5 right-5 w-64 h-64 z-10'; // 내얼굴(v)
+  //   myWebcamVideoStyle = 'hidden';
+  //   remoteVideoStyle =
+  //     'w-full h-full col-start-1 col-span-4 row-start-1 row-span-5 bg-black rounded-2xl'; // 상대방 얼굴
+  //   remoteWebcamVideoStlye = 'hidden';
+  //   controlButtonStyle =
+  //     'w-full h-full gap-4 xl:col-start-1 xl:col-span-4 row-start-6 row-span-1 xl:f-jic f-ic col-start-2 col-span-1 justify-end'; // 완료
+  //   activityButtonStyle =
+  //     'w-full h-full gap-4 xl:col-start-5 xl:col-span-2 xl:row-start-4 xl:row-span-3 xl:f-col col-start-1 col-span-1 row-start-6 row-span-1 f-ic';
+  //   activityButtonSubStyle =
+  //     'xl:h-1/3 f-jic rounded-2xl xl:border xl:border-[#D9D9D9] hover:cursor-pointer xl:w-full';
+  // } else if (shareState === 1) {
+  //   localVideoStyle =
+  //     'xl:w-full xl:h-full bg-black rounded-2xl xl:col-start-5 xl:col-span-2 xl:row-start-1 xl:row-span-3 xl:top-0 xl:right-0 absolute top-5 right-5 w-64 h-64 z-10'; // 내가 공유(v)
+  //   myWebcamVideoStyle =
+  //     'xl:w-full xl:h-full bg-black rounded-2xl xl:col-start-5 xl:col-span-2 xl:row-start-4 xl:row-span-3 xl:top-0 xl:right-0 absolute top-[300px] right-5 w-64 h-64 z-10'; // 내 얼굴 (v)
+  //   remoteVideoStyle =
+  //     'w-full h-full bg-black rounded-2xl xl:col-start-1 xl:col-span-4 row-start-1 row-span-5 col-start-1 col-span-2'; // 상대방 얼굴
+  //   controlButtonStyle =
+  //     'w-full h-full gap-4 xl:col-start-3 xl:col-span-2 row-start-6 row-span-1 f-ic justify-end col-start-2 col-span-1'; // 완료
+  //   remoteWebcamVideoStlye = 'hidden';
+  //   activityButtonStyle =
+  //     'w-full h-full gap-4 col-start-1 col-span-2 row-start-6 row-span-1 f-ic justify-start';
+  //   activityButtonSubStyle = '';
+  // } else if (shareState === 2) {
+  //   localVideoStyle =
+  //     'xl:w-full xl:h-full bg-black rounded-2xl xl:col-start-5 xl:col-span-2 xl:row-start-1 xl:row-span-3 xl:top-0 xl:right-0 absolute top-5 right-5 w-64 h-64 z-10'; // 내 얼굴(v)
+  //   myWebcamVideoStyle = 'hidden';
+  //   remoteVideoStyle =
+  //     'w-full h-full bg-black rounded-2xl xl:col-start-1 xl:col-span-4 row-start-1 row-span-5 col-start-1 col-span-2'; // 상대방 공유
+  //   remoteWebcamVideoStlye =
+  //     'xl:w-full xl:h-full bg-black rounded-2xl xl:col-start-5 xl:col-span-2 xl:row-start-4 xl:row-span-3 xl:top-0 xl:right-0 absolute top-[300px] right-5 w-64 h-64'; // 상대방 얼굴
+  //   controlButtonStyle =
+  //     'w-full h-full gap-4 xl:col-start-3 xl:col-span-2 row-start-6 row-span-1 f-ic justify-end col-start-2 col-span-1'; // 완료
+  //   activityButtonStyle =
+  //     'w-full h-full gap-4 col-start-1 col-span-2 row-start-6 row-span-1 f-ic justify-start';
+  //   activityButtonSubStyle = '';
+  // } else {
+  //   localVideoStyle =
+  //     'xl:w-full xl:h-full bg-black rounded-2xl xl:col-start-5 xl:col-span-2 xl:row-start-1 xl:row-span-3 xl:top-0 xl:right-0 absolute top-[29px] right-5 w-52 h-52 z-10'; // 내가 공유(v)
+  //   myWebcamVideoStyle =
+  //     'xl:w-64 xl:h-64 bg-black rounded-2xl xl:top-4 xl:right-4 absolute top-[266px] right-5 w-52 h-52 z-10'; // 내 얼굴 (v)
+  //   remoteVideoStyle =
+  //     'w-full h-full bg-black rounded-2xl xl:col-start-1 xl:col-span-4 row-start-1 row-span-5 col-start-1 col-span-2'; // 상대방 공유
+  //   remoteWebcamVideoStlye =
+  //     'xl:w-full xl:h-full bg-black rounded-2xl xl:col-start-5 xl:col-span-2 xl:row-start-4 xl:row-span-3 xl:top-0 xl:right-0 absolute top-[503px] right-5 w-52 h-52'; // 상대방 얼굴
+  //   controlButtonStyle =
+  //     'w-full h-full gap-4 xl:col-start-3 xl:col-span-2 row-start-6 row-span-1 f-ic justify-end col-start-2 col-span-1'; // 완료
+  //   activityButtonStyle =
+  //     'w-full h-full gap-4 col-start-1 col-span-2 row-start-6 row-span-1 f-ic justify-start';
+  //   activityButtonSubStyle = '';
+  // }
 
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
+
       <div className="f-col pt-24">
         <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 bg-white">
           <div className="flex flex-row-reverse w-full xl:h-16 h-12 mb-5 justify-between">
@@ -830,10 +931,188 @@ export const StreamRoom = () => {
             )}
           </div>
 
-          {/* 여기 비디오 부분 */}
+          {/* <div className="relative">
+            <div
+              role="none"
+              onClick={sendToastMessage}
+              onMouseOver={() => setToastHover(true)}
+              onMouseOut={() => setToastHover(false)}
+              className="w-14 h-14 f-jic absolute xl:right-[35%] top-5 ml-5 rounded-full bg-primary-300 hover:cursor-pointer z-10"
+            >
+              <ToastIcon />
+              {toastHover ? (
+                <div className="absolute w-48 h-10 top-16 xl:right-0 ml-36 bg-white text-lg font-semibold rounded-xl f-jic">
+                  건배할 때 눌러보세요!
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="relative w-full h-full grid xl:grid-cols-6 grid-cols-2 grid-rows-6 gap-3 min-h-[900px] max-h-[900px]">
+            <div className={localVideoStyle}>
+              <video
+                ref={localVideoRef}
+                autoPlay
+                muted
+                playsInline
+                className="relative w-full h-full object-contain rounded-2xl"
+              />
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                <span className="text-white text-lg">
+                  {isMyScreenShare ? '나의 공유화면' : '나'}
+                </span>
+              </div>
+            </div>
+
+            <div className={myWebcamVideoStyle}>
+              <video
+                ref={myWebcamVideoRef}
+                autoPlay
+                muted
+                playsInline
+                className="relative w-full h-full object-contain rounded-2xl"
+              />
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                <span className="text-white text-lg">
+                  {isMyScreenShare && isRemoteScreenShare
+                    ? '나'
+                    : `${
+                        !isMyScreenShare && isRemoteScreenShare
+                          ? guestProfile?.username
+                          : '나'
+                      }`}
+                </span>
+              </div>
+            </div>
+
+            <div className={remoteVideoStyle}>
+              {guestIn ? (
+                <>
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    playsInline
+                    className="relative w-full h-full object-contain rounded-2xl"
+                  />
+                  <div className="absolute bottom-44 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                    <span className="text-white text-lg">
+                      {isRemoteScreenShare
+                        ? `${guestProfile?.username}님의 공유화면`
+                        : guestProfile?.username}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <WaitingGuestRef />
+              )}
+            </div>
+
+            <div className={remoteWebcamVideoStlye}>
+              <video
+                ref={remoteWebcamVideoRef}
+                autoPlay
+                playsInline
+                className="relative w-full h-full object-contain rounded-2xl"
+              />
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
+                <span className="text-white text-lg">
+                  {isMyScreenShare && isRemoteScreenShare
+                    ? guestProfile?.username
+                    : `${
+                        !isMyScreenShare && isRemoteScreenShare
+                          ? guestProfile?.username
+                          : '나'
+                      }`}
+                </span>
+              </div>
+            </div>
+
+            <div className={controlButtonStyle}>
+              <ControlStreamRoom
+                micToggleHandler={micToggleHandler}
+                videoToggleHandler={videoToggleHandler}
+                startScreenShare={startScreenShare}
+              />
+            </div>
+
+            <div className={activityButtonStyle}>
+              <motion.div
+                role="none"
+                whileHover={{ scale: 1.02 }}
+                className={activityButtonSubStyle}
+                onClick={startScreenShare}
+              >
+                <div
+                  className={`${
+                    shareState === 0
+                      ? 'f-ic text-xl gap-4 font-semibold xl:min-w-[200px]'
+                      : ''
+                  }`}
+                >
+                  <div className="iconStyle bg-[#E0F5E6]">
+                    <ScreenShare />
+                  </div>
+                  <span
+                    className={`${
+                      shareState > 0 ? 'hidden' : 'xl:inline hidden'
+                    }`}
+                  >
+                    화면 공유하기
+                  </span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className={activityButtonSubStyle}
+              >
+                <div
+                  className={`${
+                    shareState === 0
+                      ? 'f-ic text-xl gap-4 font-semibold xl:min-w-[200px]'
+                      : ''
+                  }`}
+                >
+                  <div className="iconStyle bg-[#E0F5E6]">
+                    <Game />
+                  </div>
+                  <span
+                    className={`${
+                      shareState > 0 ? 'hidden' : 'xl:inline hidden'
+                    }`}
+                  >
+                    게임하기
+                  </span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className={activityButtonSubStyle}
+              >
+                <div
+                  className={`${
+                    shareState === 0
+                      ? 'f-ic text-xl gap-4 font-semibold xl:min-w-[200px]'
+                      : ''
+                  }`}
+                >
+                  <div className="iconStyle bg-[#E0F5E6]">
+                    <Youtube />
+                  </div>
+                  <span
+                    className={`${
+                      shareState > 0 ? 'hidden' : 'xl:inline hidden'
+                    }`}
+                  >
+                    유튜브 동시시청
+                  </span>
+                </div>
+              </motion.div>
+            </div>
+          </div> */}
 
           <div className="relative w-full h-full grid xl:grid-cols-6 xl:grid-rows-6 grid-cols-2 grid-rows-6 gap-4">
-            {/* 메인비디오 화면 */}
             <div className="relative w-full h-full xl:col-span-4 col-span-2 xl:row-span-5 row-span-5">
               <div className="relative w-full">
                 {guestIn ? (
@@ -853,7 +1132,7 @@ export const StreamRoom = () => {
                   </span>
                 </div>
               </div>
-              {/* 건배 */}
+
               <div
                 role="none"
                 onClick={sendToastMessage}
@@ -870,7 +1149,6 @@ export const StreamRoom = () => {
               </div>
             </div>
 
-            {/* 메인버튼 */}
             <div className={controlBtnClassName}>
               <ControlStreamRoom
                 micToggleHandler={micToggleHandler}
@@ -879,7 +1157,6 @@ export const StreamRoom = () => {
               />
             </div>
 
-            {/* sub first */}
             <div className={firstVideoClassName}>
               <video
                 ref={localVideoRef}
@@ -943,7 +1220,6 @@ export const StreamRoom = () => {
               </div>
             )}
 
-            {/* activity button */}
             <div className={activityBtnClassName}>
               <motion.div
                 role="none"
@@ -1014,6 +1290,7 @@ export const StreamRoom = () => {
           </div>
         </div>
       </div>
+
       <Modal
         isOpen={isOpenLeaveRoom}
         onClose={() => setIsOpenLeaveRoom(false)}

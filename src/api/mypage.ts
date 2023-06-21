@@ -7,6 +7,21 @@ interface ApiResponse {
   data: MypageProfileRooms;
 }
 
+interface MessageApiResponse {
+  status: number;
+  msg: string;
+  data: MessageData;
+}
+
+export interface MessageData {
+  messageId: number;
+  content: string;
+  isRead: boolean;
+  senderUsername: string;
+  receiverUsername: string;
+  createdAt: Date;
+}
+
 export interface MypageProfileRooms {
   userImage: string | undefined;
   username: string;
@@ -103,6 +118,11 @@ export interface DetailUserProfile {
   block: boolean;
 }
 
+interface Message {
+  receiverUsername: string;
+  content: string;
+}
+
 export const getDetailUserProfile = async (
   userId: string
 ): Promise<ApiResponse1 | undefined> => {
@@ -177,3 +197,43 @@ export const BlockHandler = async (
     throw error as Error;
   }
 };
+
+// 쪽지 보내기
+export const sendMessage = async (message: Message) => {
+  try {
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.post('/message/send', message)
+    return response
+  } catch (error: any) {
+    throw error as Error
+  }
+}
+
+// 쪽지 받기
+export const receivedMessage = async (params: string) => {
+  try {
+    const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get(`/message/${params}`)
+    return response
+  } catch (error: any) {
+    throw error as Error
+  }
+}
+
+// 보낸쪽지
+export const sentMessage = async () => {
+  try {
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.get('/message/sent')
+    return response
+  } catch (error: any) {
+    throw error as Error
+  }
+}
+
+// 받은쪽지 읽기
+export const readMessage = async (messageId: string) => {
+  try {
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.get(`/message/read/${messageId}`)
+    return response
+  } catch (error: any) {
+    throw error as Error
+  }
+}

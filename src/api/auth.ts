@@ -32,6 +32,10 @@ export interface ChangePwdInfo {
   password: string | undefined;
 }
 
+export interface DeletePwd {
+  password: string
+}
+
 export const SignupApi = async (signupInfo: SignupInfo) => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
@@ -148,32 +152,21 @@ export const getNewAccessKey = async () => {
   }
 };
 
-// // 토큰 인터셉터
-// axiosInstance.interceptors.response.use(
-//   // 1.성공시
-//   (response) => response,
+export const deleteAccount = async (password :DeletePwd) => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.post('/deleteAccount', password)
+    return response;
+  } catch (error: any) {
+    throw error as Error;
+  }
+}
 
-//   // 2.실패
-//   async (error) => {
-//     const originRequest = error.config;
-//     console.log('토큰 만료 인터셉터 오류 형태: ', error);
-
-//     // 토큰 만료 (메세지 확인)
-//     if (error.response.data.msg === '토큰만료') {
-//       const response = await getNewAccessKey();
-
-//       // 리프레시 토큰 요청 성공 (메세지 확인)
-//       if (response.data.msg === '토큰 성공') {
-//         const newAccessKey = response.headers.access_key;
-//         Cookies.set('accessKey', newAccessKey);
-
-//         // 요청 이어하기
-//         originRequest.headers.access_key = getNewAccessKey();
-//         return axios(originRequest);
-//       }
-//       // navigate('/signup')
-//       window.location.replace('/login');
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+export const deleteKakaoAccount = async () => {
+  try {
+    const token = Cookies.get('accessKey')
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.get(`/kakaoDeleteAccount?code=${token}`)
+    return response;
+  } catch (error: any) {
+    throw error as Error;
+  }
+}

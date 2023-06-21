@@ -16,6 +16,7 @@ import { LoginModal } from '../login/LoginModal';
 import { AddRoom } from './AddRoom';
 import { AuthModal } from './AuthModal';
 import { ProfileMenu } from './ProfileMenu';
+import { UserAlert } from './UserAlert';
 
 export const HeaderRightSection = () => {
   const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
@@ -29,26 +30,7 @@ export const HeaderRightSection = () => {
       setUserAtom(jwtDecode(user));
     }
   }, [user]);
-  let eventSource: EventSource;
-  // console.log(userAtom);
-  useEffect(() => {
-    if (user) {
-      eventSource = new EventSource(
-        `https://api.honsoolzzak.com/events/${userAtom?.auth.id}`
-      );
-    }
-    if (eventSource) {
-      eventSource.onmessage = () => {
-        // console.log('Received SSE event:', event.data);
-      };
-      eventSource.onerror = () => {
-        // console.error('SSE connection error:', error);
-      };
-    }
-    return () => {
-      eventSource.close();
-    };
-  }, []);
+ 
   const navigate = useNavigate();
   return (
     <motion.section
@@ -90,7 +72,8 @@ export const HeaderRightSection = () => {
             clickHandler={() => setIsOpenRoomCreate(true)}
             dimensions="mr-7 min-w-[185px] rounded-lg"
           />
-          <Notifications />
+          {/* <Notifications /> */}
+          <UserAlert />
           <ProfileMenu user={userAtom.sub} />
         </motion.div>
       ) : (
