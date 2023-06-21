@@ -13,5 +13,6 @@ export const isOpenYoutubeVideoModalAtom = atom<boolean>(false);
 
 export const isOpenLevelInfoModalAtom = atom<boolean>(false);
 
+export const isOpenMessageModalAtom = atom<boolean>(false);
 
 export const toastAtom = atom(false);
