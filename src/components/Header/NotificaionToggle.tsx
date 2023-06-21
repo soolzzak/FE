@@ -2,17 +2,43 @@ import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Notifications } from '../../assets/svgs/Notifications';
-import { userAlertAtom } from '../../store/mainpageStore';
+import {
+  userAlertAtom,
+  userNicknameAtom,
+  userTokenAtom,
+  usernameAtom,
+} from '../../store/mainpageStore';
 import { isOpenJoinRoomAtom } from '../../store/modalStore';
 
 export const NotificaionToggle = () => {
   const [userAlert, setuserAlert] = useAtom(userAlertAtom);
-  const [,setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
+  const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
   const [isOpen, setIsOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(0);
   const [alertCheck, setAlertCheck] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [username] = useAtom(userNicknameAtom);
+
+  const receivedTimeAlert = userAlert.map((item) => {
+    const currTime = new Date();
+    const receivedTime = new Date(item.time);
+    const modiTime = `${
+      receivedTime.getMonth() + 1
+    }월 ${receivedTime.getDate()}일`;
+    const timeDiffer: number = currTime.getTime() - receivedTime.getTime();
+    let timeShown: string;
+    if (timeDiffer < 60 * 1000) {
+      timeShown = '방금 전';
+    } else if (timeDiffer < 60 * 60 * 1000) {
+      timeShown = `${Math.floor(timeDiffer / (60 * 1000))}분 전`;
+    } else if (timeDiffer < 24 * 60 * 60 * 1000) {
+      timeShown = `${Math.floor(timeDiffer / (60 * 60 * 1000))}시간 전`;
+    } else {
+      timeShown = modiTime;
+    }
+    return timeShown;
+  });
 
   useEffect(() => {
     setShowAlert(userAlert.filter((item) => item.uncheck === true).length);
@@ -21,10 +47,11 @@ export const NotificaionToggle = () => {
   const onToggle = () => {
     setIsOpen(!isOpen);
     setuserAlert((prevData) =>
-    prevData.map((item) => ({
-      ...item,
-      uncheck: false,
-    })))
+      prevData.map((item) => ({
+        ...item,
+        uncheck: false,
+      }))
+    );
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -66,25 +93,31 @@ export const NotificaionToggle = () => {
 
       <div className="relative">
         {isOpen && (
-          <div className="absolute bg-[#F4F4F4] rounded-lg w-96 h-80 flex flex-col justify-center top-8 -right-6">
+          <div className={`${userAlert.length === 0 ? 'w-[300px] h-[200px]' : 'h-fit' } absolute bg-[#F4F4F4] rounded-lg w-96 max-h-[320px] f-col justify-center top-8 -right-6`}>
             {userAlert.length === 0 ? (
-              <div className="f-jic-col gap-2">
+              <div className="f-jic-col gap-2 text-lg font-medium">
                 <Notifications size="60" />
                 메세지가 없습니다!
               </div>
             ) : (
-              <div className="w-full h-full overflow-hidden rounded-2xl f-ic-col py-3 px-5">
-                <div className="w-full h-full overflow-y-auto">
+              <div className="w-full h-full overflow-hidden rounded-2xl f-ic-col pt-5 pb-3 px-5">
+                <div className="w-full h-full overflow-y-auto f-col justify-between">
                   {userAlert.map((item) => (
                     <div
                       role="none"
                       key={item.username}
-                      className="w-full h-1/3 border border-[#C2C2C2] bg-white cursor-pointer rounded-2xl mb-2 f-jic-col"
+                      className="w-full h-24 border border-[#C2C2C2] bg-white cursor-pointer rounded-2xl mb-2 flex items-center"
                       onClick={() => setIsOpenJoinRoom(true)}
                     >
-                      <p className="text-base text-[#252525] font-medium">
-                        {item.username}님이 방을 개설했습니다! 😀
-                      </p>
+                      <div className="w-full f-col pl-5">
+                        <p className="text-base text-[#252525] font-medium">
+                          {username}님, {item.username}님이 방을 개설했습니다!
+                        </p>
+                        <p>짝꿍과 가볍고 편하게 술 한잔 어때요?😀</p>
+                        <p className="text-sm text-[#9E9E9E] font-medium">
+                          {receivedTimeAlert[userAlert.indexOf(item)]}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>

@@ -10,7 +10,7 @@ interface ApiResponse {
 interface MessageApiResponse {
   status: number;
   msg: string;
-  data: MessageData;
+  data: MessageData[];
 }
 
 export interface MessageData {
@@ -110,6 +110,24 @@ interface ApiResponse1 {
   data: DetailUserProfile;
 }
 
+interface ApiResponse2 {
+  status: number;
+  msg: string;
+  data: FindUserName[];
+}
+
+export interface FindUserName {
+  alcohol: number;
+  alcoholDown: boolean;
+  alcoholUp: boolean;
+  blockedByCurrentUser: boolean;
+  followedByCurrentUser: boolean;
+  introduction: string;
+  userId: string;
+  userImage: string;
+  username: string;
+}
+
 export interface DetailUserProfile {
   userId: string;
   userImage: string | undefined;
@@ -206,49 +224,56 @@ export const BlockHandler = async (
 // 쪽지 보내기
 export const sendMessage = async (message: Message) => {
   try {
-    const response: AxiosResponse<ApiResponse1> = await axiosInstance.post('/message/send', message)
-    return response
+    const response: AxiosResponse<ApiResponse1> = await axiosInstance.post(
+      '/message/send',
+      message
+    );
+    return response;
   } catch (error: any) {
-    throw error as Error
+    throw error as Error;
   }
-}
+};
 
 // 쪽지 받기
-export const receivedMessage = async (params: string) => {
+export const receivedMessage = async () => {
   try {
-    const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get(`/message/${params}`)
+    const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get('/message/received')
     return response
   } catch (error: any) {
-    throw error as Error
+    throw error as Error;
   }
-}
+};
 
 // 보낸쪽지
 export const sentMessage = async () => {
   try {
-    const response: AxiosResponse<ApiResponse1> = await axiosInstance.get('/message/sent')
+    const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get('/message/sent')
     return response
   } catch (error: any) {
-    throw error as Error
+    throw error as Error;
   }
-}
+};
 
 // 받은쪽지 읽기
 export const readMessage = async (messageId: string) => {
   try {
-    const response: AxiosResponse<ApiResponse1> = await axiosInstance.get(`/message/read/${messageId}`)
-    return response
-  } catch (error: any) {
-    throw error as Error
-  }
-}
-// 유저찾기
-export const FindUser = async (username: string) => {
-  try {
     const response: AxiosResponse<ApiResponse1> = await axiosInstance.get(
+      `/message/read/${messageId}`
+    );
+    return response;
+  } catch (error: any) {
+    throw error as Error;
+  }
+};
+// 유저찾기
+export const FindUser = async (
+  username: string
+): Promise<ApiResponse2 | undefined> => {
+  try {
+    const response: AxiosResponse<ApiResponse2> = await axiosInstance.get(
       `/mypage/search?username=${username}`
     );
-    return response.data as ApiResponse1; // PUT 요청의 응답 데이터 처리
+    return response.data as ApiResponse2; // PUT 요청의 응답 데이터 처리
   } catch (error) {
     throw error as Error;
   }

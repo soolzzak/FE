@@ -48,9 +48,9 @@ export const Mypage = () => {
           <BadgeSection />
         </div>
       </div>
-      <button type="button" onClick={() => setIsOpenMessageModal(true)}>
+      {/* <button type="button" onClick={() => setIsOpenMessageModal(true)}>
         쪽지버튼 열기
-      </button>
+      </button> */}
       <Modal
         isOpen={isOpenMessageModal}
         onClose={() => setIsOpenMessageModal(false)}

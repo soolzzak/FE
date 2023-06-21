@@ -10,7 +10,12 @@ import { MonitorOn } from '../../assets/svgs/MonitorOn';
 import { ScreenShare } from '../../assets/svgs/ScreenShare';
 import { useModal } from '../../hooks/useModal';
 import { isOpenLeaveRoomAtom } from '../../store/modalStore';
-import { hostIdAtom, micOnAtom, monitorOnAtom } from '../../store/streamControlStore';
+import {
+  hostIdAtom,
+  micOnAtom,
+  monitorOnAtom,
+  screenShareOnAtom,
+} from '../../store/streamControlStore';
 import { ConfigDropDown } from './ConfigDropDown';
 
 interface JwtPayload {
@@ -24,16 +29,31 @@ interface JwtPayload {
   sub: string;
 }
 
-export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startScreenShare}: {micToggleHandler: () => void, videoToggleHandler: () => void, startScreenShare: () => void}) => {
-  const [micOn] = useAtom(micOnAtom)
-  const [monitorOn] = useAtom(monitorOnAtom)
+export const ControlStreamRoom = ({
+  micToggleHandler,
+  videoToggleHandler,
+  startScreenShare,
+  isMyScreenShare,
+  stopShare,
+  gameHasStarted,
+  youtubeIsOn,
+}: {
+  micToggleHandler: () => void;
+  videoToggleHandler: () => void;
+  startScreenShare: () => void;
+  isMyScreenShare: boolean;
+  stopShare: () => void;
+  gameHasStarted: boolean;
+  youtubeIsOn: boolean;
+}) => {
+  const [micOn] = useAtom(micOnAtom);
+  const [monitorOn] = useAtom(monitorOnAtom);
   const [micHover, setMicHover] = useState(false);
   const [cameraHover, setCameraHover] = useState(false);
   const [screenHover, setScreenHover] = useState(false);
   const [settingHover, setSettingHover] = useState(false);
   const [closeHover, setCloseHover] = useState(false);
-  
-  let userId: string | undefined = ""
+  let userId: string | undefined = '';
   const getCookie = Cookies.get('accessKey');
   if (getCookie) {
     userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
@@ -50,18 +70,25 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
         onClick={micToggleHandler}
         onMouseOver={() => setMicHover(true)}
         onMouseOut={() => setMicHover(false)}
-        className={`iconStyle ${micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'} shadow`}
+        className={`iconStyle ${
+          micOn ? 'bg-[#C0C0C0]' : 'bg-[#808080]'
+        } shadow`}
       >
         {micOn ? (
           <LuMic className="text-3xl text-white" />
         ) : (
           <LuMicOff className="text-3xl text-white" />
         )}
-        {micHover ? (
-          <div className="absolute bottom-28 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
-            Microphone
+        {micHover && micOn && (
+          <div className="min-w-max absolute bottom-28 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+            마이크 켜기
           </div>
-        ) : null}
+        )}
+        {micHover && !micOn && (
+          <div className="min-w-max absolute bottom-28 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+            마이크 끄기
+          </div>
+        )}
       </div>
       <div
         role="none"
@@ -73,53 +100,66 @@ export const ControlStreamRoom = ({micToggleHandler, videoToggleHandler, startSc
         } relative shadow`}
       >
         {monitorOn ? <MonitorOn /> : <MonitorOff />}
-        {cameraHover ? (
-          <div className="absolute -top-11 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
-            Camera
+        {cameraHover && monitorOn && (
+          <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+            카메라 켜기
           </div>
-        ) : null}
+        )}
+        {cameraHover && !monitorOn && (
+          <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+            카메라 끄기
+          </div>
+        )}
       </div>
 
-      {/* <div
-        role="none"
-        onClick={startScreenShare}
-        onMouseOver={() => setScreenHover(true)}
-        onMouseOut={() => setScreenHover(false)}
-        className="iconStyle relative bg-[#C0C0C0]"
-      >
-        <ScreenShare />
-        {screenHover ? (
-          <div className="w-32 absolute -top-10 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
-            Screen Share
-          </div>
-        ) : null}
-      </div> */}
+      {!gameHasStarted && !youtubeIsOn && (
+        <div
+          role="none"
+          onClick={isMyScreenShare ? stopShare : startScreenShare}
+          onMouseOver={() => setScreenHover(true)}
+          onMouseOut={() => setScreenHover(false)}
+          className={`iconStyle ${
+            isMyScreenShare ? 'bg-[#808080]' : 'bg-[#C0C0C0]' 
+          } relative shadow`}
+        >
+          <ScreenShare />
+          {screenHover && !isMyScreenShare && (
+            <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+              화면공유 켜기
+            </div>
+          )}
+          {screenHover && isMyScreenShare && (
+            <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+              화면공유 끄기
+            </div>
+          )}
+        </div>
+      )}
 
       {hostId === userId ? (
         <div
-        onMouseOver={() => setSettingHover(true)}
-        onMouseOut={() => setSettingHover(false)}
-        className="iconStyle bg-[#C0C0C0] shadow"
-      >
-        <ConfigDropDown />
-        {settingHover ? (
-          <div className="absolute bottom-28 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
-            Setting
-          </div>
-        ) : null}
-      </div>
+          onMouseOver={() => setSettingHover(true)}
+          onMouseOut={() => setSettingHover(false)}
+          className="iconStyle bg-[#C0C0C0] shadow"
+        >
+          <ConfigDropDown />
+          {settingHover ? (
+            <div className="min-w-max absolute bottom-28 text-white text-center px-3 py-1 bg-[#626262] rounded-md">
+              설정
+            </div>
+          ) : null}
+        </div>
       ) : null}
-      
 
       <div
         onMouseOver={() => setCloseHover(true)}
         onMouseOut={() => setCloseHover(false)}
-        className='shadow rounded-full'
+        className="shadow rounded-full relative"
       >
         <Exit setIsOpenLeaveRoom={setIsOpenLeaveRoom} />
         {closeHover ? (
-          <div className="absolute bottom-28 text-white text-center px-2 py-1 z-auto bg-[#626262] rounded-md">
-            Close
+          <div className="min-w-max absolute bottom-[72px] -right-6 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+            방에서 나가기
           </div>
         ) : null}
       </div>
