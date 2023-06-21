@@ -173,7 +173,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
         <div className="flex-col">
           <div className="flex justify-center md:justify-center md:mb-5 items-center md:flex md:items-start">
             {editMode ? (
-              <div className="flex justify-center items-center">
+              <div className="flex flex-col justify-center items-center">
                 <input
                   className="md:w-[211px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
                   type="text"
@@ -183,7 +183,9 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
                 />
 
                 {modifyUserName?.length >= MAX_CHARACTERS && (
-                  <p className="text-red-500">10글자 이내로 작성해주세요.</p>
+                  <p className="text-red-500 text-center">
+                    10글자 이내로 작성해주세요.
+                  </p>
                 )}
               </div>
             ) : (
@@ -195,7 +197,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
           <div className="f-jic">
-            <div className="border-t border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
+            <div className="border-t mt-2 border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
           </div>
           <div className="md:ml-10 ml-5">
             <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
@@ -216,7 +218,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
 
-          <div className="flex flex-col md:ml-10">
+          <div className="flex flex-col md:ml-10 mt-6">
             <p className="font-semibold text-lg text-[#7C7C7C] hidden sm:block">
               이메일
             </p>

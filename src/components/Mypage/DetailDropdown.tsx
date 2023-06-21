@@ -79,9 +79,18 @@ export const DetailDropdown = ({
 
       <div className="relative font-semibold">
         {isOpen && (
-          <div className="bg-white rounded-lg w-20 h-24 flex flex-col justify-center items-center absolute z-10 right-0 top-0 border  ">
+          <div className="bg-white rounded-lg w-[113px] h-[114px] flex flex-col justify-center items-center absolute z-10 right-0 top-0 border  ">
             <div
-              className="border-b-2 w-full basis-1/2 flex items-center justify-center relative z-20 text-[#F82D2D]"
+              className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20 text-[#000000]"
+              onClick={handleReportClick}
+              onKeyDown={handleKeyDown}
+              role="button"
+              tabIndex={0}
+            >
+              쪽지보내기
+            </div>
+            <div
+              className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20 text-[#F82D2D]"
               onClick={handleBlockClick}
               onKeyDown={handleKeyDown}
               role="button"
@@ -90,7 +99,7 @@ export const DetailDropdown = ({
               {userinfo?.block ? '차단해제' : '차단하기'}
             </div>
             <div
-              className=" basis-1/2 flex items-center justify-center relative z-20 text-[#F82D2D]"
+              className=" basis-1/3 flex items-center justify-center relative z-20 text-[#F82D2D]"
               onClick={handleReportClick}
               onKeyDown={handleKeyDown}
               role="button"
