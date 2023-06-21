@@ -124,10 +124,13 @@ export const StreamRoom = () => {
   const [numberShare, setNumberShare] = useState(0);
   const [, setHostIdcheck] = useAtom(hostIdAtom);
   const [idiom, setIdiom] = useState('');
-  const [gamecount, setgameCount] = useState('');
+  const [gamecount, setgameCount] = useState(0);
+  const [startgamecount, setStartgameCount] = useState(0);
 
   const [isGamePaused, setGamePaused] = useState(false);
   const [gameHasStarted, setGameHasStarted] = useState(false);
+  const [gameInfo, setGameInfo] = useState(false);
+
   const [youtubeIsOn, setYoutubeIsOn] = useState(false);
 
   const waitForGuestWarning = () => {
@@ -516,7 +519,7 @@ export const StreamRoom = () => {
       }
     }
   }, [isRemoteScreenShare, remoteWebcamStream]);
-  console.log('outside', remoteWebcamStream);
+  // console.log('outside', remoteWebcamStream);
 
   useEffect(() => {
     if (!gameHasStarted) {
@@ -608,18 +611,24 @@ export const StreamRoom = () => {
             setGameHasStarted(true);
             // console.log(message.idiom);
             // console.log(typeof message.idiom);
-            setIdiom(message.idiom);
+
+            setIdiom(message.word);
+            console.log(idiom.length);
             setgameCount(message.count);
+            setStartgameCount(message.startCount);
+
             break;
 
           case 'pauseGame':
             console.log('received pausegame message', message);
-            setIdiom(message.idiom);
+            // setgameCount(message.count);
+            setIdiom(message.word);
             break;
 
           case 'stopGame':
             console.log('received stopgame message', message);
-            setIdiom(message.idiom);
+            setGameHasStarted(false);
+            setIdiom(message.word);
             break;
 
           case 'startShare':
@@ -1168,38 +1177,105 @@ export const StreamRoom = () => {
                 />
               )}
 
+              {/* 게임설명 */}
+
+              {/* {gameInfo && (
+                <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
+                  <div className="relative flex justify-center items-center">
+                    <GameNote />
+
+                    <div className="absolute top-50 mb-6">
+                      <p
+                        style={{ fontFamily: 'KBO-Dia-Gothic_bold' }}
+                        className="text-[#202020] text-5xl font-bold text-center mb-10"
+                      >
+                        이어말하기 게임
+                      </p>
+                      <div
+                        style={{
+                          fontFamily: 'KBO-Dia-Gothic_bold',
+                          fontWeight: 300,
+                        }}
+                        className="text-[#FF7A00] text-2xl mb-2"
+                      >
+                        게임방법
+                      </div>
+                      <div className="flex flex-col items-center ">
+                        <div className="text-lg font-light mb-4">
+                          1. 화면에 네 글자 중{' '}
+                          <span style={{ fontWeight: 'bold' }}>
+                            앞의 두 글자
+                          </span>
+                          가 나타납니다. <br />
+                          2. 한 명씩 돌아가면서{' '}
+                          <span style={{ fontWeight: 'bold' }}>
+                            나머지 두글자
+                          </span>
+                          를 말해서{' '}
+                          <span style={{ fontWeight: 'bold' }}>
+                            네 글자의 정답
+                          </span>
+                          을 맞춰주세요!
+                          <br /> 3. 정답과 일치하면 성공! 다르면{' '}
+                          <span style={{ fontWeight: 'bold' }}>실패 ~!</span>
+                        </div>
+                        <button
+                          type="button"
+                          className="bg-[#FF8A00] text-4xl font-bold text-[#FFFFFF] w-[231.65px] h-[61.04px] rounded-[71.9141px]"
+                          onClick={sendstartGameMessage}
+                          style={{ fontFamily: 'KBO-Dia-Gothic_bold' }}
+                        >
+                          START
+                        </button>
+                      </div>
+                      <div className="absolute left-[250px] ml-56  -bottom-28">
+                        <GamePencil />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )} */}
+
               {gameHasStarted && (
                 <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
                   <div
                     role="none"
                     onClick={sendpauseGameMessage}
-                    className="absolute left-0 top-0 drop-shadow-xl flex items-center justify-center ml-8 mt-5 bg-[#FF8A00] text-2xl text-[#FFFFFF] rounded-[71px] w-[119.73px] h-[42.27px]"
-                    style={{ fontFamily: 'KBO Dia Gothic' }}
+                    className={`absolute left-0 top-0 drop-shadow-xl flex items-center justify-center ml-8 mt-5 bg-[#FF8A00] text-2xl text-[#FFFFFF] rounded-[71px] 
+                      ${
+                        idiom === '게임 멈춤!' ? 'w-[127px]' : 'w-[119.73px]'
+                      } h-[42.27px]`}
                   >
-                    {isGamePaused ? '게임재시작' : '게임중지'}
+                    {idiom === '게임 멈춤!' ? '게임 재시작' : '게임 중지'}
                   </div>
 
-                  <div role="none" onClick={sendstopGameMessage}>
-                    게임 끝
-                  </div>
                   <div className="relative flex justify-center items-center">
                     <div className="relative flex justify-center items-center">
                       <GameNote />
+
+                      {startgamecount !== 0 && (
+                        <div className="border-2 rounded-full border-[#FF6700] w-[158.07px] h-[158.07px] absolute top-50 right-50 flex justify-center items-center">
+                          <div className="text-8xl text-[#FF6700] font-bold">
+                            {startgamecount}
+                          </div>
+                        </div>
+                      )}
 
                       {idiom && (
                         <div className="absolute top-50 right-50 text-8xl">
                           {idiom}
                         </div>
                       )}
-                      {gamecount && (
-                        <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 left-[270px] ml-80 flex justify-center items-center">
-                          <div className="text-6xl text-[#FF6700]">
+
+                      {gamecount !== 0 && (
+                        <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 lg:left-[270px] -left-10 lg:ml-80 ml-32 flex justify-center items-center">
+                          <div className="text-6xl text-[#FF6700] font-bold">
                             {gamecount}
                           </div>
                         </div>
                       )}
                     </div>
-                    <div className="absolute -left-10 -top-2">
+                    <div className="absolute -left-10 -top-2 hidden lg:block">
                       <GameScissors />
                     </div>
                     <div className="absolute -bottom-5 -left-7">
@@ -1222,7 +1298,7 @@ export const StreamRoom = () => {
               />
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
                 <span className="text-white text-lg">
-                      {guestProfile?.username}
+                  {guestProfile?.username}
                 </span>
               </div>
             </div>
@@ -1268,12 +1344,21 @@ export const StreamRoom = () => {
                   </div>
                 </motion.div>
               )}
-
+              {/* 
               {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className={activityButtonSubStyle}
-                  onClick={sendstartGameMessage}
+                  // onClick={
+                  //   gameHasStarted ? sendstopGameMessage : setGameInfo(true)
+                  // }
+                  onClick={() => {
+                    if (!gameHasStarted) {
+                      setGameInfo(true);
+                    } else {
+                      sendstopGameMessage();
+                    }
+                  }}
                 >
                   <div
                     className={`${
@@ -1299,7 +1384,7 @@ export const StreamRoom = () => {
                     </span>
                   </div>
                 </motion.div>
-              )}
+              )} */}
 
               {!(isMyScreenShare || isRemoteScreenShare) && !gameHasStarted && (
                 <motion.div
@@ -1363,6 +1448,18 @@ export const StreamRoom = () => {
         hasOverlay
       >
         <ModifyRoomModal />
+      </Modal>
+      <Modal
+        isOpen={detailModalIsOpen}
+        onClose={() => setDetailModalIsOpen(false)}
+        hasOverlay
+      >
+        {guestProfile && (
+          <DetailUserInfoModal
+            userId={guestProfile?.userId}
+            onClose={() => setDetailModalIsOpen(false)}
+          />
+        )}
       </Modal>
       <Modal
         isOpen={detailModalIsOpen}

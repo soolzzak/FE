@@ -312,6 +312,7 @@ export const SignupInput = () => {
             handleInputChange={usernameHandler}
             handleValidation={() => usernameErrHandler(username)}
           />
+
           <button
             type="button"
             className="absolute w-16 h-7 top-11 right-3 bg-primary-100 rounded font-bold text-[14px] text-primary-300 text-center flex justify-center items-center cursor-pointer hover:bg-opacity-80"
