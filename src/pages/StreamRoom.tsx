@@ -28,6 +28,7 @@ import { ModalInput } from '../components/common/ModalInput';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
 import { userTokenAtom } from '../store/mainpageStore';
 import {
+  isOpenIceBreakerModalAtom,
   isOpenKickoutModalAtom,
   isOpenLeaveRoomAtom,
   isOpenModifyRoomAtom,
@@ -38,7 +39,6 @@ import {
   hostIdAtom,
   micOnAtom,
   monitorOnAtom,
-  screenShareOnAtom,
 } from '../store/streamControlStore';
 import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
 
@@ -47,7 +47,15 @@ import { GameNote } from '../assets/svgs/GameNote';
 import { GamePencil } from '../assets/svgs/GamePencil';
 import { GameScissors } from '../assets/svgs/GameScissors';
 import { Camera } from '../assets/svgs/Camera';
+
+import { YoutubeModal } from '../components/StreamRoom/Modals/YoutubeModal';
+import { PhotoConfirmModal } from '../components/StreamRoom/Modals/PhotoConfirmModal';
+
+import { GameUnderline } from '../assets/svgs/GameUnderline';
 import { IceBreaking } from '../assets/svgs/Icebreaking';
+import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
+import { IceGame } from '../assets/svgs/IceGame';
+import { IceGameQ } from '../assets/svgs/IceGameQ';
 
 export interface JwtPayload {
   auth: {
@@ -88,10 +96,10 @@ export const StreamRoom = () => {
   const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
 
   const navigate = useNavigate();
-  const [peerConnection] = useState<RTCPeerConnection>(
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
-  const [peerConnection1] = useState<RTCPeerConnection>(
+  const [peerConnection1, setPeerConnection1] = useState<RTCPeerConnection>(
     new RTCPeerConnection(PeerConnectionConfig)
   );
   const [socket] = useState<WebSocket>(new WebSocket(signalingServerUrl));
@@ -110,6 +118,8 @@ export const StreamRoom = () => {
   const [userId, setUserId] = useState(userInfo?.auth.id);
   const [isHost, setIsHost] = useState(false);
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
+  const [myWebcamMediaStream, setMyWebcamMediaStream] =
+    useState<MediaStream | null>(null);
   const [remoteMediaStream, setRemoteMediaStream] =
     useState<MediaStream | null>(null);
   const [remoteWebcamStream, setRemoteWebcamStream] =
@@ -120,10 +130,15 @@ export const StreamRoom = () => {
   const [youtubeModalIsOpen, setYoutubeModalIsOpen] = useAtom(
     isOpenYoutubeVideoModalAtom
   );
+  const [openConfirmModalIsOpen, setOpenConfirmModalIsOpen] = useState(false);
+  const [waitingForPhotoConfirm, setWaitingForPhotoConfirm] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [numberShare, setNumberShare] = useState(0);
   const [, setHostIdcheck] = useAtom(hostIdAtom);
   const [idiom, setIdiom] = useState('');
+
+  const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
+
   const [gamecount, setgameCount] = useState(0);
   const [startgamecount, setStartgameCount] = useState(0);
 
@@ -131,8 +146,14 @@ export const StreamRoom = () => {
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [gameInfo, setGameInfo] = useState(false);
 
-  const [youtubeIsOn, setYoutubeIsOn] = useState(false);
+  const [iceBreakerModalIsOpen, setIceBreakerModalIsOpen] = useAtom(
+    isOpenIceBreakerModalAtom
+  );
+  const [iceBreakerStarted, setIceBreakerStarted] = useState(false);
+  const [iceQuestion, setIceQuestion] = useState('');
 
+  const [youtubeIsOn, setYoutubeIsOn] = useState(false);
+  const [takePicture, setTakePicture] = useState(false);
   const waitForGuestWarning = () => {
     toast.error('짝꿍을 기다려 주세요!');
   };
@@ -166,7 +187,8 @@ export const StreamRoom = () => {
     const answerSDP = new RTCSessionDescription(message.sdp);
     setGuestIn(true);
     try {
-      // console.log('setRemoteDescription', message.sdp);
+      console.log('setRemoteDescription', message.sdp);
+      console.log('peerconnection state', peerConnection.connectionState);
       if (peerConnection.connectionState !== 'connected') {
         await peerConnection.setRemoteDescription(answerSDP);
         const answer = await peerConnection.createAnswer();
@@ -182,7 +204,7 @@ export const StreamRoom = () => {
 
         // console.log('sending sdp', peerConnection.localDescription);
         // console.log('added answer to peerConnection', peerConnection);
-        // console.log('sending answer to received offer', response);
+        console.log('sending answer to received offer', response);
         socket.send(JSON.stringify(response));
       } else {
         await peerConnection1.setRemoteDescription(answerSDP);
@@ -199,7 +221,7 @@ export const StreamRoom = () => {
 
         // console.log('sending sdp', peerConnection1.localDescription);
         // console.log('added answer to peerConnection', peerConnection1);
-        // console.log('sending answer to received offer', response);
+        console.log('sending answer to received offer', response);
         socket.send(JSON.stringify(response));
       }
     } catch (error) {
@@ -208,22 +230,10 @@ export const StreamRoom = () => {
   };
 
   const handleAnswerMessage = async (message: RTCSessionMessage) => {
-    // console.log('have received answer', message.sdp);
-
     try {
-      // console.log('setRemotelDescription', message.sdp);
-
       if (peerConnection.connectionState !== 'connected') {
-        // console.log(
-        //   'using received answer for Remote peer description',
-        //   peerConnection
-        // );
         await peerConnection.setRemoteDescription(message.sdp);
       } else {
-        // console.log(
-        //   'using received answer for Remote peer description1',
-        //   peerConnection1
-        // );
         await peerConnection1.setRemoteDescription(message.sdp);
       }
     } catch (error) {
@@ -257,7 +267,7 @@ export const StreamRoom = () => {
         sdp: peerConnection.localDescription,
       };
       // console.log('sending sdp', peerConnection.localDescription);
-      // console.log('sending offer', message);
+      console.log('sending offer', message);
       socket.send(JSON.stringify(message));
     } catch (error) {
       // toast.error('Error creating offer:', error);
@@ -270,7 +280,7 @@ export const StreamRoom = () => {
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         // Send ICE candidate to the remote peer via signaling channel
-        // console.log('sending ice candidate', event.candidate);
+        console.log('sending ice candidate', event.candidate);
         const message = {
           from: userId,
           data: Number(roomNum),
@@ -348,6 +358,7 @@ export const StreamRoom = () => {
       // console.log('stream담기나?', stream);
       mediaStream = stream;
       setMyMediaStream(stream);
+      setMyWebcamMediaStream(stream);
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -365,7 +376,7 @@ export const StreamRoom = () => {
       data: roomNum,
     });
     socket.send(message);
-    // console.log('send join message');
+    console.log('send join message');
   };
 
   const createScreenSharePeerConnection = async () => {
@@ -430,6 +441,79 @@ export const StreamRoom = () => {
     });
   };
 
+  const sendShareOffMessage = () => {
+    // console.log('click share Off');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'stopShare',
+        data: roomNum,
+      });
+      // console.log('stopeShare sent', message);
+      socket.send(message);
+    }
+  };
+
+  const stopShare = () => {
+    if (localVideoRef.current) {
+      if (localVideoRef.current.srcObject) {
+        const stream = localVideoRef.current.srcObject as MediaStream;
+        console.log('stream share', stream);
+        stream.getTracks().forEach((track) => track.stop());
+
+        sendShareOffMessage();
+        if (localVideoRef.current) {
+          setShareView(null);
+          setIsMyScreenShare(false);
+          setNumberShare((prev) => prev - 1);
+          localVideoRef.current.srcObject = myMediaStream;
+          // console.log('mediastream 바꾸자0', myMediaStream);
+        }
+        // console.log('mediastream 바꾸자1', myMediaStream);
+        peerConnection.getSenders().forEach((sender) => {
+          // console.log('mediastream 바꾸자2', myMediaStream);
+          if (sender.track?.kind === 'video' && myMediaStream) {
+            // console.log('mediastream 바꾸자3', myMediaStream);
+            sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
+            // console.log('if mediaStream', myMediaStream);
+          }
+        });
+      }
+    }
+  };
+
+  const sendstopGameMessage = () => {
+    setGameHasStarted(false);
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'stopGame',
+        data: roomNum,
+      });
+      console.log('toast sent', message);
+      // showToastHandler();
+      socket.send(message);
+    }
+  };
+  const closePreviousSession = async () => {
+    if (remoteVideoRef.current) {
+      if (remoteVideoRef.current.srcObject) {
+        remoteVideoRef.current.srcObject as MediaStream;
+        // stream.getTracks().forEach((track) => track.stop());
+      }
+      remoteVideoRef.current.srcObject = null;
+    }
+    if (isMyScreenShare) stopShare();
+    setRemoteMediaStream(null);
+    setIsRemoteScreenShare(() => false);
+    setRemoteMonitorOn(() => false);
+    setGuestIn(() => false);
+    setGuestProfile(() => undefined);
+    setGameHasStarted(() => false);
+    setYoutubeIsOn(() => false);
+    // await createPeerConnection();
+    // await createScreenSharePeerConnection();
+  };
   const closeMediaStream = () => {
     // console.log('closing');
     if (localVideoRef.current) {
@@ -460,7 +544,10 @@ export const StreamRoom = () => {
         stream.getTracks().forEach((track) => track.stop());
       }
     }
+    myWebcamMediaStream?.getTracks().forEach((track) => track.stop());
+    myMediaStream?.getTracks().forEach((track) => track.stop());
     peerConnection.close();
+    peerConnection1.close();
     socket.close();
   };
   const seekToTime = (time: number) => {
@@ -548,6 +635,34 @@ export const StreamRoom = () => {
       }
     }
   }, [gameHasStarted]);
+
+  useEffect(() => {
+    if (!gameInfo) {
+      console.log('recover');
+      if (remoteVideoRef.current) {
+        console.log('recover', remoteMediaStream);
+        remoteVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+    if (gameInfo) {
+      if (remoteWebcamVideoRef.current) {
+        remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+  }, [gameInfo]);
+
+  useEffect(() => {
+    if (iceBreakerModalIsOpen) {
+      const timer = setTimeout(() => {
+        setIceBreakerModalIsOpen(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+
+    console.log('질문', iceQuestion);
+  }, [iceQuestion, iceBreakerModalIsOpen]);
+
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
@@ -555,8 +670,12 @@ export const StreamRoom = () => {
       };
 
       socket.onclose = () => {
+        console.log('WebSocket connection closed');
+        // closeMediaStream();
+
         // console.log('WebSocket connection closed');
         closeMediaStream();
+
         // navigate('/');
       };
 
@@ -597,6 +716,16 @@ export const StreamRoom = () => {
             console.log('received toast message', message);
             showToastHandler();
             break;
+          case 'sendPicture':
+            console.log('received sendPicture message', message);
+            setOpenConfirmModalIsOpen(true);
+
+            break;
+          case 'confirmPicture':
+            console.log('received confirmPicture message', message);
+            setTakePicture(true);
+            setWaitingForPhotoConfirm(false);
+            break;
           case 'youtube':
             setNumberShare((prev) => prev + 1);
             console.log('received youtube message', message);
@@ -620,6 +749,7 @@ export const StreamRoom = () => {
 
           case 'startGame':
             console.log('received startgame message', message);
+            setGameInfo(false);
             setGameHasStarted(true);
             // console.log(message.idiom);
             // console.log(typeof message.idiom);
@@ -629,6 +759,11 @@ export const StreamRoom = () => {
             setgameCount(message.count);
             setStartgameCount(message.startCount);
 
+            break;
+
+          case 'gameInfo':
+            console.log('received gameInfo message', message);
+            setGameInfo(true);
             break;
 
           case 'pauseGame':
@@ -643,11 +778,41 @@ export const StreamRoom = () => {
             setIdiom(message.word);
             break;
 
+          case 'iceBreaker':
+            console.log('received icegame message', message);
+            setIceBreakerStarted(true);
+            console.log(message.question);
+            setIceQuestion(message.question);
+            setIceBreakerModalIsOpen(true);
+            break;
+
           case 'startShare':
             // console.log('received startShare message', message);
             setIsRemoteScreenShare(true);
             setNumberShare((prev) => prev + 1);
 
+            break;
+          case 'kick':
+            console.log('received kick message', message);
+            closeMediaStream();
+            toast.error('강퇴되었습니다.');
+            navigate('/');
+            break;
+          case 'hostDisconnect':
+            console.log('received host disconnect message', message);
+            console.log(gameHasStarted);
+            if (gameHasStarted) sendstopGameMessage();
+            closeMediaStream();
+            toast('방장이 퇴장하였습니다.');
+            navigate('/');
+            break;
+          case 'guestDisconnect':
+            setPeerConnection(new RTCPeerConnection(PeerConnectionConfig));
+            setPeerConnection1(new RTCPeerConnection(PeerConnectionConfig));
+            console.log('received guest disconnect message', message);
+            if (gameHasStarted) sendstopGameMessage();
+            toast('상대방이 퇴장하였습니다');
+            closePreviousSession();
             break;
 
           case 'stopShare':
@@ -658,6 +823,7 @@ export const StreamRoom = () => {
             break;
 
           case 'join':
+            console.log('received join message');
             setSocketIsOnline(true);
             message.data = await getRoom(params as string);
             setHostIdcheck(message.data.hostId);
@@ -741,29 +907,45 @@ export const StreamRoom = () => {
         type: 'toast',
         data: roomNum,
       });
-      // console.log('toast sent', message);
+      console.log('toast sent', message);
       showToastHandler();
       socket.send(message);
     }
   };
 
-  // const sendstartGameMessage = () => {
-  //   if (!guestProfile) {
-  //     toast.error('짝꿍을 기다려 주세요!');
-  //   } else {
-  //     setGameHasStarted(true);
-  //     if (socket) {
-  //       const message = JSON.stringify({
-  //         from: userId,
-  //         type: 'startGame',
-  //         data: roomNum,
-  //       });
-  //       console.log('toast sent', message);
-  //       // showToastHandler();
-  //       socket.send(message);
-  //     }
-  //   }
-  // };
+  const sendstartGameMessage = () => {
+    if (!guestProfile) {
+      toast.error('짝꿍을 기다려 주세요!');
+    } else {
+      setGameInfo(false);
+      setGameHasStarted(true);
+      if (socket) {
+        const message = JSON.stringify({
+          from: userId,
+          type: 'startGame',
+          data: roomNum,
+        });
+        console.log('toast sent', message);
+        // showToastHandler();
+        socket.send(message);
+      }
+    }
+  };
+
+  const sendGameInfoMessage = () => {
+    // console.log('click toast');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'gameInfo',
+        data: roomNum,
+      });
+      setGameInfo(true);
+      // console.log('toast sent', message);
+      // showToastHandler();
+      socket.send(message);
+    }
+  };
 
   const sendpauseGameMessage = () => {
     if (socket) {
@@ -779,16 +961,14 @@ export const StreamRoom = () => {
     }
   };
 
-  const sendstopGameMessage = () => {
-    setGameHasStarted(false);
+  const sendIceGameMessage = () => {
     if (socket) {
       const message = JSON.stringify({
         from: userId,
-        type: 'stopGame',
+        type: 'iceBreaker',
         data: roomNum,
       });
-      console.log('toast sent', message);
-      // showToastHandler();
+      console.log('icegame sent', message);
       socket.send(message);
     }
   };
@@ -802,18 +982,6 @@ export const StreamRoom = () => {
         data: roomNum,
       });
       // console.log('startShare sent', message);
-      socket.send(message);
-    }
-  };
-  const sendShareOffMessage = () => {
-    // console.log('click share Off');
-    if (socket) {
-      const message = JSON.stringify({
-        from: userId,
-        type: 'stopShare',
-        data: roomNum,
-      });
-      // console.log('stopeShare sent', message);
       socket.send(message);
     }
   };
@@ -839,7 +1007,7 @@ export const StreamRoom = () => {
           type: 'ping',
           data: roomNum,
         });
-        // console.log('sending ping', message);
+        console.log('sending ping', message);
         socket.send(message);
       }, 30000);
     }
@@ -865,7 +1033,7 @@ export const StreamRoom = () => {
   //   socket.send(message);
 
   // 화면공유
-  const [shareView, setShareView] = useState<MediaStream | null>(null); // 화면 공유 스트림 상태 추가
+
   // console.log('shareView', shareView);
 
   useEffect(() => {
@@ -910,34 +1078,6 @@ export const StreamRoom = () => {
       socket.send(JSON.stringify(message));
     } catch (error) {
       // console.error('Error creating offer:', error);
-    }
-  };
-
-  const stopShare = () => {
-    if (localVideoRef.current) {
-      if (localVideoRef.current.srcObject) {
-        const stream = localVideoRef.current.srcObject as MediaStream;
-        console.log('stream share', stream);
-        stream.getTracks().forEach((track) => track.stop());
-
-        sendShareOffMessage();
-        if (localVideoRef.current) {
-          setShareView(null);
-          setIsMyScreenShare(false);
-          setNumberShare((prev) => prev - 1);
-          localVideoRef.current.srcObject = myMediaStream;
-          // console.log('mediastream 바꾸자0', myMediaStream);
-        }
-        // console.log('mediastream 바꾸자1', myMediaStream);
-        peerConnection.getSenders().forEach((sender) => {
-          // console.log('mediastream 바꾸자2', myMediaStream);
-          if (sender.track?.kind === 'video' && myMediaStream) {
-            // console.log('mediastream 바꾸자3', myMediaStream);
-            sender.replaceTrack(myMediaStream.getVideoTracks()[0]);
-            // console.log('if mediaStream', myMediaStream);
-          }
-        });
-      }
     }
   };
 
@@ -1103,7 +1243,24 @@ export const StreamRoom = () => {
       'w-full h-full gap-4 col-start-1 col-span-2 row-start-6 row-span-1 f-ic justify-start';
     activityButtonSubStyle = '';
   }
-
+  const sendTakePictureOffer = () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'sendPicture',
+      data: roomNum,
+    });
+    console.log('sending photo offer', message);
+    socket.send(message);
+  };
+  const sendPhotoConfirmMessage = () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'confirmPicture',
+      data: roomNum,
+    });
+    console.log('sending confirmation to photo offer', message);
+    socket.send(message);
+  };
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
@@ -1123,7 +1280,7 @@ export const StreamRoom = () => {
             )}
           </div>
 
-          {!youtubeIsOn && !gameHasStarted && (
+          {!youtubeIsOn && !gameHasStarted && !gameInfo && (
             <div className="relative">
               <div
                 role="none"
@@ -1180,7 +1337,7 @@ export const StreamRoom = () => {
             </div>
 
             <div className={remoteVideoStyle}>
-              {guestIn && !youtubeIsOn && !gameHasStarted && (
+              {guestIn && !youtubeIsOn && !gameHasStarted && !gameInfo && (
                 <>
                   <video
                     ref={remoteVideoRef}
@@ -1198,7 +1355,7 @@ export const StreamRoom = () => {
                 </>
               )}
 
-              {!guestIn && !youtubeIsOn && !gameHasStarted && (
+              {!guestIn && !youtubeIsOn && !gameHasStarted && !gameInfo && (
                 <WaitingGuestRef />
               )}
               {youtubeIsOn && userId && (
@@ -1215,64 +1372,68 @@ export const StreamRoom = () => {
               )}
 
               {/* 게임설명 */}
-
-              {/* {gameInfo && (
+              {gameInfo && (
                 <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
                   <div className="relative flex justify-center items-center">
                     <GameNote />
 
-                    <div className="absolute top-50 mb-6">
+                    <div className="absolute top-50 mb-2">
                       <p
                         style={{ fontFamily: 'KBO-Dia-Gothic_bold' }}
-                        className="text-[#202020] text-5xl font-bold text-center mb-10"
+                        className="text-[#202020] text-5xl font-bold text-center mt-5 mb-10"
                       >
                         이어말하기 게임
                       </p>
                       <div
                         style={{
-                          fontFamily: 'KBO-Dia-Gothic_bold',
-                          fontWeight: 300,
+                          fontFamily: 'KBO-Dia-Gothic_medium',
                         }}
-                        className="text-[#FF7A00] text-2xl mb-2"
+                        className="text-[#FF7A00] text-2xl mb-2 ml-6"
                       >
                         게임방법
                       </div>
                       <div className="flex flex-col items-center ">
-                        <div className="text-lg font-light mb-4">
+                        <div
+                          className="text-lg mb-5 ml-6"
+                          style={{ fontFamily: 'KBO-Dia-Gothic_light' }}
+                        >
                           1. 화면에 네 글자 중{' '}
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
                             앞의 두 글자
-                          </span>
+                          </span>{' '}
                           가 나타납니다. <br />
                           2. 한 명씩 돌아가면서{' '}
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
                             나머지 두글자
                           </span>
                           를 말해서{' '}
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
                             네 글자의 정답
                           </span>
                           을 맞춰주세요!
                           <br /> 3. 정답과 일치하면 성공! 다르면{' '}
-                          <span style={{ fontWeight: 'bold' }}>실패 ~!</span>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
+                            실패 ~!
+                          </span>
                         </div>
                         <button
                           type="button"
-                          className="bg-[#FF8A00] text-4xl font-bold text-[#FFFFFF] w-[231.65px] h-[61.04px] rounded-[71.9141px]"
+                          className="bg-[#FF8A00] text-4xl font-bold mt-5 text-[#FFFFFF] w-[231.65px] h-[61.04px] rounded-[71.9141px]"
                           onClick={sendstartGameMessage}
                           style={{ fontFamily: 'KBO-Dia-Gothic_bold' }}
                         >
                           START
                         </button>
                       </div>
-                      <div className="absolute left-[250px] ml-56  -bottom-28">
+                      <div className="absolute left-[250px] ml-60 -bottom-28">
                         <GamePencil />
                       </div>
                     </div>
                   </div>
                 </div>
-              )} */}
+              )}
 
+              {/* 게임시작 */}
               {gameHasStarted && (
                 <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
                   <div
@@ -1291,36 +1452,84 @@ export const StreamRoom = () => {
                       <GameNote />
 
                       {startgamecount !== 0 && (
-                        <div className="border-2 rounded-full border-[#FF6700] w-[158.07px] h-[158.07px] absolute top-50 right-50 flex justify-center items-center">
-                          <div className="text-8xl text-[#FF6700] font-bold">
+                        <div className="border-4 rounded-full border-[#FF6700] w-[158.07px] h-[158.07px] absolute top-50 right-50 flex justify-center items-center">
+                          <div
+                            className="text-8xl text-[#FF6700] translate-y-1"
+                            style={{ fontFamily: 'GmarketSans' }}
+                          >
                             {startgamecount}
                           </div>
                         </div>
                       )}
 
-                      {idiom && (
-                        <div className="absolute top-50 right-50 text-8xl">
-                          {idiom}
-                        </div>
+                      {idiom && !startgamecount && (
+                        <>
+                          <div
+                            className={`absolute top-50 right-50 text-8xl text-[#3A3A3A] ${
+                              idiom.length === 2 ? 'hidden' : ''
+                            }`}
+                            style={{ fontFamily: 'GmarketSans' }}
+                          >
+                            {idiom}
+                          </div>
+
+                          {idiom.length === 2 && (
+                            <div
+                              className="absolute top-50 right-50 text-8xl text-[#3A3A3A]"
+                              style={{
+                                fontFamily: 'GmarketSans',
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <span>{idiom}</span>
+                              <span
+                                style={{
+                                  marginLeft: '10px',
+                                  marginTop: '50px',
+                                }}
+                              >
+                                <GameUnderline />
+                              </span>
+                              <span
+                                style={{
+                                  marginLeft: '10px',
+                                  marginTop: '50px',
+                                }}
+                              >
+                                <GameUnderline />
+                              </span>
+                            </div>
+                          )}
+                        </>
                       )}
 
                       {gamecount !== 0 && (
                         <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 lg:left-[270px] -left-10 lg:ml-80 ml-32 flex justify-center items-center">
-                          <div className="text-6xl text-[#FF6700] font-bold">
+                          <div
+                            className="text-6xl text-[#FF6700] translate-y-2"
+                            style={{ fontFamily: 'GmarketSans' }}
+                          >
                             {gamecount}
                           </div>
                         </div>
                       )}
                     </div>
-                    <div className="absolute -left-10 -top-2 hidden lg:block">
-                      <GameScissors />
-                    </div>
-                    <div className="absolute -bottom-5 -left-7">
-                      <GameApple />
-                    </div>
-                    <div className="absolute left-[250px] ml-80 -bottom-12">
-                      <GamePencil />
-                    </div>
+                    {!startgamecount && (
+                      <div className="absolute -left-10 -top-2 hidden lg:block">
+                        <GameScissors />
+                      </div>
+                    )}
+                    {!startgamecount && (
+                      <div className="absolute -bottom-5 -left-7">
+                        <GameApple />
+                      </div>
+                    )}
+                    {!startgamecount && (
+                      <div className="absolute left-[250px] ml-80 -bottom-12">
+                        <GamePencil />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -1359,6 +1568,7 @@ export const StreamRoom = () => {
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className={activityButtonSubStyle}
+                    onClick={sendIceGameMessage}
                   >
                     <div
                       className={`${
@@ -1370,7 +1580,7 @@ export const StreamRoom = () => {
                       <div className="iconStyle bg-[#E0F5E6] relative">
                         <IceBreaking />
                       </div>
-                      {/* {아이스브레이킹 boolean state && (
+                      {/* {icebreak boolean state && (
                     <span className="hoverActivityButton">
                       아이스 브레이킹 종료하기
                     </span>
@@ -1472,6 +1682,10 @@ export const StreamRoom = () => {
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className={activityButtonSubStyle}
+                    onClick={() => {
+                      setWaitingForPhotoConfirm(true);
+                      sendTakePictureOffer();
+                    }}
                   >
                     <div
                       className={`${
@@ -1499,11 +1713,18 @@ export const StreamRoom = () => {
                   </motion.div>
                 )}
 
-              {/* {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
+              {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className={activityButtonSubStyle}
-                  onClick={sendstartGameMessage}
+                  // onClick={sendstartGameMessage}
+                  onClick={() => {
+                    if (!gameHasStarted) {
+                      sendGameInfoMessage();
+                    } else {
+                      sendstopGameMessage();
+                    }
+                  }}
                 >
                   <div
                     className={`${
@@ -1527,11 +1748,18 @@ export const StreamRoom = () => {
                     </span>
                   </div>
                 </motion.div>
-              )} */}
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      <TakeSnapshot
+        setTakePicture={setTakePicture}
+        takePicture={takePicture}
+        localVideoRef={localVideoRef}
+        remoteVideoRef={remoteVideoRef}
+      />
 
       <Modal
         isOpen={isOpenLeaveRoom}
@@ -1587,19 +1815,74 @@ export const StreamRoom = () => {
         onClose={() => setYoutubeModalIsOpen(false)}
         hasOverlay
       >
-        <div className="f-jic-col px-5 py-3 rounded-2xl bg-white">
-          <ModalInput
-            title="YouTube 링크 입력"
-            inputType="text"
-            placeholderText="유튜브 링크를 입력해주세요"
-            handleInputChange={setVideoUrl}
-          />
-          <CommonButton
-            enabled
-            clickHandler={onYoutubeWatchalongClick}
-            buttonText="PLAY"
-            dimensions="mt-3"
-          />
+        <YoutubeModal
+          onYoutubeWatchalongClick={onYoutubeWatchalongClick}
+          setVideoUrl={setVideoUrl}
+        />
+      </Modal>
+      <Modal
+        isOpen={openConfirmModalIsOpen}
+        onClose={() => setOpenConfirmModalIsOpen(false)}
+        hasOverlay
+      >
+        <PhotoConfirmModal
+          sendPhotoConfirmMessage={sendPhotoConfirmMessage}
+          setOpenConfirmModalIsOpen={setOpenConfirmModalIsOpen}
+        />
+      </Modal>
+      <Modal
+        isOpen={waitingForPhotoConfirm}
+        onClose={() => setWaitingForPhotoConfirm(false)}
+        hasOverlay
+      >
+        <WaitingGuestRef loadingMessage="사진찍기 수락 대기중..." />
+      </Modal>
+
+      <Modal
+        isOpen={iceBreakerModalIsOpen}
+        onClose={() => setIceBreakerModalIsOpen(false)}
+        hasOverlay
+      >
+        <div className="w-[516px] h-[329px] bg-[#B6ECC4] rounded-2xl flex justify-center items-center">
+          <div className="border-2 border-[#FFFFFF] w-[499PX] h-[311px] rounded-2xl flex justify-center items-center">
+            <div
+              className="bg-[#FFFFFF] text-center relative text-xl w-[446px] h-[259px] rounded-full flex flex-col justify-center items-center"
+              style={{
+                wordWrap: 'break-word',
+                wordBreak: 'keep-all',
+                fontFamily: 'GmarketSans_medium',
+              }}
+            >
+              <div className="absolute top-11">
+                <IceGameQ />
+              </div>
+              <div className="mt-2 px-4">{iceQuestion}</div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={iceBreakerModalIsOpen}
+        onClose={() => setIceBreakerModalIsOpen(false)}
+        hasOverlay
+      >
+        <div className="w-[516px] h-[329px] bg-[#B6ECC4] rounded-2xl flex justify-center items-center">
+          <div className="border-2 border-[#FFFFFF] w-[499PX] h-[311px] rounded-2xl flex justify-center items-center">
+            <div
+              className="bg-[#FFFFFF] text-center relative text-xl w-[446px] h-[259px] rounded-full flex flex-col justify-center items-center"
+              style={{
+                wordWrap: 'break-word',
+                wordBreak: 'keep-all',
+                fontFamily: 'GmarketSans_medium',
+              }}
+            >
+              <div className="absolute top-11">
+                <IceGameQ />
+              </div>
+              <div className="mt-2 px-4">{iceQuestion}</div>
+            </div>
+          </div>
         </div>
       </Modal>
     </div>

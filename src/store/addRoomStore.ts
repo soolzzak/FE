@@ -32,3 +32,4 @@ export const handleRoomPasswprdChangeAtom = atom(
 );
 
 export const streamRoomInfoAtom = atom<Room | null>(null);
+export const isLoginAtom = atom<boolean>(true);

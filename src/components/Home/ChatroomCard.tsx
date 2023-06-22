@@ -17,6 +17,7 @@ import { Modal } from '../common/Modal';
 import { AuthModal } from '../Header/AuthModal';
 import { calculateTimeAgo } from '../../utils/calculateTimeAgo';
 import { Lock } from '../../assets/svgs/Lock';
+import { isLoginAtom } from '../../store/addRoomStore';
 
 export const chatRoomInfoAtom = atom<MainpageRooms | null>(null);
 export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
@@ -26,13 +27,14 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
   const [genderSetting, setGenderSetting] = useState('');
   const [userToken] = useAtom(userTokenAtom);
   const [, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
-
+  const [, setIsLogin] = useAtom(isLoginAtom);
   useEffect(() => {
     setCategory(categorySelection(chatRoom.category) as string);
     setGenderSetting(genderSelection(chatRoom.genderSetting) as string);
   }, []);
   const handleCardClick = async () => {
     if (Object.keys(userToken as object).length === 0) {
+      setIsLogin(true);
       setIsOpenAuth(true);
       return;
     }
@@ -107,7 +109,10 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
         </span>
       </div>
       <div className="self-start mt-1 text-xl font-bold text-left overflow-hidden w-full">
-        <div className="h-[52px] mt-2 overflow-ellipsis overflow-hidden w-full text-[#1A1C20]">
+        <div
+          className="h-[52px] mt-2 overflow-ellipsis overflow-hidden w-full text-[#1A1C20]"
+          style={{ wordWrap: 'break-word', wordBreak: 'keep-all' }}
+        >
           {chatRoom.title}
         </div>
       </div>
@@ -121,8 +126,8 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
         ) : (
           <div className="w-10 min-w-[40px] h-10 rounded-full bg-gray-300 shadow-sm" />
         )}
-        <div className="f-ic justify-between ml-2 w-5/6">
-          <div className="text-lg font-semibold text-[#5f5f5f]">
+        <div className="f-ic justify-between ml-2 w-5/6 overflow-hidden truncate">
+          <div className="text-lg font-semibold text-[#5f5f5f] truncate">
             {chatRoom.username}
           </div>
           <div className="text-[15px] font-normal px-3 py-1 rounded-full bg-secondary-100 text-secondary-300">

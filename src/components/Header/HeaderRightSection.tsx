@@ -6,7 +6,7 @@ import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { DetailUserProfile, FindUser, FindUserName } from '../../api/mypage';
 import { useModal } from '../../hooks/useModal';
-import { handleTitleChangeAtom } from '../../store/addRoomStore';
+import { handleTitleChangeAtom, isLoginAtom } from '../../store/addRoomStore';
 import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
 import {
   isOpenAuthModalAtom,
@@ -33,7 +33,7 @@ export const HeaderRightSection = () => {
     handleTitleChange('');
     onCloseRoomCreate();
   };
-
+  const [isLogin, setIsLogin] = useAtom(isLoginAtom);
   const [searchUsernameModalIsOpen, setSearchUsernameModalIsOpen] = useAtom(
     isOpenSearchUsernameModalAtom
   );
@@ -87,7 +87,7 @@ export const HeaderRightSection = () => {
           hasOverlay
           onClose={() => setIsOpenAuth(false)}
         >
-          <AuthModal />
+          <AuthModal login={isLogin} />
         </Modal>
         <Modal
           key={2}
@@ -141,7 +141,10 @@ export const HeaderRightSection = () => {
           <button
             type="button"
             className="text-primary-300 hover:text-primary-400 text-lg mr-7 font-semibold"
-            onClick={() => navigate('/signup')}
+            onClick={() => {
+              setIsLogin(() => false);
+              setIsOpenAuth(() => true);
+            }}
           >
             회원가입
           </button>

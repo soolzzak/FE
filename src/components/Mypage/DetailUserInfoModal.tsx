@@ -101,10 +101,21 @@ export const DetailUserInfoModal = ({
             <CancelButton onClose={onClose} />
           </div>
 
-          <div className="flex flex-col md:mt-0 mt-5">
+          {/* <div className="flex flex-col md:mt-0 mt-5">
             <div className="text-2xl font-semibold">{userinfo?.username}</div>
             {userinfo?.introduction ? (
               <div className="font-medium">{userinfo.introduction}</div>
+            ) : (
+              <div className="text-sm text-gray-400">한줄소개가 없습니다.</div>
+            )}
+          </div> */}
+
+          <div className="flex flex-col md:mt-0 mt-5">
+            <div className="text-2xl font-semibold">{userinfo?.username}</div>
+            {userinfo?.introduction ? (
+              <div className="font-medium overflow-hidden truncate max-w-[240px]">
+                <div className="truncate">{userinfo.introduction}</div>
+              </div>
             ) : (
               <div className="text-sm text-gray-400">한줄소개가 없습니다.</div>
             )}
@@ -128,7 +139,7 @@ export const DetailUserInfoModal = ({
             </div>
           </div>
 
-          <div className="w-full  bg-[#B6ECC4] rounded-full h-2.5 dark:bg-gray-700 ">
+          <div className="w-full bg-[#B6ECC4] rounded-full h-2.5 dark:bg-gray-700 ">
             <div
               className="bg-[#179638] h-2.5 rounded-full"
               style={{ width: `${userinfo?.alcohol}%` }}

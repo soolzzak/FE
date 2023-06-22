@@ -17,6 +17,8 @@ export const isOpenKickoutModalAtom = atom<boolean>(false);
 export const isOpenYoutubeVideoModalAtom = atom<boolean>(false);
 export const isOpenDeleteAccountAtom = atom<boolean>(false);
 
+export const isOpenIceBreakerModalAtom = atom<boolean>(false);
+
 export const isOpenMessageModalAtom = atom<boolean>(false);
 export const messageAtom = atom<MessageInfo>({tab: '받은쪽지함', username: undefined});
 export const isOpenSearchUsernameModalAtom = atom<boolean>(false);

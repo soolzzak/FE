@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-export const WaitingGuestRef = () => {
+export const WaitingGuestRef = ({
+  loadingMessage,
+}: {
+  loadingMessage?: string;
+}) => {
   const [time, setTime] = useState(1);
 
   useEffect(() => {
@@ -14,7 +18,7 @@ export const WaitingGuestRef = () => {
   }, []);
 
   return (
-    <div className="f-jic-col text-white xl:text-3xl w-full rounded-2xl h-full bg-black py-5 object-contain">
+    <div className="f-jic-col text-white xl:text-3xl w-full rounded-2xl h-full py-5 object-contain">
       <div className="flex gap-5 mb-5">
         <div
           className={`w-3 h-3 rounded-full ${
@@ -32,7 +36,9 @@ export const WaitingGuestRef = () => {
           }`}
         />
       </div>
-      <div className='font-bold'>짝을 기다리고 있어요 👀</div>
+      <div className="font-bold">
+        {loadingMessage || '짝을 기다리고 있어요 👀'}
+      </div>
     </div>
   );
 };
