@@ -250,6 +250,7 @@ export const SignupInput = () => {
           <SignupInputForm
             inputValue={email || ''}
             inputType="text"
+            maxLength={40}
             className="signupInput"
             placeholderText="example@naver.com"
             handleInputChange={emailHandler}
@@ -271,6 +272,7 @@ export const SignupInput = () => {
             <input
               value={emailNumber || ''}
               type="password"
+              maxLength={6}
               className="signupInput"
               placeholder="인증번호를 입력해주세요"
               onChange={emailNumberHandler}
@@ -285,6 +287,7 @@ export const SignupInput = () => {
           inputValue={password || ''}
           inputType="password"
           className="signupInput"
+          maxLength={16}
           placeholderText="8~16자 영문, 숫자, 특수문자를 사용하세요"
           handleInputChange={passwordHandler}
           handleValidation={() => passwordTypeHandler(password)}
@@ -295,6 +298,7 @@ export const SignupInput = () => {
         <SignupInputForm
           inputValue={pwcheck || ''}
           inputType="password"
+          maxLength={16}
           className="signupInput"
           placeholderText=""
           handleInputChange={pwcheckHandler}
@@ -303,12 +307,16 @@ export const SignupInput = () => {
         <div className="signupError">{pwcheckErrMsg}</div>
 
         <div className="relative">
-          <p className="signupInputTitle">닉네임</p>
+          <div className="flex flex-row justify-between">
+            <p className="signupInputTitle">닉네임</p>
+            {username?.length !== 0 && username ? <span className={`${username.length === 10 && 'text-red-600'} text-sm pr-2`}>{username?.length}/10</span> : null}
+          </div>
           <SignupInputForm
             inputValue={username || ''}
             inputType="text"
+            maxLength={10}
             className="signupInput"
-            placeholderText=""
+            placeholderText="10자 이내로 작성해주세요"
             handleInputChange={usernameHandler}
             handleValidation={() => usernameErrHandler(username)}
           />

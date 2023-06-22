@@ -732,7 +732,6 @@ export const StreamRoom = () => {
             setVideoUrl(message.youtubeUrl);
             setYoutubeIsOn(true);
             seekToTime(0);
-
             break;
           case 'startYoutube':
             console.log('received startYoutube message', message);
@@ -839,6 +838,7 @@ export const StreamRoom = () => {
             break;
           case 'ping':
             break;
+
           default:
             break;
         }
