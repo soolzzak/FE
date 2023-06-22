@@ -1,3 +1,4 @@
+import { useAtom } from 'jotai';
 import { useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
@@ -6,10 +7,12 @@ import {
   UpdateMypageData,
   updateMypageProfile,
 } from '../../api/mypage';
-import { Modify } from '../../assets/svgs/Modify';
 import { Kakao } from '../../assets/svgs/Kakao';
+import { Modify } from '../../assets/svgs/Modify';
+import { isOpenDeleteAccountAtom } from '../../store/modalStore';
 import { errorMessageConvert } from '../../utils/switchSelections';
-import { MypageLine } from '../../assets/svgs/MypageLine';
+import { Modal } from '../common/Modal';
+import { DeleteAccount } from '../login/DeleteAccountModal';
 
 // 얘가 원래꺼
 export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
@@ -19,6 +22,8 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const [view, setView] = useState<string | undefined>(myinfo.userImage);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [editMode, setEditMode] = useState(false);
+
+  const [isOpenDeleteAccount, setIsOpenDeleteAccount] = useAtom(isOpenDeleteAccountAtom)
 
   const MAX_CHARACTERS = 10;
   // const [modifyUserName, setmodifyUserName] = useState<string | undefined>(
@@ -226,7 +231,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           </div>
         </div>
       </div>
-      <div className="md:ml-10 ml-5">
+      <div className="relative md:ml-10 ml-5">
         <p className="font-semibold text-lg text-[#7C7C7C]">연결된 소셜계정</p>
         <div className="flex flex-row mt-2 items-center">
           <div className="border p-2 rounded-3xl flex items-center">
@@ -244,7 +249,11 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
         </div>
+        {/* <button className='flex underline text-[#969696] text-sm absolute -bottom-5 right-8' type='button' onClick={() => setIsOpenDeleteAccount(true)}>회원탈퇴</button> */}
       </div>
+      <Modal isOpen={isOpenDeleteAccount} onClose={() => setIsOpenDeleteAccount(false)} hasOverlay>
+        <DeleteAccount kakaoId={myinfo.kakaoId || null}/>
+      </Modal>
     </div>
   );
 };
