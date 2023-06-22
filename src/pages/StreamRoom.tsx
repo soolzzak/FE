@@ -28,6 +28,7 @@ import { ModalInput } from '../components/common/ModalInput';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
 import { userTokenAtom } from '../store/mainpageStore';
 import {
+  isOpenIceBreakerModalAtom,
   isOpenKickoutModalAtom,
   isOpenLeaveRoomAtom,
   isOpenModifyRoomAtom,
@@ -38,23 +39,24 @@ import {
   hostIdAtom,
   micOnAtom,
   monitorOnAtom,
-  screenShareOnAtom,
 } from '../store/streamControlStore';
 import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
 
 import { GameApple } from '../assets/svgs/GameApple';
 import { GameNote } from '../assets/svgs/GameNote';
 import { GamePencil } from '../assets/svgs/GamePencil';
-import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
 import { GameScissors } from '../assets/svgs/GameScissors';
 import { Camera } from '../assets/svgs/Camera';
-import { IceBreaking } from '../assets/svgs/Icebreaking';
 
 import { YoutubeModal } from '../components/StreamRoom/Modals/YoutubeModal';
 import { PhotoConfirmModal } from '../components/StreamRoom/Modals/PhotoConfirmModal';
 
 import { GameUnderline } from '../assets/svgs/GameUnderline';
 import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
+import { IceBreaking } from '../assets/svgs/Icebreaking';
+import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
+import { IceGame } from '../assets/svgs/IceGame';
+import { IceGameQ } from '../assets/svgs/IceGameQ';
 
 export interface JwtPayload {
   auth: {
@@ -145,6 +147,12 @@ export const StreamRoom = () => {
   const [isGamePaused, setGamePaused] = useState(false);
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [gameInfo, setGameInfo] = useState(false);
+
+  const [iceBreakerModalIsOpen, setIceBreakerModalIsOpen] = useAtom(
+    isOpenIceBreakerModalAtom
+  );
+  const [iceBreakerStarted, setIceBreakerStarted] = useState(false);
+  const [iceQuestion, setIceQuestion] = useState('');
 
   const [youtubeIsOn, setYoutubeIsOn] = useState(false);
   const [takePicture, setTakePicture] = useState(false);
@@ -583,6 +591,18 @@ export const StreamRoom = () => {
   }, [gameInfo]);
 
   useEffect(() => {
+    if (iceBreakerModalIsOpen) {
+      const timer = setTimeout(() => {
+        setIceBreakerModalIsOpen(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+
+    console.log('질문', iceQuestion);
+  }, [iceQuestion, iceBreakerModalIsOpen]);
+
+  useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
         console.log('WebSocket connection opened');
@@ -651,7 +671,6 @@ export const StreamRoom = () => {
             setVideoUrl(message.youtubeUrl);
             setYoutubeIsOn(true);
             seekToTime(0);
-
             break;
           case 'startYoutube':
             console.log('received startYoutube message', message);
@@ -696,6 +715,14 @@ export const StreamRoom = () => {
             console.log('received stopgame message', message);
             setGameHasStarted(false);
             setIdiom(message.word);
+            break;
+
+          case 'iceBreaker':
+            console.log('received icegame message', message);
+            setIceBreakerStarted(true);
+            console.log(message.question);
+            setIceQuestion(message.question);
+            setIceBreakerModalIsOpen(true);
             break;
 
           case 'startShare':
@@ -748,6 +775,7 @@ export const StreamRoom = () => {
             break;
           case 'ping':
             break;
+
           default:
             break;
         }
@@ -867,6 +895,18 @@ export const StreamRoom = () => {
       // showToastHandler();
       socket.send(message);
       setGamePaused(!isGamePaused);
+    }
+  };
+
+  const sendIceGameMessage = () => {
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'iceBreaker',
+        data: roomNum,
+      });
+      console.log('icegame sent', message);
+      socket.send(message);
     }
   };
 
@@ -1282,7 +1322,6 @@ export const StreamRoom = () => {
               )}
 
               {/* 게임설명 */}
-
               {gameInfo && (
                 <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
                   <div className="relative flex justify-center items-center">
@@ -1343,8 +1382,8 @@ export const StreamRoom = () => {
                   </div>
                 </div>
               )}
-              {/* 게임시작 */}
 
+              {/* 게임시작 */}
               {gameHasStarted && (
                 <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
                   <div
@@ -1479,6 +1518,7 @@ export const StreamRoom = () => {
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className={activityButtonSubStyle}
+                    onClick={sendIceGameMessage}
                   >
                     <div
                       className={`${
@@ -1490,7 +1530,7 @@ export const StreamRoom = () => {
                       <div className="iconStyle bg-[#E0F5E6] relative">
                         <IceBreaking />
                       </div>
-                      {/* {아이스브레이킹 boolean state && (
+                      {/* {icebreak boolean state && (
                     <span className="hoverActivityButton">
                       아이스 브레이킹 종료하기
                     </span>
@@ -1748,6 +1788,7 @@ export const StreamRoom = () => {
       >
         <WaitingGuestRef loadingMessage="사진찍기 수락 대기중..." />
       </Modal>
+
       <Modal
         isOpen={photoCounterModalIsOpen}
         onClose={() => setPhotoCounterModalIsOpen(false)}
@@ -1758,6 +1799,54 @@ export const StreamRoom = () => {
           startAfterTimeout={() => setTakePicture(true)}
           onClose={() => setPhotoCounterModalIsOpen(false)}
         />
+      </Modal>
+
+      <Modal
+        isOpen={iceBreakerModalIsOpen}
+        onClose={() => setIceBreakerModalIsOpen(false)}
+        hasOverlay
+      >
+        <div className="w-[516px] h-[329px] bg-[#B6ECC4] rounded-2xl flex justify-center items-center">
+          <div className="border-2 border-[#FFFFFF] w-[499PX] h-[311px] rounded-2xl flex justify-center items-center">
+            <div
+              className="bg-[#FFFFFF] text-center relative text-xl w-[446px] h-[259px] rounded-full flex flex-col justify-center items-center"
+              style={{
+                wordWrap: 'break-word',
+                wordBreak: 'keep-all',
+                fontFamily: 'GmarketSans_medium',
+              }}
+            >
+              <div className="absolute top-11">
+                <IceGameQ />
+              </div>
+              <div className="mt-2 px-4">{iceQuestion}</div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={iceBreakerModalIsOpen}
+        onClose={() => setIceBreakerModalIsOpen(false)}
+        hasOverlay
+      >
+        <div className="w-[516px] h-[329px] bg-[#B6ECC4] rounded-2xl flex justify-center items-center">
+          <div className="border-2 border-[#FFFFFF] w-[499PX] h-[311px] rounded-2xl flex justify-center items-center">
+            <div
+              className="bg-[#FFFFFF] text-center relative text-xl w-[446px] h-[259px] rounded-full flex flex-col justify-center items-center"
+              style={{
+                wordWrap: 'break-word',
+                wordBreak: 'keep-all',
+                fontFamily: 'GmarketSans_medium',
+              }}
+            >
+              <div className="absolute top-11">
+                <IceGameQ />
+              </div>
+              <div className="mt-2 px-4">{iceQuestion}</div>
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   );

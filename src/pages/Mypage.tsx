@@ -7,8 +7,9 @@ import { BadgeSection } from '../components/Mypage/BadgeSection';
 import { FollowSection } from '../components/Mypage/FollowSection';
 import { MyinfoSection } from '../components/Mypage/MyinfoSection';
 import { Modal } from '../components/common/Modal';
-import { isOpenMessageModalAtom } from '../store/modalStore';
+import { isOpenDeleteAccountAtom, isOpenMessageModalAtom } from '../store/modalStore';
 import { MessageModal } from '../components/Mypage/MessageModal';
+import { DeleteAccount } from '../components/login/DeleteAccountModal';
 
 export const Mypage = () => {
   const { data } = useQuery('mypageInfo', getMypageProfile, {
