@@ -43,7 +43,7 @@ export const SearchUserField = () => {
           value={searchUserName}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="xl:w-full w-[70px] h-[32px] px-2 bg-transparent outline-none text-base font-medium text-[#323232] placeholder-[#9A9A9A]"
+          className="w-full  h-[32px] px-2 bg-transparent outline-none text-base font-medium text-[#323232] placeholder-[#9A9A9A]"
           placeholder="닉네임 검색"
         />
       </div>
