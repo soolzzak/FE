@@ -42,13 +42,11 @@ import {
 } from '../store/streamControlStore';
 import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
 
-import { Camera } from '../assets/svgs/Camera';
 import { GameApple } from '../assets/svgs/GameApple';
 import { GameNote } from '../assets/svgs/GameNote';
 import { GamePencil } from '../assets/svgs/GamePencil';
 import { GameScissors } from '../assets/svgs/GameScissors';
 import { Camera } from '../assets/svgs/Camera';
-import { IceBreaking } from '../assets/svgs/Icebreaking';
 
 import { YoutubeModal } from '../components/StreamRoom/Modals/YoutubeModal';
 import { PhotoConfirmModal } from '../components/StreamRoom/Modals/PhotoConfirmModal';
