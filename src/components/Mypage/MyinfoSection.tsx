@@ -21,6 +21,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const [editMode, setEditMode] = useState(false);
 
   const MAX_CHARACTERS = 10;
+
   // const [modifyUserName, setmodifyUserName] = useState<string | undefined>(
   //   myinfo?.username
   // );

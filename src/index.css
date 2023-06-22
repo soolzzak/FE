@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard.css');
-@import url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/KBO-Dia-Gothic_bold.woff');
+/* @import url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/KBO-Dia-Gothic_bold.woff'); */
 
 @font-face {
   font-family: 'Pretendard';
@@ -19,6 +19,38 @@ body {
     format('woff');
   font-weight: 700;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'KBO-Dia-Gothic_light';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/KBO-Dia-Gothic_light.woff')
+    format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'KBO-Dia-Gothic_medium';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/KBO-Dia-Gothic_medium.woff')
+    format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GmarketSans';
+  font-weight: 700;
+  font-style: normal;
+  src: url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansBold.eot');
+  src: url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansBold.eot?#iefix')
+      format('embedded-opentype'),
+    url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansBold.woff2')
+      format('woff2'),
+    url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansBold.woff')
+      format('woff'),
+    url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansBold.ttf')
+      format('truetype');
+  font-display: swap;
 }
 
 @layer components {
@@ -71,7 +103,7 @@ body {
     @apply py-2.5 bg-[#FEE500] rounded-lg text-[#242424] text-lg font-bold hover:bg-opacity-80;
   }
   .hoverActivityButton {
-    @apply min-w-max absolute -top-11 -right-[29px] text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md
+    @apply min-w-max absolute -top-11 -right-[29px] text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md;
   }
 }
 

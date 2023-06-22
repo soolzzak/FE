@@ -49,6 +49,7 @@ import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
 import { GameScissors } from '../assets/svgs/GameScissors';
 import { Camera } from '../assets/svgs/Camera';
 import { IceBreaking } from '../assets/svgs/Icebreaking';
+import { GameUnderline } from '../assets/svgs/GameUnderline';
 
 export interface JwtPayload {
   auth: {
@@ -631,6 +632,22 @@ export const StreamRoom = () => {
       }
     }
   }, [gameHasStarted]);
+
+  useEffect(() => {
+    if (!gameInfo) {
+      console.log('recover');
+      if (remoteVideoRef.current) {
+        console.log('recover', remoteMediaStream);
+        remoteVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+    if (gameInfo) {
+      if (remoteWebcamVideoRef.current) {
+        remoteWebcamVideoRef.current.srcObject = remoteMediaStream;
+      }
+    }
+  }, [gameInfo]);
+
   useEffect(() => {
     const connectToSignalingServer = async () => {
       socket.onopen = () => {
@@ -708,7 +725,8 @@ export const StreamRoom = () => {
 
           case 'startGame':
             console.log('received startgame message', message);
-            if (guestIn) setGameHasStarted(true);
+            setGameInfo(false);
+            setGameHasStarted(true);
             // console.log(message.idiom);
             // console.log(typeof message.idiom);
 
@@ -717,6 +735,11 @@ export const StreamRoom = () => {
             setgameCount(message.count);
             setStartgameCount(message.startCount);
 
+            break;
+
+          case 'gameInfo':
+            console.log('received gameInfo message', message);
+            setGameInfo(true);
             break;
 
           case 'pauseGame':
@@ -856,23 +879,39 @@ export const StreamRoom = () => {
     }
   };
 
-  // const sendstartGameMessage = () => {
-  //   if (!guestProfile) {
-  //     toast.error('짝꿍을 기다려 주세요!');
-  //   } else {
-  //     setGameHasStarted(true);
-  //     if (socket) {
-  //       const message = JSON.stringify({
-  //         from: userId,
-  //         type: 'startGame',
-  //         data: roomNum,
-  //       });
-  //       console.log('toast sent', message);
-  //       // showToastHandler();
-  //       socket.send(message);
-  //     }
-  //   }
-  // };
+  const sendstartGameMessage = () => {
+    if (!guestProfile) {
+      toast.error('짝꿍을 기다려 주세요!');
+    } else {
+      setGameInfo(false);
+      setGameHasStarted(true);
+      if (socket) {
+        const message = JSON.stringify({
+          from: userId,
+          type: 'startGame',
+          data: roomNum,
+        });
+        console.log('toast sent', message);
+        // showToastHandler();
+        socket.send(message);
+      }
+    }
+  };
+
+  const sendGameInfoMessage = () => {
+    // console.log('click toast');
+    if (socket) {
+      const message = JSON.stringify({
+        from: userId,
+        type: 'gameInfo',
+        data: roomNum,
+      });
+      setGameInfo(true);
+      // console.log('toast sent', message);
+      // showToastHandler();
+      socket.send(message);
+    }
+  };
 
   const sendpauseGameMessage = () => {
     if (socket) {
@@ -1178,7 +1217,7 @@ export const StreamRoom = () => {
             )}
           </div>
 
-          {!youtubeIsOn && !gameHasStarted && (
+          {!youtubeIsOn && !gameHasStarted && !gameInfo && (
             <div className="relative">
               <div
                 role="none"
@@ -1235,7 +1274,7 @@ export const StreamRoom = () => {
             </div>
 
             <div className={remoteVideoStyle}>
-              {guestIn && !youtubeIsOn && !gameHasStarted && (
+              {guestIn && !youtubeIsOn && !gameHasStarted && !gameInfo && (
                 <>
                   <video
                     ref={remoteVideoRef}
@@ -1253,7 +1292,7 @@ export const StreamRoom = () => {
                 </>
               )}
 
-              {!guestIn && !youtubeIsOn && !gameHasStarted && (
+              {!guestIn && !youtubeIsOn && !gameHasStarted && !gameInfo && (
                 <WaitingGuestRef />
               )}
               {youtubeIsOn && userId && (
@@ -1271,62 +1310,67 @@ export const StreamRoom = () => {
 
               {/* 게임설명 */}
 
-              {/* {gameInfo && (
+              {gameInfo && (
                 <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
                   <div className="relative flex justify-center items-center">
                     <GameNote />
 
-                    <div className="absolute top-50 mb-6">
+                    <div className="absolute top-50 mb-2">
                       <p
                         style={{ fontFamily: 'KBO-Dia-Gothic_bold' }}
-                        className="text-[#202020] text-5xl font-bold text-center mb-10"
+                        className="text-[#202020] text-5xl font-bold text-center mt-5 mb-10"
                       >
                         이어말하기 게임
                       </p>
                       <div
                         style={{
-                          fontFamily: 'KBO-Dia-Gothic_bold',
-                          fontWeight: 300,
+                          fontFamily: 'KBO-Dia-Gothic_medium',
                         }}
-                        className="text-[#FF7A00] text-2xl mb-2"
+                        className="text-[#FF7A00] text-2xl mb-2 ml-6"
                       >
                         게임방법
                       </div>
                       <div className="flex flex-col items-center ">
-                        <div className="text-lg font-light mb-4">
+                        <div
+                          className="text-lg mb-5 ml-6"
+                          style={{ fontFamily: 'KBO-Dia-Gothic_light' }}
+                        >
                           1. 화면에 네 글자 중{' '}
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
                             앞의 두 글자
-                          </span>
+                          </span>{' '}
                           가 나타납니다. <br />
                           2. 한 명씩 돌아가면서{' '}
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
                             나머지 두글자
                           </span>
                           를 말해서{' '}
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
                             네 글자의 정답
                           </span>
                           을 맞춰주세요!
                           <br /> 3. 정답과 일치하면 성공! 다르면{' '}
-                          <span style={{ fontWeight: 'bold' }}>실패 ~!</span>
+                          <span style={{ fontFamily: 'KBO-Dia-Gothic_medium' }}>
+                            실패 ~!
+                          </span>
                         </div>
                         <button
                           type="button"
-                          className="bg-[#FF8A00] text-4xl font-bold text-[#FFFFFF] w-[231.65px] h-[61.04px] rounded-[71.9141px]"
+                          className="bg-[#FF8A00] text-4xl font-bold mt-5 text-[#FFFFFF] w-[231.65px] h-[61.04px] rounded-[71.9141px]"
                           onClick={sendstartGameMessage}
                           style={{ fontFamily: 'KBO-Dia-Gothic_bold' }}
                         >
                           START
                         </button>
                       </div>
-                      <div className="absolute left-[250px] ml-56  -bottom-28">
+                      <div className="absolute left-[250px] ml-60 -bottom-28">
                         <GamePencil />
                       </div>
                     </div>
                   </div>
                 </div>
-              )} */}
+              )}
+              {/* 게임시작 */}
 
               {gameHasStarted && (
                 <div className="bg-[#FFCE95] flex items-center justify-center w-full h-full rounded-2xl">
@@ -1346,36 +1390,84 @@ export const StreamRoom = () => {
                       <GameNote />
 
                       {startgamecount !== 0 && (
-                        <div className="border-2 rounded-full border-[#FF6700] w-[158.07px] h-[158.07px] absolute top-50 right-50 flex justify-center items-center">
-                          <div className="text-8xl text-[#FF6700] font-bold">
+                        <div className="border-4 rounded-full border-[#FF6700] w-[158.07px] h-[158.07px] absolute top-50 right-50 flex justify-center items-center">
+                          <div
+                            className="text-8xl text-[#FF6700] translate-y-1"
+                            style={{ fontFamily: 'GmarketSans' }}
+                          >
                             {startgamecount}
                           </div>
                         </div>
                       )}
 
-                      {idiom && (
-                        <div className="absolute top-50 right-50 text-8xl">
-                          {idiom}
-                        </div>
+                      {idiom && !startgamecount && (
+                        <>
+                          <div
+                            className={`absolute top-50 right-50 text-8xl text-[#3A3A3A] ${
+                              idiom.length === 2 ? 'hidden' : ''
+                            }`}
+                            style={{ fontFamily: 'GmarketSans' }}
+                          >
+                            {idiom}
+                          </div>
+
+                          {idiom.length === 2 && (
+                            <div
+                              className="absolute top-50 right-50 text-8xl text-[#3A3A3A]"
+                              style={{
+                                fontFamily: 'GmarketSans',
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <span>{idiom}</span>
+                              <span
+                                style={{
+                                  marginLeft: '10px',
+                                  marginTop: '50px',
+                                }}
+                              >
+                                <GameUnderline />
+                              </span>
+                              <span
+                                style={{
+                                  marginLeft: '10px',
+                                  marginTop: '50px',
+                                }}
+                              >
+                                <GameUnderline />
+                              </span>
+                            </div>
+                          )}
+                        </>
                       )}
 
                       {gamecount !== 0 && (
                         <div className="border-2 rounded-full border-[#FF6700] w-[75.21px] h-[75.21px] absolute top-4 lg:left-[270px] -left-10 lg:ml-80 ml-32 flex justify-center items-center">
-                          <div className="text-6xl text-[#FF6700] font-bold">
+                          <div
+                            className="text-6xl text-[#FF6700] translate-y-2"
+                            style={{ fontFamily: 'GmarketSans' }}
+                          >
                             {gamecount}
                           </div>
                         </div>
                       )}
                     </div>
-                    <div className="absolute -left-10 -top-2 hidden lg:block">
-                      <GameScissors />
-                    </div>
-                    <div className="absolute -bottom-5 -left-7">
-                      <GameApple />
-                    </div>
-                    <div className="absolute left-[250px] ml-80 -bottom-12">
-                      <GamePencil />
-                    </div>
+                    {!startgamecount && (
+                      <div className="absolute -left-10 -top-2 hidden lg:block">
+                        <GameScissors />
+                      </div>
+                    )}
+                    {!startgamecount && (
+                      <div className="absolute -bottom-5 -left-7">
+                        <GameApple />
+                      </div>
+                    )}
+                    {!startgamecount && (
+                      <div className="absolute left-[250px] ml-80 -bottom-12">
+                        <GamePencil />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -1554,11 +1646,18 @@ export const StreamRoom = () => {
                   </motion.div>
                 )}
 
-              {/* {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
+              {!(isMyScreenShare || isRemoteScreenShare) && !youtubeIsOn && (
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className={activityButtonSubStyle}
-                  onClick={sendstartGameMessage}
+                  // onClick={sendstartGameMessage}
+                  onClick={() => {
+                    if (!gameHasStarted) {
+                      sendGameInfoMessage();
+                    } else {
+                      sendstopGameMessage();
+                    }
+                  }}
                 >
                   <div
                     className={`${
@@ -1582,7 +1681,7 @@ export const StreamRoom = () => {
                     </span>
                   </div>
                 </motion.div>
-              )} */}
+              )}
             </div>
           </div>
         </div>
