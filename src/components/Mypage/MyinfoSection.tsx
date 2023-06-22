@@ -21,6 +21,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const [editMode, setEditMode] = useState(false);
 
   const MAX_CHARACTERS = 10;
+  const MAX_INTRO = 150;
 
   // const [modifyUserName, setmodifyUserName] = useState<string | undefined>(
   //   myinfo?.username
@@ -39,12 +40,18 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
     }
   };
 
-  const [modifyUserInfo, setmodifyUserInfo] = useState<string | undefined>(
+  const [modifyUserInfo, setmodifyUserInfo] = useState<string>(
     myinfo.introduction
   );
 
-  const modifyUserInfoHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setmodifyUserInfo(event.target.value);
+  const modifyUserInfoHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const infoinputValue = event.target.value;
+    if (infoinputValue.length <= MAX_INTRO) {
+      setmodifyUserInfo(infoinputValue);
+    }
+  };
 
   // 수정 ,,,
   const updateMyProfileMutation = useMutation(updateMypageProfile, {
@@ -203,13 +210,20 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           <div className="md:ml-10 ml-5">
             <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
             {editMode ? (
-              <input
-                className="md:w-[280px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
-                type="text"
-                onChange={modifyUserInfoHandler}
-                value={modifyUserInfo}
-                placeholder={myinfo.introduction}
-              />
+              <div className="flex flex-col justify-center items-center">
+                <input
+                  className="md:w-[280px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
+                  type="text"
+                  onChange={modifyUserInfoHandler}
+                  value={modifyUserInfo}
+                  placeholder={myinfo.introduction}
+                />
+                {modifyUserInfo?.length >= MAX_INTRO && (
+                  <p className="text-red-500 text-center">
+                    150글자 이내로 작성해주세요.
+                  </p>
+                )}
+              </div>
             ) : (
               <p className="font-normal mt-2">
                 {modifyUserInfo ||
