@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-export const WaitingGuestRef = () => {
+export const WaitingGuestRef = ({
+  loadingMessage,
+}: {
+  loadingMessage?: string;
+}) => {
   const [time, setTime] = useState(1);
 
   useEffect(() => {
@@ -32,7 +36,9 @@ export const WaitingGuestRef = () => {
           }`}
         />
       </div>
-      <div className='font-bold'>짝을 기다리고 있어요 👀</div>
+      <div className="font-bold">
+        {loadingMessage || '짝을 기다리고 있어요 👀'}
+      </div>
     </div>
   );
 };

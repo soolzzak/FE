@@ -17,6 +17,7 @@ import { Modal } from '../common/Modal';
 import { AuthModal } from '../Header/AuthModal';
 import { calculateTimeAgo } from '../../utils/calculateTimeAgo';
 import { Lock } from '../../assets/svgs/Lock';
+import { isLoginAtom } from '../../store/addRoomStore';
 
 export const chatRoomInfoAtom = atom<MainpageRooms | null>(null);
 export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
@@ -26,13 +27,14 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
   const [genderSetting, setGenderSetting] = useState('');
   const [userToken] = useAtom(userTokenAtom);
   const [, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
-
+  const [, setIsLogin] = useAtom(isLoginAtom);
   useEffect(() => {
     setCategory(categorySelection(chatRoom.category) as string);
     setGenderSetting(genderSelection(chatRoom.genderSetting) as string);
   }, []);
   const handleCardClick = async () => {
     if (Object.keys(userToken as object).length === 0) {
+      setIsLogin(true);
       setIsOpenAuth(true);
       return;
     }
