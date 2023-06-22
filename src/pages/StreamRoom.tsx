@@ -47,6 +47,12 @@ import { GameApple } from '../assets/svgs/GameApple';
 import { GameNote } from '../assets/svgs/GameNote';
 import { GamePencil } from '../assets/svgs/GamePencil';
 import { GameScissors } from '../assets/svgs/GameScissors';
+import { Camera } from '../assets/svgs/Camera';
+import { IceBreaking } from '../assets/svgs/Icebreaking';
+
+import { YoutubeModal } from '../components/StreamRoom/Modals/YoutubeModal';
+import { PhotoConfirmModal } from '../components/StreamRoom/Modals/PhotoConfirmModal';
+
 import { GameUnderline } from '../assets/svgs/GameUnderline';
 import { IceBreaking } from '../assets/svgs/Icebreaking';
 import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
@@ -126,6 +132,8 @@ export const StreamRoom = () => {
   const [youtubeModalIsOpen, setYoutubeModalIsOpen] = useAtom(
     isOpenYoutubeVideoModalAtom
   );
+  const [openConfirmModalIsOpen, setOpenConfirmModalIsOpen] = useState(false);
+  const [waitingForPhotoConfirm, setWaitingForPhotoConfirm] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [numberShare, setNumberShare] = useState(0);
   const [, setHostIdcheck] = useAtom(hostIdAtom);
@@ -147,7 +155,7 @@ export const StreamRoom = () => {
   const [iceQuestion, setIceQuestion] = useState('');
 
   const [youtubeIsOn, setYoutubeIsOn] = useState(false);
-
+  const [takePicture, setTakePicture] = useState(false);
   const waitForGuestWarning = () => {
     toast.error('짝꿍을 기다려 주세요!');
   };
@@ -181,7 +189,8 @@ export const StreamRoom = () => {
     const answerSDP = new RTCSessionDescription(message.sdp);
     setGuestIn(true);
     try {
-      // console.log('setRemoteDescription', message.sdp);
+      console.log('setRemoteDescription', message.sdp);
+      console.log('peerconnection state', peerConnection.connectionState);
       if (peerConnection.connectionState !== 'connected') {
         await peerConnection.setRemoteDescription(answerSDP);
         const answer = await peerConnection.createAnswer();
@@ -197,7 +206,7 @@ export const StreamRoom = () => {
 
         // console.log('sending sdp', peerConnection.localDescription);
         // console.log('added answer to peerConnection', peerConnection);
-        // console.log('sending answer to received offer', response);
+        console.log('sending answer to received offer', response);
         socket.send(JSON.stringify(response));
       } else {
         await peerConnection1.setRemoteDescription(answerSDP);
@@ -214,7 +223,7 @@ export const StreamRoom = () => {
 
         // console.log('sending sdp', peerConnection1.localDescription);
         // console.log('added answer to peerConnection', peerConnection1);
-        // console.log('sending answer to received offer', response);
+        console.log('sending answer to received offer', response);
         socket.send(JSON.stringify(response));
       }
     } catch (error) {
@@ -223,22 +232,10 @@ export const StreamRoom = () => {
   };
 
   const handleAnswerMessage = async (message: RTCSessionMessage) => {
-    // console.log('have received answer', message.sdp);
-
     try {
-      // console.log('setRemotelDescription', message.sdp);
-
       if (peerConnection.connectionState !== 'connected') {
-        // console.log(
-        //   'using received answer for Remote peer description',
-        //   peerConnection
-        // );
         await peerConnection.setRemoteDescription(message.sdp);
       } else {
-        // console.log(
-        //   'using received answer for Remote peer description1',
-        //   peerConnection1
-        // );
         await peerConnection1.setRemoteDescription(message.sdp);
       }
     } catch (error) {
@@ -272,7 +269,7 @@ export const StreamRoom = () => {
         sdp: peerConnection.localDescription,
       };
       // console.log('sending sdp', peerConnection.localDescription);
-      // console.log('sending offer', message);
+      console.log('sending offer', message);
       socket.send(JSON.stringify(message));
     } catch (error) {
       // toast.error('Error creating offer:', error);
@@ -285,7 +282,7 @@ export const StreamRoom = () => {
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         // Send ICE candidate to the remote peer via signaling channel
-        // console.log('sending ice candidate', event.candidate);
+        console.log('sending ice candidate', event.candidate);
         const message = {
           from: userId,
           data: Number(roomNum),
@@ -381,7 +378,7 @@ export const StreamRoom = () => {
       data: roomNum,
     });
     socket.send(message);
-    // console.log('send join message');
+    console.log('send join message');
   };
 
   const createScreenSharePeerConnection = async () => {
@@ -721,6 +718,16 @@ export const StreamRoom = () => {
             console.log('received toast message', message);
             showToastHandler();
             break;
+          case 'sendPicture':
+            console.log('received sendPicture message', message);
+            setOpenConfirmModalIsOpen(true);
+
+            break;
+          case 'confirmPicture':
+            console.log('received confirmPicture message', message);
+            setTakePicture(true);
+            setWaitingForPhotoConfirm(false);
+            break;
           case 'youtube':
             setNumberShare((prev) => prev + 1);
             console.log('received youtube message', message);
@@ -819,6 +826,7 @@ export const StreamRoom = () => {
             break;
 
           case 'join':
+            console.log('received join message');
             setSocketIsOnline(true);
             message.data = await getRoom(params as string);
             setHostIdcheck(message.data.hostId);
@@ -901,7 +909,7 @@ export const StreamRoom = () => {
         type: 'toast',
         data: roomNum,
       });
-      // console.log('toast sent', message);
+      console.log('toast sent', message);
       showToastHandler();
       socket.send(message);
     }
@@ -1001,7 +1009,7 @@ export const StreamRoom = () => {
           type: 'ping',
           data: roomNum,
         });
-        // console.log('sending ping', message);
+        console.log('sending ping', message);
         socket.send(message);
       }, 30000);
     }
@@ -1237,7 +1245,24 @@ export const StreamRoom = () => {
       'w-full h-full gap-4 col-start-1 col-span-2 row-start-6 row-span-1 f-ic justify-start';
     activityButtonSubStyle = '';
   }
-
+  const sendTakePictureOffer = () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'sendPicture',
+      data: roomNum,
+    });
+    console.log('sending photo offer', message);
+    socket.send(message);
+  };
+  const sendPhotoConfirmMessage = () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'confirmPicture',
+      data: roomNum,
+    });
+    console.log('sending confirmation to photo offer', message);
+    socket.send(message);
+  };
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
@@ -1659,6 +1684,10 @@ export const StreamRoom = () => {
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className={activityButtonSubStyle}
+                    onClick={() => {
+                      setWaitingForPhotoConfirm(true);
+                      sendTakePictureOffer();
+                    }}
                   >
                     <div
                       className={`${
@@ -1728,6 +1757,8 @@ export const StreamRoom = () => {
       </div>
 
       <TakeSnapshot
+        setTakePicture={setTakePicture}
+        takePicture={takePicture}
         localVideoRef={localVideoRef}
         remoteVideoRef={remoteVideoRef}
       />
@@ -1786,19 +1817,50 @@ export const StreamRoom = () => {
         onClose={() => setYoutubeModalIsOpen(false)}
         hasOverlay
       >
-        <div className="f-jic-col px-5 py-3 rounded-2xl bg-white">
-          <ModalInput
-            title="YouTube 링크 입력"
-            inputType="text"
-            placeholderText="유튜브 링크를 입력해주세요"
-            handleInputChange={setVideoUrl}
-          />
-          <CommonButton
-            enabled
-            clickHandler={onYoutubeWatchalongClick}
-            buttonText="PLAY"
-            dimensions="mt-3"
-          />
+        <YoutubeModal
+          onYoutubeWatchalongClick={onYoutubeWatchalongClick}
+          setVideoUrl={setVideoUrl}
+        />
+      </Modal>
+      <Modal
+        isOpen={openConfirmModalIsOpen}
+        onClose={() => setOpenConfirmModalIsOpen(false)}
+        hasOverlay
+      >
+        <PhotoConfirmModal
+          sendPhotoConfirmMessage={sendPhotoConfirmMessage}
+          setOpenConfirmModalIsOpen={setOpenConfirmModalIsOpen}
+        />
+      </Modal>
+      <Modal
+        isOpen={waitingForPhotoConfirm}
+        onClose={() => setWaitingForPhotoConfirm(false)}
+        hasOverlay
+      >
+        <WaitingGuestRef loadingMessage="사진찍기 수락 대기중..." />
+      </Modal>
+
+      <Modal
+        isOpen={iceBreakerModalIsOpen}
+        onClose={() => setIceBreakerModalIsOpen(false)}
+        hasOverlay
+      >
+        <div className="w-[516px] h-[329px] bg-[#B6ECC4] rounded-2xl flex justify-center items-center">
+          <div className="border-2 border-[#FFFFFF] w-[499PX] h-[311px] rounded-2xl flex justify-center items-center">
+            <div
+              className="bg-[#FFFFFF] text-center relative text-xl w-[446px] h-[259px] rounded-full flex flex-col justify-center items-center"
+              style={{
+                wordWrap: 'break-word',
+                wordBreak: 'keep-all',
+                fontFamily: 'GmarketSans_medium',
+              }}
+            >
+              <div className="absolute top-11">
+                <IceGameQ />
+              </div>
+              <div className="mt-2 px-4">{iceQuestion}</div>
+            </div>
+          </div>
         </div>
       </Modal>
 
