@@ -18,7 +18,7 @@ export const WaitingGuestRef = ({
   }, []);
 
   return (
-    <div className="f-jic-col text-white xl:text-3xl w-full rounded-2xl h-ful py-5 object-contain">
+    <div className="f-jic-col text-white xl:text-3xl w-full rounded-2xl h-full py-5 object-contain">
       <div className="flex gap-5 mb-5">
         <div
           className={`w-3 h-3 rounded-full ${
