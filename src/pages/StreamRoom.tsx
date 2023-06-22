@@ -52,6 +52,7 @@ import { YoutubeModal } from '../components/StreamRoom/Modals/YoutubeModal';
 import { PhotoConfirmModal } from '../components/StreamRoom/Modals/PhotoConfirmModal';
 
 import { GameUnderline } from '../assets/svgs/GameUnderline';
+import { WaitingRoomModal } from '../components/Home/WaitingRoomModal';
 import { IceBreaking } from '../assets/svgs/Icebreaking';
 import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
 import { IceGame } from '../assets/svgs/IceGame';
@@ -130,6 +131,7 @@ export const StreamRoom = () => {
   const [youtubeModalIsOpen, setYoutubeModalIsOpen] = useAtom(
     isOpenYoutubeVideoModalAtom
   );
+  const [photoCounterModalIsOpen, setPhotoCounterModalIsOpen] = useState(false);
   const [openConfirmModalIsOpen, setOpenConfirmModalIsOpen] = useState(false);
   const [waitingForPhotoConfirm, setWaitingForPhotoConfirm] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
@@ -299,7 +301,7 @@ export const StreamRoom = () => {
       const stream = event.streams[0];
       setRemoteMediaStream(stream);
       if (remoteVideoRef.current) {
-        // console.log('adding remote stream to video element');
+        console.log('adding remote stream to video element');
         remoteVideoRef.current.srcObject = stream;
         // console.log('stream?', stream);
       }
@@ -308,38 +310,6 @@ export const StreamRoom = () => {
       //   'remoteVideoRef.current.srcObject',
       //   remoteVideoRef.current?.srcObject
       // );
-    };
-    peerConnection.oniceconnectionstatechange = () => {
-      // console.log('opposing user disconnect event');
-      if (
-        peerConnection.iceConnectionState === 'disconnected' ||
-        peerConnection.iceConnectionState === 'closed'
-      ) {
-        // console.log('Opposing peer disconnected');
-        if (remoteVideoRef.current) {
-          if (remoteVideoRef.current.srcObject) {
-            remoteVideoRef.current.srcObject as MediaStream;
-            // stream.getTracks().forEach((track) => track.stop());
-          }
-          remoteVideoRef.current.srcObject = null;
-        }
-        // console.log(
-        //   'remoteVideoRef.current.srcObject',
-        //   remoteVideoRef.current?.srcObject
-        // );
-        // setNumberShare((prev) => prev - 1);
-        setIsRemoteScreenShare(() => false);
-        setRemoteMonitorOn(() => false);
-        setGuestIn(() => false);
-        setGuestProfile(() => undefined);
-        setIsMyScreenShare(false);
-        setIsRemoteScreenShare(false);
-        setYoutubeIsOn(false);
-        setGameHasStarted(false);
-        setRemoteMediaStream(null);
-        setRemoteWebcamStream(null);
-        // console.log('peerConnection', peerConnection);
-      }
     };
 
     // console.log('adding media stream to track', mediaStream);
@@ -400,39 +370,6 @@ export const StreamRoom = () => {
       // console.log(isRemoteScreenShare, remoteWebcamVideoRef.current);
       const stream = event.streams[0];
       setRemoteWebcamStream(stream);
-    };
-    peerConnection1.oniceconnectionstatechange = () => {
-      // console.log(' remote media', remoteMediaStream);
-      // console.log('opposing user disconnect event');
-      if (
-        peerConnection1.iceConnectionState === 'disconnected' ||
-        peerConnection1.iceConnectionState === 'closed'
-      ) {
-        // console.log('Opposing peer disconnected');
-        if (remoteWebcamVideoRef.current) {
-          if (remoteWebcamVideoRef.current.srcObject) {
-            remoteWebcamVideoRef.current.srcObject as MediaStream;
-            // stream.getTracks().forEach((track) => track.stop());
-          }
-          remoteWebcamVideoRef.current.srcObject = null;
-        }
-        // console.log(
-        //   'remoteWebcamVideoRef.current.srcObject',
-        //   remoteWebcamVideoRef.current?.srcObject
-        // );
-        // setNumberShare((prev) => prev - 1);
-        setIsRemoteScreenShare(() => false);
-        setRemoteMonitorOn(() => false);
-        setGuestIn(() => false);
-        setGuestProfile(() => undefined);
-        setIsMyScreenShare(false);
-        setIsRemoteScreenShare(false);
-        setYoutubeIsOn(false);
-        setGameHasStarted(false);
-        setRemoteMediaStream(null);
-        setRemoteWebcamStream(null);
-        // console.log('peerConnection', peerConnection1);
-      }
     };
 
     // console.log('adding media stream to track', mediaStream);
@@ -511,6 +448,8 @@ export const StreamRoom = () => {
     setGuestProfile(() => undefined);
     setGameHasStarted(() => false);
     setYoutubeIsOn(() => false);
+    peerConnection.restartIce();
+    peerConnection1.restartIce();
     // await createPeerConnection();
     // await createScreenSharePeerConnection();
   };
@@ -546,8 +485,8 @@ export const StreamRoom = () => {
     }
     myWebcamMediaStream?.getTracks().forEach((track) => track.stop());
     myMediaStream?.getTracks().forEach((track) => track.stop());
-    peerConnection.close();
-    peerConnection1.close();
+    peerConnection.restartIce();
+    peerConnection1.restartIce();
     socket.close();
   };
   const seekToTime = (time: number) => {
@@ -723,7 +662,7 @@ export const StreamRoom = () => {
             break;
           case 'confirmPicture':
             console.log('received confirmPicture message', message);
-            setTakePicture(true);
+            setPhotoCounterModalIsOpen(true);
             setWaitingForPhotoConfirm(false);
             break;
           case 'youtube':
@@ -807,8 +746,6 @@ export const StreamRoom = () => {
             navigate('/');
             break;
           case 'guestDisconnect':
-            setPeerConnection(new RTCPeerConnection(PeerConnectionConfig));
-            setPeerConnection1(new RTCPeerConnection(PeerConnectionConfig));
             console.log('received guest disconnect message', message);
             if (gameHasStarted) sendstopGameMessage();
             toast('상대방이 퇴장하였습니다');
@@ -1020,8 +957,12 @@ export const StreamRoom = () => {
   }, [socketIsOnline]);
 
   useEffect(() => {
-    // if (guestIn) console.log('remote ref2', remoteVideoRef);
-  }, [guestIn]);
+    if (guestIn)
+      if (remoteVideoRef.current && remoteMediaStream) {
+        console.log('recover', remoteMediaStream);
+        remoteVideoRef.current.srcObject = remoteMediaStream;
+      }
+  }, [guestIn, remoteMediaStream]);
 
   // const sendToastMessage = () => {
   //   const message = JSON.stringify({
@@ -1261,12 +1202,21 @@ export const StreamRoom = () => {
     console.log('sending confirmation to photo offer', message);
     socket.send(message);
   };
+  const sendPhotoDenyMessage = () => {
+    const message = JSON.stringify({
+      from: userId,
+      type: 'denyPicture',
+      data: roomNum,
+    });
+    console.log('sending deny to photo offer', message);
+    socket.send(message);
+  };
   return (
     <div className="w-full h-full min-w-[660px]">
       {showToast && <Toast />}
 
       <div className="f-col pt-24">
-        <div className="border rounded-2xl f-col max-w-[1500px] w-full h-full mx-auto py-5 px-5 bg-white">
+        <div className="border rounded-2xl f-col max-w-[1500px] w-full mx-auto py-5 px-5 bg-white">
           <div className="flex flex-row-reverse w-full xl:h-16 h-12 mb-5 justify-between">
             <div className="flex items-center xl:text-3xl text-xl font-semibold pr-1 truncate">
               &quot;{roomInfo?.title}&quot;
@@ -1299,7 +1249,7 @@ export const StreamRoom = () => {
             </div>
           )}
 
-          <div className="relative w-full h-full grid xl:grid-cols-6 grid-cols-2 grid-rows-6 gap-3 min-h-[900px] max-h-[900px]">
+          <div className="relative w-full h-full grid xl:grid-cols-6 grid-cols-2 grid-rows-6 gap-3 min-h-[700px] max-h-[700px]">
             <div className={localVideoStyle}>
               <video
                 ref={localVideoRef}
@@ -1827,6 +1777,7 @@ export const StreamRoom = () => {
       >
         <PhotoConfirmModal
           sendPhotoConfirmMessage={sendPhotoConfirmMessage}
+          sendPhotoDenyMessage={sendPhotoDenyMessage}
           setOpenConfirmModalIsOpen={setOpenConfirmModalIsOpen}
         />
       </Modal>
@@ -1836,6 +1787,18 @@ export const StreamRoom = () => {
         hasOverlay
       >
         <WaitingGuestRef loadingMessage="사진찍기 수락 대기중..." />
+      </Modal>
+
+      <Modal
+        isOpen={photoCounterModalIsOpen}
+        onClose={() => setPhotoCounterModalIsOpen(false)}
+        hasOverlay
+      >
+        <WaitingRoomModal
+          count={5}
+          startAfterTimeout={() => setTakePicture(true)}
+          onClose={() => setPhotoCounterModalIsOpen(false)}
+        />
       </Modal>
 
       <Modal
