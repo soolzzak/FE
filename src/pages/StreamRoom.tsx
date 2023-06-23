@@ -369,6 +369,7 @@ export const StreamRoom = () => {
         type: 'stopGame',
         data: roomNum,
       });
+      console.log('send stop game message');
       socket.send(message);
     }
   };
@@ -601,7 +602,7 @@ export const StreamRoom = () => {
             break;
 
           case 'startGame':
-            // console.log('received startgame message', message);
+            console.log('received startgame message', message);
             setGameInfo(false);
             setGameHasStarted(true);
             setIdiom(message.word);
@@ -609,7 +610,7 @@ export const StreamRoom = () => {
             setStartgameCount(message.startCount);
             break;
           case 'gameInfo':
-            // console.log('received gameInfo message', message);
+            console.log('received gameInfo message', message);
             setGameInfo((prev) => !prev);
             break;
           case 'pauseGame':
@@ -618,8 +619,9 @@ export const StreamRoom = () => {
             break;
 
           case 'stopGame':
-            // console.log('received stopgame message', message);
+            console.log('received stopgame message', message);
             setGameHasStarted(false);
+            setGameInfo(false);
             setIdiom(message.word);
             break;
 
@@ -772,8 +774,8 @@ export const StreamRoom = () => {
         type: 'gameInfo',
         data: roomNum,
       });
-      setGameInfo(true);
-      // console.log('toast sent', message);
+      setGameInfo((prev) => !prev);
+      console.log('gameinfo sent', message);
       // showToastHandler();
       socket.send(message);
     }
@@ -992,7 +994,8 @@ export const StreamRoom = () => {
     shareState = 1;
   } else if (
     (!isMyScreenShare && isRemoteScreenShare) ||
-    (gameHasStarted && gameInfo) ||
+    gameHasStarted ||
+    gameInfo ||
     youtubeIsOn
   ) {
     shareState = 2;
@@ -1131,7 +1134,8 @@ export const StreamRoom = () => {
                 autoPlay
                 muted
                 playsInline
-                className="relative w-full h-full object-contain rounded-2xl"
+                className={`relative w-full h-full object-contain rounded-2xl
+                ${!isMyScreenShare && 'scale-x-[-1]'}`}
               />
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
                 <span className="text-white text-lg">
@@ -1146,7 +1150,7 @@ export const StreamRoom = () => {
                 autoPlay
                 muted
                 playsInline
-                className="relative w-full h-full object-contain rounded-2xl"
+                className="relative w-full h-full object-contain rounded-2xl scale-x-[-1]"
               />
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
                 <span className="text-white text-lg">
@@ -1168,7 +1172,8 @@ export const StreamRoom = () => {
                     ref={remoteVideoRef}
                     autoPlay
                     playsInline
-                    className="relative w-full h-full object-contain rounded-2xl"
+                    className={`relative w-full h-full object-contain rounded-2xl
+                    ${!isRemoteScreenShare && 'scale-x-[-1]'}`}
                   />
                   <div className="absolute bottom-32 left-2 bg-black bg-opacity-50 rounded-lg px-2">
                     <span className="text-white text-lg">
@@ -1365,7 +1370,7 @@ export const StreamRoom = () => {
                 ref={remoteWebcamVideoRef}
                 autoPlay
                 playsInline
-                className="relative w-full h-full object-contain rounded-2xl"
+                className="relative w-full h-full object-contain rounded-2xl scale-x-[-1]"
               />
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 rounded-lg px-2">
                 <span className="text-white text-lg">
@@ -1553,10 +1558,8 @@ export const StreamRoom = () => {
                   className={activityButtonSubStyle}
                   // onClick={sendstartGameMessage}
                   onClick={() => {
-                    if (!gameHasStarted && !gameInfo) {
+                    if (!gameHasStarted) {
                       sendGameInfoMessage();
-                    } else {
-                      sendstopGameMessage();
                     }
                   }}
                 >
