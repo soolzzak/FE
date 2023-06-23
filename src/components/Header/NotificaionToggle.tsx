@@ -206,13 +206,6 @@ export const NotificaionToggle = () => {
           </div>
         )}
       </div>
-      <Modal
-        isOpen={isOpenMessageModal}
-        onClose={() => setIsOpenMessageModal(false)}
-        hasOverlay
-      >
-        <MessageModal />
-      </Modal>
     </div>
   );
 };
