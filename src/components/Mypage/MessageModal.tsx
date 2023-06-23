@@ -51,6 +51,7 @@ export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
   const sendMessageMutation = useMutation(sendMessage, {
     onSuccess: () => {
       queryClient.invalidateQueries('sentMessage');
+      toast.success(`${username}님께 쪽지를 발송했습니다`)
       setUsername('');
       setContent('');
       setCurrentTab('보낸쪽지함');
