@@ -1560,6 +1560,8 @@ export const StreamRoom = () => {
                   onClick={() => {
                     if (!gameHasStarted) {
                       sendGameInfoMessage();
+                    } else {
+                      sendstopGameMessage();
                     }
                   }}
                 >
@@ -1576,12 +1578,11 @@ export const StreamRoom = () => {
                     {/* {gameHasStarted && (
                       <span className="hoverActivityButton">게임 종료하기</span>
                     )} */}
-                    {gameHasStarted ||
-                      (gameInfo && (
-                        <span className="text-lg font-semibold ml-3">
-                          게임 종료하기
-                        </span>
-                      ))}
+                    {(gameHasStarted || gameInfo) && (
+                      <span className="text-lg font-semibold ml-3">
+                        게임 종료하기
+                      </span>
+                    )}
                     <span
                       className={`${
                         shareState > 0 ? 'hidden' : 'xl:inline hidden'
