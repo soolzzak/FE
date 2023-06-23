@@ -168,7 +168,7 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => {
               if (alcohol >= 49 && alcohol <= 54) {
                 return `브랜디레벨까지 ${55 - alcohol}도 남았어요 :)`;
               }
-              return '브랜디';
+              return '당신은 진정한 혼술짝 술꾼! 👏';
             })()}{' '}
           </p>
         </div>

@@ -2,11 +2,7 @@ import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { toast } from 'react-toastify';
-import {
-  DetailUserProfile,
-  getDetailUserProfile,
-  getMypageProfile,
-} from '../../api/mypage';
+import { DetailUserProfile, getDetailUserProfile } from '../../api/mypage';
 import { checkRoomPassword } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { roomPasswordAtom } from '../../store/addRoomStore';
@@ -90,7 +86,6 @@ export const JoinRoomModal = () => {
     };
   }, []);
 
-  console.log(data);
   return (
     <div className="bg-white px-12 py-8 rounded-2xl min-w-[350px]">
       <div className="w-full text-3xl mb-3 font-bold truncate">

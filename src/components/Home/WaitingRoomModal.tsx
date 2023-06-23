@@ -18,7 +18,7 @@ export const WaitingRoomModal = ({
   const navigation = useNavigate();
   const [, setIsOpenWaitingRoom] = useAtom(isOpenWaitingAtom);
   const [chatRoomInfo] = useAtom(chatRoomInfoAtom);
-  console.log(count);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((time) => time - 1);

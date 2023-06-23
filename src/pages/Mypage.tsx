@@ -29,7 +29,7 @@ export const Mypage = () => {
   }, [data]);
 
   return (
-    <div className="flex-grow w-full gap-10 min-w-[660px] bg-[#f6fff9] min-h-screen">
+    <div className="flex-grow w-full gap-10 min-w-[580px] bg-[#f6fff9] min-h-screen">
       <div className="f-ic-col relative">
         <div className="flex md:flex-row flex-col px-6 w-full mt-32 max-w-[1230px] mx-auto gap-10">
           {myinfo && (

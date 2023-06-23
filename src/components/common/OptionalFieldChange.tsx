@@ -33,7 +33,6 @@ export const OptionalFieldChange = ({
         title="방 공개설정"
         leftRightSelect={selections}
         isPrivate={isPrivate}
-        roomPassword={roomPassword}
       />
       {selectedOption === selections[1] ? (
         <ModalInput
