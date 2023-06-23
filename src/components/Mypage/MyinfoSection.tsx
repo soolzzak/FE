@@ -210,9 +210,9 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           <div className="md:ml-10 ml-5">
             <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
             {editMode ? (
-              <div className="flex flex-col justify-center items-center">
+              <div className="flex flex-col">
                 <input
-                  className="md:w-[280px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
+                  className="md:w-[290px] md:h-[32px] w-[180px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
                   type="text"
                   onChange={modifyUserInfoHandler}
                   value={modifyUserInfo}

@@ -1841,31 +1841,6 @@ export const StreamRoom = () => {
       <Modal
         isOpen={iceBreakerModalIsOpen}
         onClose={() => setIceBreakerModalIsOpen(false)}
-        hasOverlay
-      >
-        <div className="w-[516px] h-[329px] bg-[#B6ECC4] rounded-2xl flex justify-center items-center">
-          <div className="border-2 border-[#FFFFFF] w-[499PX] h-[311px] rounded-2xl flex justify-center items-center">
-            <div
-              className="bg-[#FFFFFF] text-center relative text-xl w-[446px] h-[259px] rounded-full flex flex-col justify-center items-center"
-              style={{
-                wordWrap: 'break-word',
-                wordBreak: 'keep-all',
-                fontFamily: 'GmarketSans_medium',
-              }}
-            >
-              <div className="absolute top-11">
-                <IceGameQ />
-              </div>
-              <div className="mt-2 px-4">{iceQuestion}</div>
-            </div>
-          </div>
-        </div>
-      </Modal>
-
-      <Modal
-        isOpen={iceBreakerModalIsOpen}
-        onClose={() => setIceBreakerModalIsOpen(false)}
-        hasOverlay
       >
         <div className="w-[516px] h-[329px] bg-[#B6ECC4] rounded-2xl flex justify-center items-center">
           <div className="border-2 border-[#FFFFFF] w-[499PX] h-[311px] rounded-2xl flex justify-center items-center">
