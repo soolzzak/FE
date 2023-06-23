@@ -1,10 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
-import { useEffect, useState } from 'react';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { DetailUserProfile, FindUser, FindUserName } from '../../api/mypage';
+import { useEffect } from 'react';
 import { useModal } from '../../hooks/useModal';
 import { handleTitleChangeAtom, isLoginAtom } from '../../store/addRoomStore';
 import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
@@ -20,8 +17,6 @@ import { AddRoom } from './AddRoom';
 import { AuthModal } from './AuthModal';
 import { ProfileMenu } from './ProfileMenu';
 import { UserAlert } from './UserAlert';
-import { Search } from '../../assets/svgs/Search';
-import { SearchUserCard } from './SearchUserCard';
 import { SearchUserField } from './SearchUserField';
 
 export const HeaderRightSection = () => {
@@ -66,7 +61,6 @@ export const HeaderRightSection = () => {
   //     eventSource.close();
   //   };
   // }, []);
-  const navigate = useNavigate();
   return (
     <motion.section
       className={`f-ic justify-end mr-4 md:min-w-[200px]
