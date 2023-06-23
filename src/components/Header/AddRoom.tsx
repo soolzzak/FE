@@ -1,6 +1,5 @@
 import { useAtom } from 'jotai';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
-import { useModal } from '../../hooks/useModal';
 import { handleTitleChangeAtom } from '../../store/addRoomStore';
 import { CustomSelector } from '../common/CustomSelector';
 import { DropdownSelector } from '../common/DropdownSelector';

@@ -13,8 +13,6 @@ import {
   genderSelection,
 } from '../../utils/switchSelections';
 import { checkIfRoomIsEmpty } from '../../api/streamRoom';
-import { Modal } from '../common/Modal';
-import { AuthModal } from '../Header/AuthModal';
 import { calculateTimeAgo } from '../../utils/calculateTimeAgo';
 import { Lock } from '../../assets/svgs/Lock';
 import { isLoginAtom } from '../../store/addRoomStore';
