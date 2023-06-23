@@ -16,9 +16,7 @@ export const Mypage = () => {
     refetchOnWindowFocus: false,
   });
   const [myinfo, setMyinfo] = useState<MypageProfileRooms | undefined>();
-  const [isOpenMessageModal, setIsOpenMessageModal] = useAtom(
-    isOpenMessageModalAtom
-  );
+
 
   // if (isLoading) return <div>Loading...</div>;
   // if (isError) return <div>{(error as Error).message}</div>;
@@ -49,16 +47,6 @@ export const Mypage = () => {
           <BadgeSection />
         </div>
       </div>
-      {/* <button type="button" onClick={() => setIsOpenMessageModal(true)}>
-        쪽지버튼 열기
-      </button> */}
-      <Modal
-        isOpen={isOpenMessageModal}
-        onClose={() => setIsOpenMessageModal(false)}
-        hasOverlay
-      >
-        <MessageModal />
-      </Modal>
     </div>
   );
 };

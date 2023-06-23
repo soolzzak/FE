@@ -33,7 +33,7 @@ export interface ChangePwdInfo {
 }
 
 export interface DeletePwd {
-  password: string
+  password: string | undefined;
 }
 
 export const SignupApi = async (signupInfo: SignupInfo) => {

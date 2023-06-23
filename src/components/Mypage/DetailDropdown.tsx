@@ -4,9 +4,11 @@ import { DetailUserProfile } from '../../api/mypage';
 import { Menu } from '../../assets/svgs/Menu';
 import { useModal } from '../../hooks/useModal';
 import { ReportModal } from '../../report/ReportModal';
-import { isOpenMessageModalAtom, messageAtom } from '../../store/modalStore';
+import { isOpenBloackModalAtom, isOpenMessageModalAtom, isOpenReportModalAtom, messageAtom } from '../../store/modalStore';
 import { BlockModal } from '../StreamRoom/BlockModal';
 import { Modal } from '../common/Modal';
+import { MessageModal } from './MessageModal';
+import { currentTabAtom, tabStateAtom } from '../../store/messageStore';
 
 export const DetailDropdown = ({
   userinfo,
@@ -16,11 +18,11 @@ export const DetailDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const [isOpenBlock, onCloseBlock, setIsOpenBlock] = useModal();
-  const [isOpenReport, onCloseReport, setIsOpenReport] = useModal();
-  const [,setIsOpenMessageModal] = useAtom(isOpenMessageModalAtom)
-  const [messageInfo, setMessageInfo] = useAtom(messageAtom)
+  const [isOpenReport, setIsOpenReport] = useAtom(isOpenReportModalAtom)
+  const [isOpenBlock, setIsOpenBlock] = useAtom(isOpenBloackModalAtom)
+  const [isOpenMessageModal,setIsOpenMessageModal] = useAtom(isOpenMessageModalAtom)
+  const [, setCurrentTab] = useAtom(currentTabAtom)
+  const [, setTabState] = useAtom(tabStateAtom)
 
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -63,7 +65,8 @@ export const DetailDropdown = ({
   const handleMessageClick = () => {
     setIsOpen(false);
     setIsOpenMessageModal(true);
-    setMessageInfo({...messageInfo, tab: '쪽지쓰기'})
+    setTabState('detailTab')
+    setCurrentTab('쪽지쓰기')
   }
 
   return (
@@ -78,14 +81,22 @@ export const DetailDropdown = ({
         <Menu />
       </div>
 
-      <Modal isOpen={isOpenBlock} onClose={onCloseBlock} hasOverlay>
-        {userinfo && <BlockModal userinfo={userinfo} onClose={onCloseBlock} />}
+      <Modal isOpen={isOpenBlock} onClose={() => setIsOpenBlock(false)} hasOverlay>
+        {userinfo && <BlockModal userinfo={userinfo} onClose={() => setIsOpenBlock(false)} />}
       </Modal>
 
-      <Modal isOpen={isOpenReport} onClose={onCloseReport} hasOverlay>
+      <Modal isOpen={isOpenReport} onClose={() => setIsOpenReport(false)} hasOverlay>
         {userinfo && (
-          <ReportModal userinfo={userinfo} onCloseReport={onCloseReport} />
+          <ReportModal userinfo={userinfo} onCloseReport={() => setIsOpenReport(false)} />
         )}
+      </Modal>
+
+      <Modal
+        isOpen={isOpenMessageModal}
+        onClose={() => setIsOpenMessageModal(false)}
+        hasOverlay
+      >
+        {userinfo && <MessageModal userinfo={userinfo}/>}
       </Modal>
 
       <div className="relative font-semibold">
