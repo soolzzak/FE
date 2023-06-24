@@ -1,10 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useModal } from '../../hooks/useModal';
-import { Modal } from '../common/Modal';
-import { BlockModal } from '../StreamRoom/BlockModal';
-import { Menu } from '../../assets/svgs/Menu';
-import { ReportModal } from '../../report/ReportModal';
+import { useAtom } from 'jotai';
+import React, { useEffect, useRef, useState } from 'react';
 import { DetailUserProfile } from '../../api/mypage';
+import { Menu } from '../../assets/svgs/Menu';
+import { useModal } from '../../hooks/useModal';
+import { ReportModal } from '../../report/ReportModal';
+import { isOpenBloackModalAtom, isOpenMessageModalAtom, isOpenReportModalAtom, messageAtom } from '../../store/modalStore';
+import { BlockModal } from '../StreamRoom/BlockModal';
+import { Modal } from '../common/Modal';
+import { MessageModal } from './MessageModal';
+import { currentTabAtom, tabStateAtom } from '../../store/messageStore';
 
 export const DetailDropdown = ({
   userinfo,
@@ -14,9 +18,11 @@ export const DetailDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const [isOpenBlock, onCloseBlock, setIsOpenBlock] = useModal();
-  const [isOpenReport, onCloseReport, setIsOpenReport] = useModal();
+  const [isOpenReport, setIsOpenReport] = useAtom(isOpenReportModalAtom)
+  const [isOpenBlock, setIsOpenBlock] = useAtom(isOpenBloackModalAtom)
+  const [isOpenMessageModal,setIsOpenMessageModal] = useAtom(isOpenMessageModalAtom)
+  const [, setCurrentTab] = useAtom(currentTabAtom)
+  const [, setTabState] = useAtom(tabStateAtom)
 
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -55,6 +61,14 @@ export const DetailDropdown = ({
     setIsOpenReport(true);
   };
 
+  // 쪽지
+  const handleMessageClick = () => {
+    setIsOpen(false);
+    setIsOpenMessageModal(true);
+    setTabState('detailTab')
+    setCurrentTab('쪽지쓰기')
+  }
+
   return (
     <div ref={dropdownRef}>
       <div
@@ -67,14 +81,22 @@ export const DetailDropdown = ({
         <Menu />
       </div>
 
-      <Modal isOpen={isOpenBlock} onClose={onCloseBlock} hasOverlay>
-        {userinfo && <BlockModal userinfo={userinfo} onClose={onCloseBlock} />}
+      <Modal isOpen={isOpenBlock} onClose={() => setIsOpenBlock(false)} hasOverlay>
+        {userinfo && <BlockModal userinfo={userinfo} onClose={() => setIsOpenBlock(false)} />}
       </Modal>
 
-      <Modal isOpen={isOpenReport} onClose={onCloseReport} hasOverlay>
+      <Modal isOpen={isOpenReport} onClose={() => setIsOpenReport(false)} hasOverlay>
         {userinfo && (
-          <ReportModal userinfo={userinfo} onCloseReport={onCloseReport} />
+          <ReportModal userinfo={userinfo} onCloseReport={() => setIsOpenReport(false)} />
         )}
+      </Modal>
+
+      <Modal
+        isOpen={isOpenMessageModal}
+        onClose={() => setIsOpenMessageModal(false)}
+        hasOverlay
+      >
+        {userinfo && <MessageModal userinfo={userinfo}/>}
       </Modal>
 
       <div className="relative font-semibold">
@@ -82,7 +104,7 @@ export const DetailDropdown = ({
           <div className="bg-white rounded-lg w-[113px] h-[114px] flex flex-col justify-center items-center absolute z-10 right-0 top-0 border  ">
             <div
               className="border-b-2 w-full basis-1/3 flex items-center justify-center relative z-20 text-[#000000]"
-              onClick={handleReportClick}
+              onClick={handleMessageClick}
               onKeyDown={handleKeyDown}
               role="button"
               tabIndex={0}

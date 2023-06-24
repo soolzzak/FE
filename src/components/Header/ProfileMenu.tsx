@@ -42,10 +42,10 @@ export const ProfileMenu = ({ user }: { user: string }) => {
   }, []);
 
   useEffect(() => {
-    if(data) {
+    if (data) {
       setUserNickname(data?.data.username as string);
     }
-  },[data])
+  }, [data]);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -70,11 +70,11 @@ export const ProfileMenu = ({ user }: { user: string }) => {
           animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
           exit={{ opacity: 0, scale: 0, y: -100, x: 100 }}
           transition={{ duration: 0.15 }}
-          className="absolute border top-full right-3 z-10 mt-1 bg-white rounded-lg shadow-lg"
+          className="absolute f-jic-col border top-full right-3 z-10 mt-1 bg-white rounded-lg shadow-lg"
         >
-          <div className="rounded-t-md px-4 py-1 text-lg border-b border-green-200 text-black whitespace-nowrap">
+          <div className="rounded-t-md w-full px-4 pr-8 py-2.5 text-lg border-b border-green-200 text-black whitespace-nowrap">
             <div>안녕하세요,</div>
-            <span className="font-bold text-lg">{`${user}님`}</span>
+            <span className="font-bold text-lg">{`${data?.data.username}님`}</span>
           </div>
           <div
             role="none"
@@ -82,14 +82,14 @@ export const ProfileMenu = ({ user }: { user: string }) => {
               setIsOpen(false);
               navigate('/mypage');
             }}
-            className="dropdownItemStyle"
+            className="dropdownItemStyle w-full"
           >
             <div>마이페이지</div>
           </div>
           <div
             role="none"
             onClick={handleLogout}
-            className="  rounded-b-md border-t border-green-200 dropdownItemStyle"
+            className="dropdownItemStyle w-full rounded-b-md border-t border-green-200"
           >
             <div>로그아웃</div>
           </div>

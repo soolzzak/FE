@@ -1,11 +1,17 @@
-export const Report = ({setIsOpenReport}) => (
+import { Dispatch, SetStateAction } from 'react';
+
+export const Report = ({
+  setIsOpenReport,
+}: {
+  setIsOpenReport: Dispatch<SetStateAction<boolean>>,
+}) => (
   <svg
     width="21"
     height="20"
     viewBox="0 0 21 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{cursor: "pointer"}}
+    style={{ cursor: 'pointer' }}
     onClick={() => setIsOpenReport(true)}
   >
     <path

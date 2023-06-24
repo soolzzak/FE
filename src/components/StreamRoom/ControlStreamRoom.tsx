@@ -80,13 +80,13 @@ export const ControlStreamRoom = ({
           <LuMicOff className="text-3xl text-white" />
         )}
         {micHover && micOn && (
-          <div className="min-w-max absolute bottom-28 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-            마이크 켜기
+          <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+            마이크 끄기
           </div>
         )}
         {micHover && !micOn && (
-          <div className="min-w-max absolute bottom-28 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-            마이크 끄기
+          <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
+            마이크 켜기
           </div>
         )}
       </div>
@@ -102,12 +102,12 @@ export const ControlStreamRoom = ({
         {monitorOn ? <MonitorOn /> : <MonitorOff />}
         {cameraHover && monitorOn && (
           <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-            카메라 켜기
+            카메라 끄기
           </div>
         )}
         {cameraHover && !monitorOn && (
           <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-            카메라 끄기
+            카메라 켜기
           </div>
         )}
       </div>
@@ -144,7 +144,7 @@ export const ControlStreamRoom = ({
         >
           <ConfigDropDown />
           {settingHover ? (
-            <div className="min-w-max absolute bottom-28 text-white text-center px-3 py-1 bg-[#626262] rounded-md">
+            <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 bg-[#626262] rounded-md">
               설정
             </div>
           ) : null}

@@ -13,11 +13,17 @@ export type UserInfo = {
   email: string;
 };
 
-type UserAlert = {
+export type UserAlert = {
   username: string;
   roomId: number;
   uncheck: boolean;
   time: Date;
+}
+
+export type MessageAlert = {
+  username: string;
+  time: Date;
+  uncheck: boolean;
 }
 
 export const usernameAtom = atom('');
@@ -66,3 +72,4 @@ export const handleSearchwordTriggerAtom = atom(
 export const userNicknameAtom = atom('');
 
 export const userAlertAtom = atom([] as UserAlert[]);
+export const messageAlertAtom = atom([] as MessageAlert[]);

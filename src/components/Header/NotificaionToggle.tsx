@@ -1,26 +1,64 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { BiMessageAltDots } from 'react-icons/bi';
 import { Notifications } from '../../assets/svgs/Notifications';
 import {
+  MessageAlert,
+  UserAlert,
+  messageAlertAtom,
   userAlertAtom,
   userNicknameAtom,
-  userTokenAtom,
-  usernameAtom,
 } from '../../store/mainpageStore';
-import { isOpenJoinRoomAtom } from '../../store/modalStore';
+import { isOpenJoinRoomAtom, isOpenMessageModalAtom, messageAtom } from '../../store/modalStore';
+import { Modal } from '../common/Modal';
+import { MessageModal } from '../Mypage/MessageModal';
 
 export const NotificaionToggle = () => {
   const [userAlert, setuserAlert] = useAtom(userAlertAtom);
+  const [messageAlert, setMessageAlert] = useAtom(messageAlertAtom);
   const [, setIsOpenJoinRoom] = useAtom(isOpenJoinRoomAtom);
   const [isOpen, setIsOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(0);
   const [alertCheck, setAlertCheck] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const [messageInfo, setMessageInfo] = useAtom(messageAtom);
   const [username] = useAtom(userNicknameAtom);
+  const [isOpenMessageModal, setIsOpenMessageModal] = useAtom(
+    isOpenMessageModalAtom
+  );
 
-  const receivedTimeAlert = userAlert.map((item) => {
+  const sortData = (a: UserAlert | MessageAlert, b: UserAlert | MessageAlert) => {
+    const dataA = new Date(a.time).getTime();
+    const dataB = new Date(b.time).getTime();
+    return dataB - dataA
+  }
+
+  const sortUserAlert = [...userAlert].sort(sortData)
+  const sortMessageAlert = [...messageAlert].sort(sortData)
+  
+  const combineAlerts = [...userAlert,...messageAlert].sort(sortData)
+
+  const receivedRoomTimeAlert = sortUserAlert.map((item) => {
+    const currTime = new Date();
+    const receivedTime = new Date(item.time);
+    const modiTime = `${
+      receivedTime.getMonth() + 1
+    }월 ${receivedTime.getDate()}일`;
+    const timeDiffer: number = currTime.getTime() - receivedTime.getTime();
+    let timeShown: string;
+    if (timeDiffer < 60 * 1000) {
+      timeShown = '방금 전';
+    } else if (timeDiffer < 60 * 60 * 1000) {
+      timeShown = `${Math.floor(timeDiffer / (60 * 1000))}분 전`;
+    } else if (timeDiffer < 24 * 60 * 60 * 1000) {
+      timeShown = `${Math.floor(timeDiffer / (60 * 60 * 1000))}시간 전`;
+    } else {
+      timeShown = modiTime;
+    }
+    return timeShown;
+  })
+
+  const receivedMsgTimeAlert = sortMessageAlert.map((item) => {
     const currTime = new Date();
     const receivedTime = new Date(item.time);
     const modiTime = `${
@@ -41,12 +79,21 @@ export const NotificaionToggle = () => {
   });
 
   useEffect(() => {
-    setShowAlert(userAlert.filter((item) => item.uncheck === true).length);
-  }, [userAlert]);
+    setShowAlert(
+      sortUserAlert.filter((item) => item.uncheck === true).length +
+      sortMessageAlert.filter((item) => item.uncheck === true).length
+    );
+  }, [sortUserAlert, sortMessageAlert]);
 
   const onToggle = () => {
     setIsOpen(!isOpen);
     setuserAlert((prevData) =>
+      prevData.map((item) => ({
+        ...item,
+        uncheck: false,
+      }))
+    );
+    setMessageAlert((prevData) =>
       prevData.map((item) => ({
         ...item,
         uncheck: false,
@@ -93,8 +140,14 @@ export const NotificaionToggle = () => {
 
       <div className="relative">
         {isOpen && (
-          <div className={`${userAlert.length === 0 ? 'w-[300px] h-[200px]' : 'h-fit' } absolute bg-[#F4F4F4] rounded-lg w-96 max-h-[320px] f-col justify-center top-8 -right-6`}>
-            {userAlert.length === 0 ? (
+          <div
+            className={`${
+              sortUserAlert.length === 0 && sortMessageAlert.length === 0
+                ? 'w-[300px] h-[200px]'
+                : 'h-fit'
+            } absolute bg-[#F4F4F4] rounded-lg w-96 max-h-[320px] f-col justify-center top-8 -right-6`}
+          >
+            {sortUserAlert.length === 0 && sortMessageAlert.length === 0 ? (
               <div className="f-jic-col gap-2 text-lg font-medium">
                 <Notifications size="60" />
                 메세지가 없습니다!
@@ -102,20 +155,47 @@ export const NotificaionToggle = () => {
             ) : (
               <div className="w-full h-full overflow-hidden rounded-2xl f-ic-col pt-5 pb-3 px-5">
                 <div className="w-full h-full overflow-y-auto f-col justify-between">
-                  {userAlert.map((item) => (
+                  {sortUserAlert?.map((item) => (
                     <div
                       role="none"
                       key={item.username}
-                      className="w-full h-24 border border-[#C2C2C2] bg-white cursor-pointer rounded-2xl mb-2 flex items-center"
-                      onClick={() => setIsOpenJoinRoom(true)}
+                      className="w-full h-full border border-[#C2C2C2] bg-white cursor-pointer rounded-2xl mb-2 flex items-center"
+                      // onClick={() => setIsOpenJoinRoom(true)}
                     >
-                      <div className="w-full f-col pl-5">
+                      <div className="w-full min-h-[100px] f-col justify-center pl-5">
                         <p className="text-base text-[#252525] font-medium">
-                          {username}님, {item.username}님이 방을 개설했습니다!
+                          {item.username}님이 방을 개설했습니다!
                         </p>
-                        <p>짝꿍과 가볍고 편하게 술 한잔 어때요?😀</p>
+                        <p>짝꿍과 가볍고 편하게 술 한잔 어때요? 😀</p>
                         <p className="text-sm text-[#9E9E9E] font-medium">
-                          {receivedTimeAlert[userAlert.indexOf(item)]}
+                          {receivedRoomTimeAlert[sortUserAlert.indexOf(item)]}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+
+                  {sortMessageAlert?.map((item) => (
+                    <div
+                      role="none"
+                      key={item.username}
+                      className="w-full h-full border border-[#C2C2C2] bg-white cursor-pointer rounded-2xl mb-2 flex items-center"
+                      onClick={() => {
+                        setIsOpen(!isOpen)
+                        setIsOpenMessageModal(true)
+                        setMessageInfo({ ...messageInfo, tab: '받은쪽지함' });
+                      }}
+                    >
+                      <div className="w-full min-h-[100px] f-col justify-center pl-5">
+                        <p className="text-base text-[#252525] font-medium flex">
+                          <div className='pt-1 pr-1'>
+                            <BiMessageAltDots />
+                          </div>
+                          {item.username}님이 쪽지를 보내셨습니다!
+                        </p>
+
+                        <p>쪽지를 확인해주세요! 😀</p>
+                        <p className="text-sm text-[#9E9E9E] font-medium">
+                          {receivedMsgTimeAlert[sortMessageAlert.indexOf(item)]}
                         </p>
                       </div>
                     </div>

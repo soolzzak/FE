@@ -5,6 +5,7 @@ type InputType = {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleValidation: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className: string;
+  maxLength: number
 };
 
 export const SignupInputForm = ({
@@ -14,6 +15,7 @@ export const SignupInputForm = ({
   handleInputChange,
   handleValidation,
   className,
+  maxLength,
 }: InputType) => (
   <div>
     {/* <p className="font-bold text-lg mb-2">{title}</p> */}
@@ -24,6 +26,7 @@ export const SignupInputForm = ({
       placeholder={placeholderText}
       onChange={handleInputChange}
       onBlur={handleValidation}
+      maxLength={maxLength}
     />
   </div>
 );

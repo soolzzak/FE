@@ -141,9 +141,9 @@ export interface DetailUserProfile {
   block: boolean;
 }
 
-interface Message {
-  receiverUsername: string;
-  content: string;
+interface SendMessage {
+  receiverUsername: string | undefined;
+  content: string | undefined;
 }
 
 export const getDetailUserProfile = async (
@@ -222,7 +222,7 @@ export const BlockHandler = async (
 };
 
 // 쪽지 보내기
-export const sendMessage = async (message: Message) => {
+export const sendMessage = async (message: SendMessage) => {
   try {
     const response: AxiosResponse<ApiResponse1> = await axiosInstance.post(
       '/message/send',
@@ -238,7 +238,7 @@ export const sendMessage = async (message: Message) => {
 export const receivedMessage = async () => {
   try {
     const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get('/message/received')
-    return response
+    return response.data.data
   } catch (error: any) {
     throw error as Error;
   }
@@ -248,7 +248,7 @@ export const receivedMessage = async () => {
 export const sentMessage = async () => {
   try {
     const response: AxiosResponse<MessageApiResponse> = await axiosInstance.get('/message/sent')
-    return response
+    return response.data.data
   } catch (error: any) {
     throw error as Error;
   }

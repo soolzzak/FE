@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
-import { userAlertAtom, userNicknameAtom } from '../../store/mainpageStore';
+import { messageAlertAtom, userAlertAtom, userNicknameAtom } from '../../store/mainpageStore';
 import { Notifications } from '../../assets/svgs/Notifications';
 import { NotificaionToggle } from './NotificaionToggle';
 
 export const UserAlert = () => {
   const [userNickname] = useAtom(userNicknameAtom);
   const [, setUserAlert] = useAtom(userAlertAtom);
+  const [, setMessageAlert] = useAtom(messageAlertAtom);
 
   let eventSource;
   useEffect(() => {
@@ -31,6 +32,19 @@ export const UserAlert = () => {
           }
         ]
         )
+      });
+
+      eventSource.addEventListener('message', (event) => {
+        const response = event.data;
+        const timeStamp = new Date()
+        setMessageAlert((prevData) => [
+          ...prevData,
+          {
+            username: response,
+            time: timeStamp,
+            uncheck: true,
+          }
+        ]);
       });
     }
   }, [userNickname]);

@@ -7,17 +7,16 @@ import { BadgeSection } from '../components/Mypage/BadgeSection';
 import { FollowSection } from '../components/Mypage/FollowSection';
 import { MyinfoSection } from '../components/Mypage/MyinfoSection';
 import { Modal } from '../components/common/Modal';
-import { isOpenMessageModalAtom } from '../store/modalStore';
+import { isOpenDeleteAccountAtom, isOpenMessageModalAtom } from '../store/modalStore';
 import { MessageModal } from '../components/Mypage/MessageModal';
+import { DeleteAccount } from '../components/login/DeleteAccountModal';
 
 export const Mypage = () => {
   const { data } = useQuery('mypageInfo', getMypageProfile, {
     refetchOnWindowFocus: false,
   });
   const [myinfo, setMyinfo] = useState<MypageProfileRooms | undefined>();
-  const [isOpenMessageModal, setIsOpenMessageModal] = useAtom(
-    isOpenMessageModalAtom
-  );
+
 
   // if (isLoading) return <div>Loading...</div>;
   // if (isError) return <div>{(error as Error).message}</div>;
@@ -48,16 +47,6 @@ export const Mypage = () => {
           <BadgeSection />
         </div>
       </div>
-      {/* <button type="button" onClick={() => setIsOpenMessageModal(true)}>
-        쪽지버튼 열기
-      </button> */}
-      <Modal
-        isOpen={isOpenMessageModal}
-        onClose={() => setIsOpenMessageModal(false)}
-        hasOverlay
-      >
-        <MessageModal />
-      </Modal>
     </div>
   );
 };

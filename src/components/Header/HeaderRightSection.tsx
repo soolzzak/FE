@@ -1,10 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
-import { useEffect, useState } from 'react';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { DetailUserProfile, FindUser, FindUserName } from '../../api/mypage';
+import { useEffect } from 'react';
 import { useModal } from '../../hooks/useModal';
 import { handleTitleChangeAtom, isLoginAtom } from '../../store/addRoomStore';
 import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
@@ -20,8 +17,6 @@ import { AddRoom } from './AddRoom';
 import { AuthModal } from './AuthModal';
 import { ProfileMenu } from './ProfileMenu';
 import { UserAlert } from './UserAlert';
-import { Search } from '../../assets/svgs/Search';
-import { SearchUserCard } from './SearchUserCard';
 import { SearchUserField } from './SearchUserField';
 
 export const HeaderRightSection = () => {
@@ -46,27 +41,26 @@ export const HeaderRightSection = () => {
       setUserAtom(jwtDecode(user));
     }
   }, [user]);
-  let eventSource: EventSource;
-  // console.log(userAtom);
-  useEffect(() => {
-    if (user) {
-      eventSource = new EventSource(
-        `https://api.honsoolzzak.com/events/${userAtom?.auth.id}`
-      );
-    }
-    if (eventSource) {
-      eventSource.onmessage = () => {
-        // console.log('Received SSE event:', event.data);
-      };
-      eventSource.onerror = () => {
-        // console.error('SSE connection error:', error);
-      };
-    }
-    return () => {
-      eventSource.close();
-    };
-  }, []);
-  const navigate = useNavigate();
+  // let eventSource: EventSource;
+  // // console.log(userAtom);
+  // useEffect(() => {
+  //   if (user) {
+  //     eventSource = new EventSource(
+  //       `https://api.honsoolzzak.com/events/${userAtom?.auth.id}`
+  //     );
+  //   }
+  //   if (eventSource) {
+  //     eventSource.onmessage = () => {
+  //       // console.log('Received SSE event:', event.data);
+  //     };
+  //     eventSource.onerror = () => {
+  //       // console.error('SSE connection error:', error);
+  //     };
+  //   }
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, []);
   return (
     <motion.section
       className={`f-ic justify-end mr-4 md:min-w-[200px]
@@ -115,7 +109,7 @@ export const HeaderRightSection = () => {
         >
           <button
             type="button"
-            className="text-primary-300 hover:text-primary-400 text-lg mr-7 font-semibold"
+            className="text-primary-300 hover:text-primary-400 text-lg mr-7 font-semibold min-w-[70px]"
             onClick={() => setSearchUsernameModalIsOpen(true)}
           >
             유저 찾기
