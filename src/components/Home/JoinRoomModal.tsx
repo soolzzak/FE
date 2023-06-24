@@ -100,7 +100,7 @@ export const JoinRoomModal = () => {
             </div>
           )}
           <video
-            className="w-full h-full max-w-[640px] object-cover rounded-2xl"
+            className="w-full h-full max-w-[640px] object-cover rounded-2xl scale-x-[-1]"
             ref={myVideoRef}
             autoPlay
             muted

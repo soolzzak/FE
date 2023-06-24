@@ -23,7 +23,7 @@ import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { YoutubeContent } from '../components/StreamRoom/YoutubeContent';
 import { Modal } from '../components/common/Modal';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
-import { userTokenAtom } from '../store/mainpageStore';
+import { AuthToken, userTokenAtom } from '../store/mainpageStore';
 import {
   isOpenIceBreakerModalAtom,
   isOpenKickoutModalAtom,
@@ -113,7 +113,7 @@ export const StreamRoom = () => {
 
   let mediaStream: MediaStream | null = null;
   const [userInfo] = useAtom(userTokenAtom);
-  const [userId] = useState(userInfo?.auth.id);
+  const [userId, setUserId] = useState(0);
   const [isHost, setIsHost] = useState(false);
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
   const [myWebcamMediaStream, setMyWebcamMediaStream] =
@@ -461,6 +461,12 @@ export const StreamRoom = () => {
     }
   };
   useEffect(() => {
+    if (!Object.keys(userInfo as AuthToken)) {
+      setUserId(userInfo?.auth.id as number);
+      console.log('done', userInfo);
+    }
+  }, [userInfo]);
+  useEffect(() => {
     if (!youtubeIsOn) {
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = remoteMediaStream;
@@ -532,7 +538,8 @@ export const StreamRoom = () => {
         // console.log('WebSocket connection closed');
         // console.log('WebSocket connection closed');
         closeMediaStream();
-        // navigate('/');
+        toast.error('');
+        navigate('/');
       };
 
       socket.onerror = () => {

@@ -1,11 +1,5 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import YouTube, { YouTubeProps, YouTubeEvent } from 'react-youtube';
-
-declare global {
-  interface Window {
-    YT: any;
-  }
-}
 
 export const YoutubeContent = ({
   videoLink,
@@ -28,8 +22,6 @@ export const YoutubeContent = ({
   const onVideoStatechange = (event: YouTubeEvent) => {
     if (event.data === 1 && isHost) {
       const currentTime = event.target.getCurrentTime();
-      console.log('Seeked to:', currentTime);
-
       const roundedTime = parseFloat(currentTime.toFixed(10)) + 0.4;
       const message = {
         from: userId,
@@ -37,7 +29,6 @@ export const YoutubeContent = ({
         data: roomNum,
         time: roundedTime,
       };
-      console.log('send youtube time', message);
       socket.send(JSON.stringify(message));
     }
     if (event.data === 2 && isHost) {
@@ -46,20 +37,10 @@ export const YoutubeContent = ({
         type: 'pauseYoutube',
         data: roomNum,
       };
-      console.log('send pause', message);
       socket.send(JSON.stringify(message));
     }
   };
 
-  const guestOpts: YouTubeProps['opts'] = {
-    height: '100%',
-    width: '100%',
-    playerVars: {
-      autoplay: 1,
-      controls: 0,
-      disablekb: 1,
-    },
-  };
   const hostOpts: YouTubeProps['opts'] = {
     height: '100%',
     width: '100%',
@@ -67,7 +48,7 @@ export const YoutubeContent = ({
       autoplay: 1,
     },
   };
-  console.log('videolink', videoLink);
+
   return (
     <YouTube
       className="h-full"

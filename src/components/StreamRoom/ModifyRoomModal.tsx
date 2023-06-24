@@ -1,6 +1,4 @@
 import { useAtom } from 'jotai';
-import { useQuery, useQueryClient } from 'react-query';
-import { getRoom } from '../../api/streamRoom';
 import { DeleteBtn } from '../../assets/svgs/DeleteBtn';
 import { useModal } from '../../hooks/useModal';
 import {
@@ -21,7 +19,7 @@ export const ModifyRoomModal = () => {
   const [, handleTitleChange] = useAtom(handleTitleChangeAtom);
   const [isOpenExit, onCloseExit] = useModal();
 
-  const [roomInfo, setRoomInfo] = useAtom(streamRoomInfoAtom);
+  const [roomInfo] = useAtom(streamRoomInfoAtom);
 
   return (
     <div className="relative f-col bg-white px-12 rounded-[20px]">
