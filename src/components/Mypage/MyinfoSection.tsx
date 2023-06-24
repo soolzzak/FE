@@ -189,7 +189,6 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
                   value={modifyUserName}
                   placeholder={myinfo?.username}
                 />
-
                 {modifyUserName?.length >= MAX_CHARACTERS && (
                   <p className="text-red-500 text-center">
                     10글자 이내로 작성해주세요.
@@ -207,7 +206,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           <div className="f-jic">
             <div className="border-t mt-2 border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
           </div>
-          <div className="md:ml-10 ml-5">
+          <div className="md:ml-10 ml-5 mr-10">
             <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
             {editMode ? (
               <div className="flex flex-col">
