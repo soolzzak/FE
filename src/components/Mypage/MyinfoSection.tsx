@@ -264,7 +264,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
         </div>
-        {/* <button className='flex underline text-[#969696] text-sm absolute -bottom-5 right-8' type='button' onClick={() => setIsOpenDeleteAccount(true)}>회원탈퇴</button> */}
+        <button className='flex underline text-[#969696] text-sm absolute -bottom-5 right-8' type='button' onClick={() => setIsOpenDeleteAccount(true)}>회원탈퇴</button>
       </div>
       <Modal isOpen={isOpenDeleteAccount} onClose={() => setIsOpenDeleteAccount(false)} hasOverlay>
         <DeleteAccount kakaoId={myinfo.kakaoId || null}/>

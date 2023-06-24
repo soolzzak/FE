@@ -141,7 +141,7 @@ export interface DetailUserProfile {
   block: boolean;
 }
 
-interface Message {
+interface SendMessage {
   receiverUsername: string | undefined;
   content: string | undefined;
 }
@@ -222,7 +222,7 @@ export const BlockHandler = async (
 };
 
 // 쪽지 보내기
-export const sendMessage = async (message: Message) => {
+export const sendMessage = async (message: SendMessage) => {
   try {
     const response: AxiosResponse<ApiResponse1> = await axiosInstance.post(
       '/message/send',
