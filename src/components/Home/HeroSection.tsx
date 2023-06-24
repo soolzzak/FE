@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export const HeroSection = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -19,20 +19,6 @@ export const HeroSection = () => {
     };
   }, []);
 
-  const swipeVariants = {
-    enter: {
-      opacity: 1,
-      x: '100%',
-    },
-    center: {
-      opacity: 1,
-      x: 0,
-    },
-    exit: {
-      opacity: 1,
-      x: '-100%',
-    },
-  };
   const textVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
