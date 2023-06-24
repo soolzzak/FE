@@ -125,12 +125,12 @@ export const ControlStreamRoom = ({
           <ScreenShare />
           {screenHover && !isMyScreenShare && (
             <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-              화면공유 끄기
+              화면공유 켜기
             </div>
           )}
           {screenHover && isMyScreenShare && (
             <div className="min-w-max absolute -top-11 text-white text-center px-3 py-1 z-auto bg-[#626262] rounded-md">
-              화면공유 켜기
+              화면공유 끄기
             </div>
           )}
         </div>
