@@ -113,7 +113,7 @@ export const StreamRoom = () => {
 
   let mediaStream: MediaStream | null = null;
   const [userInfo] = useAtom(userTokenAtom);
-  const [userId, setUserId] = useState(0);
+  const [userId, setUserId] = useState(userInfo?.auth.id);
   const [isHost, setIsHost] = useState(false);
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
   const [myWebcamMediaStream, setMyWebcamMediaStream] =
@@ -538,7 +538,7 @@ export const StreamRoom = () => {
         // console.log('WebSocket connection closed');
         // console.log('WebSocket connection closed');
         closeMediaStream();
-        toast.error('');
+        // toast.error('');
         navigate('/');
       };
 
