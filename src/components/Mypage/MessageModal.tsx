@@ -5,9 +5,10 @@ import { toast } from 'react-toastify';
 import { DetailUserProfile, receivedMessage, sendMessage, sentMessage } from '../../api/mypage';
 import { isOpenMessageModalAtom } from '../../store/modalStore';
 import { CancelButton } from '../common/CancelButton';
-import { currentTabAtom, tabStateAtom } from '../../store/messageStore';
+import { currentTabAtom, messageUserInfoAtom, tabStateAtom } from '../../store/messageStore';
+import { messageAlertAtom } from '../../store/mainpageStore';
 
-export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
+export const MessageModal = () => {
   const queryClient = useQueryClient();
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [tabList, setTablList] = useState({
@@ -20,6 +21,7 @@ export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
   const [content, setContent] = useState<string | undefined>();
   const [detailId, setDetailId] = useState<number>();
   const [, setIsOpenMessageModal] = useAtom(isOpenMessageModalAtom);
+  const [messageUserInfo] = useAtom(messageUserInfoAtom)
 
   const cancelButton = () => {
     if (tabState === 'tab') {
@@ -29,8 +31,6 @@ export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
       setCurrentTab('받은쪽지함');
     }
   };
-
-  console.log('userinfo', userinfo)
 
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
@@ -69,13 +69,13 @@ export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
   }, [currentTab]);
 
   useEffect(() => {
-    if (userinfo) {
-      setUsername(userinfo.username);
+    if (messageUserInfo) {
+      setUsername(messageUserInfo);
       if (textAreaRef.current) {
         textAreaRef.current.focus();
       }
     }
-  },[userinfo])
+  },[messageUserInfo])
 
   const sendMessageHandler = async () => {
     if (!username || !content) {
@@ -88,6 +88,12 @@ export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
     };
     await sendMessageMutation.mutate(message);
   };
+
+  const replyMessageHandler = (sendName: string) => {
+    setTabState('detailTab')
+    setCurrentTab('쪽지쓰기')
+    setUsername(sendName)
+  }
 
   return (
     <div className="relative w-[450px] h-[470px] rounded-2xl bg-white f-col px-7 py-5">
@@ -124,6 +130,7 @@ export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
               onClick={() => {
                 setCurrentTab('쪽지쓰기');
                 setTabState('detailTab');
+                setUsername(undefined)
               }}
             >
               쪽지쓰기
@@ -277,7 +284,12 @@ export const MessageModal = ({userinfo}: {userinfo: DetailUserProfile}) => {
       )}
 
       {currentTab === '받은쪽지' && (
-        <div className="w-full h-full f-jic-col">
+        <div className="relative w-full h-full f-jic-col">
+          <button type='button'
+          className='absolute -top-12 right-0 w-fit h-fit font-semibold text-secondary-200 border border-secondary-200 bg-secondary-50 px-3 py-1 rounded-2xl cursor-pointer'
+          onClick={() => replyMessageHandler(receivedData[detailId as number].senderUsername)}
+          >
+            답장하기</button>
           <div className="w-full min-h-fit flex items-center justify-center pb-4">
             <div className="w-2/3 h-full f-jic gap-4">
               <div className="w-1/3 h-full f-jic font-semibold">보낸사람</div>

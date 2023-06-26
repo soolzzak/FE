@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { MainpageRooms } from '../api/main';
+import { DetailUserProfile } from '../api/mypage';
 
 export type AuthToken = {
   sub: string;
