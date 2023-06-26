@@ -130,6 +130,7 @@ export const MessageModal = () => {
               onClick={() => {
                 setCurrentTab('쪽지쓰기');
                 setTabState('detailTab');
+                setUsername(undefined)
               }}
             >
               쪽지쓰기
