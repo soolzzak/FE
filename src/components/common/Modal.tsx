@@ -16,7 +16,7 @@ export const Modal = ({
 }: ChildenType) => (
   <div>
     {isOpen && (
-      <div className="fixed inset-0 z-50 f-jic-col">
+      <div className="fixed inset-0 z-30 f-jic-col">
         <div
           role="none"
           className={`fixed inset-0 ${
