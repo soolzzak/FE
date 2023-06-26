@@ -12,6 +12,7 @@ import {
 import { isOpenJoinRoomAtom, isOpenMessageModalAtom, messageAtom } from '../../store/modalStore';
 import { Modal } from '../common/Modal';
 import { MessageModal } from '../Mypage/MessageModal';
+import { currentTabAtom, messageUserInfoAtom, tabStateAtom } from '../../store/messageStore';
 
 export const NotificaionToggle = () => {
   const [userAlert, setuserAlert] = useAtom(userAlertAtom);
@@ -26,6 +27,8 @@ export const NotificaionToggle = () => {
   const [isOpenMessageModal, setIsOpenMessageModal] = useAtom(
     isOpenMessageModalAtom
   );
+  const [, setCurrentTab] = useAtom(currentTabAtom);
+  const [, setTabState] = useAtom(tabStateAtom);
 
   const sortData = (a: UserAlert | MessageAlert, b: UserAlert | MessageAlert) => {
     const dataA = new Date(a.time).getTime();
@@ -100,6 +103,12 @@ export const NotificaionToggle = () => {
       }))
     );
   };
+
+  const openMessageHandler = () => {
+    setTabState('tab');
+    setCurrentTab('받은쪽지함');
+    setIsOpenMessageModal(true);
+  }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
@@ -181,8 +190,7 @@ export const NotificaionToggle = () => {
                       className="w-full h-full border border-[#C2C2C2] bg-white cursor-pointer rounded-2xl mb-2 flex items-center"
                       onClick={() => {
                         setIsOpen(!isOpen)
-                        setIsOpenMessageModal(true)
-                        setMessageInfo({ ...messageInfo, tab: '받은쪽지함' });
+                        openMessageHandler();
                       }}
                     >
                       <div className="w-full min-h-[100px] f-col justify-center pl-5">
