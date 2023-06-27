@@ -55,7 +55,7 @@ export const ProfileMenu = ({ user }: { user: string }) => {
           src={data.data.userImage}
           role="none"
           onClick={handleDropdownToggle}
-          className="cursor-pointer min-w-[48px] w-12 h-12 rounded-full bg-primary-100 mr-3 ml-5 object-cover"
+          className="cursor-pointer min-w-[48px] w-12 h-12 rounded-full bg-primary-100 sm:mr-3 ml-5 object-cover"
         />
       ) : (
         <div

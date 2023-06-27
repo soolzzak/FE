@@ -22,18 +22,18 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => {
   const [toastHover, setToastHover] = useState(false);
 
   return (
-    <div className="basis-1/2 bg-[#ffffff] rounded-3xl flex flex-col gap-y-2 shadow">
-      <div className="p-8">
+    <div className="basis-1/2 bg-[#ffffff] rounded-3xl flex flex-col md:gap-y-2 shadow">
+      <div className="px-8 md:py-8 py-0 mt-4">
         <div className="flex flex-row">
           <p className="font-bold mb-2 mr-2">도수 레벨</p>
           <div
-            className="mt-0.5"
+            className="mt-0.5 relative"
             onMouseOver={() => setToastHover(true)}
             onMouseOut={() => setToastHover(false)}
           >
             <MypageInfo />
             {toastHover ? (
-              <div className="absolute flex flex-col w-[656px] h-[202px] py-2 rounded-2xl shadow-lg bg-[#ffffff]">
+              <div className="absolute -left-20 sm:top-5 sm:left-0 -top-52 flex flex-col sm:w-[656px] border border-gray-200 w-[490px] h-[202px] py-2 rounded-2xl shadow bg-[#ffffff]">
                 <div className="flex flex-row items-center px-5">
                   <LevelInfoBeer />
                   <p className="text-[#454545] text-base font-bold ml-3">
@@ -139,34 +139,34 @@ export const AlcoholSection = ({ alcohol }: { alcohol: number }) => {
             레벨!&nbsp;
             {(() => {
               if (alcohol === 0) {
-                return '소주레벨까지 1도 남았어요 :)';
+                return '맥주 레벨까지 1도 남았어요 :)';
               }
               if (alcohol >= 1 && alcohol <= 6) {
-                return `칵테일레벨까지 ${alcohol - 7}도 남았어요 :)`;
+                return `칵테일 레벨까지 ${alcohol - 7}도 남았어요 :)`;
               }
               if (alcohol >= 7 && alcohol <= 12) {
-                return `소주레벨까지 ${13 - alcohol}도 남았어요 :)`;
+                return `소주 레벨까지 ${13 - alcohol}도 남았어요 :)`;
               }
               if (alcohol >= 13 && alcohol <= 18) {
-                return `와인레벨까지 ${19 - alcohol}도 남았어요 :)`;
+                return `와인 레벨까지 ${19 - alcohol}도 남았어요 :)`;
               }
               if (alcohol >= 19 && alcohol <= 24) {
-                return `전통주레벨까지 ${25 - alcohol}도 남았어요 :)`;
+                return `전통주 레벨까지 ${25 - alcohol}도 남았어요 :)`;
               }
               if (alcohol >= 25 && alcohol <= 30) {
-                return `럼레벨까지 ${31 - alcohol}도 남았어요 :)`;
+                return `럼 레벨까지 ${31 - alcohol}도 남았어요 :)`;
               }
               if (alcohol >= 31 && alcohol <= 36) {
-                return `테킬라레벨까지 ${37 - alcohol}도 남았어요 :)`;
+                return `테킬라 레벨까지 ${37 - alcohol}도 남았어요 :)`;
               }
               if (alcohol >= 37 && alcohol <= 42) {
-                return `보드카레벨까지 ${43 - alcohol}도 남았어요 :)`;
+                return `보드카 레벨까지 ${43 - alcohol}도 남았어요 :)`;
               }
               if (alcohol >= 43 && alcohol <= 48) {
-                return `위스키레벨까지 ${49 - alcohol}도 남았어요 :)`;
+                return `위스키 레벨까지 ${49 - alcohol}도 남았어요 :)`;
               }
               if (alcohol >= 49 && alcohol <= 54) {
-                return `브랜디레벨까지 ${55 - alcohol}도 남았어요 :)`;
+                return `브랜디 레벨까지 ${55 - alcohol}도 남았어요 :)`;
               }
               return '당신은 진정한 혼술짝 술꾼! 👏';
             })()}{' '}
