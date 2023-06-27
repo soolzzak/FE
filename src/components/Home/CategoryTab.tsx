@@ -6,14 +6,16 @@ import {
   tabAtom,
 } from '../../store/mainpageStore';
 import { selections, tabList } from '../../utils/switchSelections';
+import useAnalyticsEventTracker from '../../hooks/useAnalyticsEventTracker';
 
 export const CategoryTab = () => {
   const [activeTab, setActiveTab] = useState('전체');
   const [currentTab, setCurrentTab] = useAtom(tabAtom);
-
+  const gaEventTracker = useAnalyticsEventTracker('MAINPAGE TAB');
   const [, setDisplayedTabAtom] = useAtom(handleDisplayedTabChangeAtom);
 
   const handleTabChange = (tab: string, index: number) => {
+    gaEventTracker(`CATEGORY SELECTION ${tab}`);
     setCurrentTab(selections[index]);
     setDisplayedTabAtom(tab);
     setActiveTab(tab);
@@ -25,9 +27,7 @@ export const CategoryTab = () => {
 
   return (
     <nav className="w-full border-t f-jic bg-white">
-      <div
-        className="f-jic grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1600px] min-w-[660px] gap-4 xl:px-32"
-      >
+      <div className="f-jic grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1600px] min-w-[660px] gap-4 xl:px-32">
         {tabList.map((tab, index) => (
           <motion.div
             whileHover={{ scale: 1.02 }}

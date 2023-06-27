@@ -54,6 +54,7 @@ import { IceBreaking } from '../assets/svgs/Icebreaking';
 import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
 import { IceGame } from '../assets/svgs/IceGame';
 import { IceGameQ } from '../assets/svgs/IceGameQ';
+import useAnalyticsEventTracker from '../hooks/useAnalyticsEventTracker';
 
 export interface JwtPayload {
   auth: {
@@ -84,6 +85,7 @@ const PeerConnectionConfig = {
 // let mediaStream: MediaStream;
 
 export const StreamRoom = () => {
+  const gaEventTracker = useAnalyticsEventTracker('STREAMROOM');
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const remoteWebcamVideoRef = useRef<HTMLVideoElement>(null);
@@ -443,6 +445,7 @@ export const StreamRoom = () => {
       return;
     }
     setNumberShare((prev) => prev + 1);
+    gaEventTracker('Menu - Youtube');
     setYoutubeModalIsOpen(false);
     const message = {
       from: userId,
@@ -743,6 +746,7 @@ export const StreamRoom = () => {
   }, [myMediaStream]);
 
   const sendToastMessage = () => {
+    gaEventTracker('Toast');
     // console.log('click toast');
     if (socket) {
       const message = JSON.stringify({
@@ -775,6 +779,7 @@ export const StreamRoom = () => {
 
   const sendGameInfoMessage = () => {
     // console.log('click toast');
+    gaEventTracker('Menu - Game');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -802,6 +807,7 @@ export const StreamRoom = () => {
   };
 
   const sendIceGameMessage = () => {
+    gaEventTracker('Menu - Icebreaker');
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -1073,6 +1079,7 @@ export const StreamRoom = () => {
     activityButtonSubStyle = '';
   }
   const sendTakePictureOffer = () => {
+    gaEventTracker('Menu - Take Photo');
     const message = JSON.stringify({
       from: userId,
       type: 'sendPicture',

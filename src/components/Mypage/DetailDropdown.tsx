@@ -13,7 +13,11 @@ import {
 import { BlockModal } from '../StreamRoom/BlockModal';
 import { Modal } from '../common/Modal';
 import { MessageModal } from './MessageModal';
-import { currentTabAtom, messageUserInfoAtom, tabStateAtom } from '../../store/messageStore';
+import {
+  currentTabAtom,
+  messageUserInfoAtom,
+  tabStateAtom,
+} from '../../store/messageStore';
 
 export const DetailDropdown = ({
   userinfo,
@@ -27,7 +31,7 @@ export const DetailDropdown = ({
   const [isOpenBlock, setIsOpenBlock] = useAtom(isOpenBloackModalAtom);
   const [, setIsOpenMessageModal] = useAtom(isOpenMessageModalAtom);
   const [, setMessageUserInfo] = useAtom(messageUserInfoAtom);
-  
+
   const [, setCurrentTab] = useAtom(currentTabAtom);
   const [, setTabState] = useAtom(tabStateAtom);
 
@@ -51,7 +55,7 @@ export const DetailDropdown = ({
   }, []);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && event.keyCode !== 229) {
       setIsOpen(!isOpen);
     }
   };
@@ -71,7 +75,7 @@ export const DetailDropdown = ({
   // 쪽지
   const handleMessageClick = () => {
     setIsOpen(false);
-    setMessageUserInfo(userinfo?.username)
+    setMessageUserInfo(userinfo?.username);
     setIsOpenMessageModal(true);
     setTabState('detailTab');
     setCurrentTab('쪽지쓰기');

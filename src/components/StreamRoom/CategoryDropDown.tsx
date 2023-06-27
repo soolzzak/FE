@@ -38,7 +38,7 @@ export const CategoryDropDown = ({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && event.keyCode !== 229) {
       setIsOpen(!isOpen);
     }
   };

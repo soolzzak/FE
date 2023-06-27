@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^7.1.0",
+    "@mediapipe/selfie_segmentation": "^0.1.1675465747",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -25,6 +26,7 @@
     "postcss-loader": "^7.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-ga": "^3.3.1",
     "react-icons": "^4.9.0",
     "react-query": "^3.39.3",
     "react-redux": "^8.0.5",

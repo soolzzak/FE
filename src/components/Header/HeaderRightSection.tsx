@@ -41,26 +41,7 @@ export const HeaderRightSection = () => {
       setUserAtom(jwtDecode(user));
     }
   }, [user]);
-  // let eventSource: EventSource;
-  // // console.log(userAtom);
-  // useEffect(() => {
-  //   if (user) {
-  //     eventSource = new EventSource(
-  //       `https://api.honsoolzzak.com/events/${userAtom?.auth.id}`
-  //     );
-  //   }
-  //   if (eventSource) {
-  //     eventSource.onmessage = () => {
-  //       // console.log('Received SSE event:', event.data);
-  //     };
-  //     eventSource.onerror = () => {
-  //       // console.error('SSE connection error:', error);
-  //     };
-  //   }
-  //   return () => {
-  //     eventSource.close();
-  //   };
-  // }, []);
+
   return (
     <motion.section
       className={`f-ic justify-end mr-4 md:min-w-[200px]

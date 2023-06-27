@@ -22,7 +22,7 @@ export const SearchUserField = () => {
   });
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && searchUserName) {
+    if (e.key === 'Enter' && searchUserName && e.keyCode !== 229) {
       usernameSearchMutation.mutate(searchUserName);
     }
   };

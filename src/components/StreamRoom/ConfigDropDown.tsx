@@ -1,5 +1,11 @@
 import { useAtom } from 'jotai';
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { AiOutlineSetting } from 'react-icons/ai';
 import {
   isOpenKickoutModalAtom,
@@ -17,7 +23,7 @@ export const ConfigDropDown = () => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && event.keyCode !== 229) {
       setIsOpen(!isOpen);
     }
   };
@@ -54,7 +60,7 @@ export const ConfigDropDown = () => {
   };
 
   return (
-    <div ref={dropdownRef} className='z-10'>
+    <div ref={dropdownRef} className="z-10">
       <div
         role="button"
         onClick={onToggle}
