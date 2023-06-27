@@ -117,7 +117,7 @@ export const HomeBodySection = () => {
 
   return (
     <section className="flex-grow w-full min-h-[100vh]">
-      <div className="f-ic-col min-w-[660px] relative">
+      <div className="f-ic-col min-w-[520px] relative">
         <div className="px-5 w-full max-w-[1230px]">
           <div className="f-ic justify-between my-10 w-full xl:px-16">
             <p className="font-bold text-2xl">
@@ -129,12 +129,12 @@ export const HomeBodySection = () => {
           </div>
 
           {!chatListMutation.isLoading && !chatList?.length && (
-            <div className="f-jic w-full min-w-[660px] h-[100vh]">
+            <div className="f-jic w-full min-w-[520px] h-[100vh]">
               <NoRoom />
             </div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6 h-full mb-14 mx-14 md:mx-0 xl:px-16">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6 h-full mb-14 sm:mx-14 xl:px-16">
             {chatList &&
               chatList.map((chatRoom) => (
                 <div className="flex justify-center" key={chatRoom.roomId}>
