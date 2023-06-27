@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 export const HeroSection = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [
-    'https://mynice.s3.ap-northeast-2.amazonaws.com/mainImage/8d7de50650a64f02bb1982f0cee16638.png',
-    'https://mynice.s3.ap-northeast-2.amazonaws.com/mainImage/d6bb14e0ddda460a94a5bea4eba60437.png',
-    'https://mynice.s3.ap-northeast-2.amazonaws.com/mainImage/e572c23979e2444faf0542c4c0b33695.png',
+    'https://mynice.s3.ap-northeast-2.amazonaws.com/mainBanner/fe9c16091925488583d4211058f7893f.webp',
+    'https://mynice.s3.ap-northeast-2.amazonaws.com/mainBanner/84604c303cb54663b7add6b800ea552c.webp',
+    'https://mynice.s3.ap-northeast-2.amazonaws.com/mainBanner/9b841951ef69412d808e64bd419b400d.webp',
   ];
 
   useEffect(() => {

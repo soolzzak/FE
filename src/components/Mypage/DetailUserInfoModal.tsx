@@ -12,6 +12,7 @@ import { Like } from '../../assets/svgs/Like';
 import { UnLike } from '../../assets/svgs/UnLike';
 import { DetailDropdown } from './DetailDropdown';
 import { CancelButton } from '../common/CancelButton';
+import useAnalyticsEventTracker from '../../hooks/useAnalyticsEventTracker';
 
 export const DetailUserInfoModal = ({
   onClose,
@@ -27,7 +28,7 @@ export const DetailUserInfoModal = ({
       refetchOnWindowFocus: false,
     }
   );
-
+  const gaEventTracker = useAnalyticsEventTracker('MYPAGE');
   const queryClient = useQueryClient();
 
   const [userinfo, setUserinfo] = useState<DetailUserProfile | undefined>();
@@ -41,6 +42,7 @@ export const DetailUserInfoModal = ({
   }, [data]);
 
   const handleFollowClick = async () => {
+    gaEventTracker('Follow');
     const response = await FollowHandler(userinfo?.userId);
     if (response.status === 200) {
       await queryClient.invalidateQueries('mypageInfo');
@@ -49,6 +51,7 @@ export const DetailUserInfoModal = ({
   };
 
   const handleThumbupClick = async () => {
+    gaEventTracker('Thumbs Up');
     if (!userinfo?.alcoholDown) {
       try {
         const response = await ThumbUpHandler(userinfo?.userId);
@@ -62,6 +65,7 @@ export const DetailUserInfoModal = ({
   };
 
   const handleThumbdownClick = async () => {
+    gaEventTracker('Thumbs Down');
     if (!userinfo?.alcoholUp) {
       const response = await ThumbDownHandler(userinfo?.userId);
       if (response.status === 200) {

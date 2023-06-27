@@ -7,7 +7,7 @@ export const handleImageChangeAtom = atom(null, (get, set, update: File) => {
   set(imageAtom, () => update);
 });
 
-export const titleAtom = atom('');
+export const titleAtom = atom<string>('');
 export const handleTitleChangeAtom = atom(null, (get, set, update: string) => {
   set(titleAtom, () => update);
 });

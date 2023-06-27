@@ -6,6 +6,10 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { getMypageProfile } from '../../api/mypage';
 import { userNicknameAtom, userTokenAtom } from '../../store/mainpageStore';
+import { Modal } from '../common/Modal';
+import { MessageModal } from '../Mypage/MessageModal';
+import { isOpenMessageModalAtom } from '../../store/modalStore';
+import { currentTabAtom, messageUserInfoAtom, tabStateAtom } from '../../store/messageStore';
 
 export const ProfileMenu = ({ user }: { user: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +19,12 @@ export const ProfileMenu = ({ user }: { user: string }) => {
   });
   const [, setUserInfo] = useAtom(userTokenAtom);
   const [userNickname, setUserNickname] = useAtom(userNicknameAtom);
+  const [isOpenMessageModal, setIsOpenMessageModal] = useAtom(
+    isOpenMessageModalAtom
+  );
+  const [,setMessageUserInfo] = useAtom(messageUserInfoAtom)
+  const [, setCurrentTab] = useAtom(currentTabAtom);
+  const [, setTabState] = useAtom(tabStateAtom);
   const navigate = useNavigate();
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
@@ -26,6 +36,12 @@ export const ProfileMenu = ({ user }: { user: string }) => {
     setIsOpen(false);
     navigate('/');
   };
+  const messageHandler = () => {
+    setTabState('tab');
+    setCurrentTab('받은쪽지함');
+    setMessageUserInfo(undefined)
+    setIsOpenMessageModal(true);
+  }
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (
@@ -88,6 +104,13 @@ export const ProfileMenu = ({ user }: { user: string }) => {
           </div>
           <div
             role="none"
+            onClick={messageHandler}
+            className="dropdownItemStyle w-full rounded-b-md border-t border-green-200"
+          >
+            <div>메세지</div>
+          </div>
+          <div
+            role="none"
             onClick={handleLogout}
             className="dropdownItemStyle w-full rounded-b-md border-t border-green-200"
           >
@@ -95,6 +118,13 @@ export const ProfileMenu = ({ user }: { user: string }) => {
           </div>
         </motion.div>
       )}
+      <Modal
+        isOpen={isOpenMessageModal}
+        onClose={() => setIsOpenMessageModal(false)}
+        hasOverlay
+      >
+        <MessageModal />
+      </Modal>
     </div>
   );
 };

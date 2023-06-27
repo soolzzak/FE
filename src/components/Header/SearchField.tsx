@@ -18,7 +18,7 @@ export const SearchField = () => {
   const [prev, setSearchWordTrigger] = useAtom(searchwordTriggerAtom);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && e.keyCode !== 229) {
       setTab('SEARCH');
       setDisplayedTab(`'${searchValue || ' '}'에 대한 검색결과`);
       setSearchWord(searchValue);

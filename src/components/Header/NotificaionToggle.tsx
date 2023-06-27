@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { BiMessageAltDots } from 'react-icons/bi';
@@ -9,9 +10,12 @@ import {
   userAlertAtom,
   userNicknameAtom,
 } from '../../store/mainpageStore';
-import { isOpenJoinRoomAtom, isOpenMessageModalAtom, messageAtom } from '../../store/modalStore';
-import { Modal } from '../common/Modal';
-import { MessageModal } from '../Mypage/MessageModal';
+import { currentTabAtom, tabStateAtom } from '../../store/messageStore';
+import {
+  isOpenJoinRoomAtom,
+  isOpenMessageModalAtom,
+  messageAtom,
+} from '../../store/modalStore';
 
 export const NotificaionToggle = () => {
   const [userAlert, setuserAlert] = useAtom(userAlertAtom);
@@ -26,17 +30,22 @@ export const NotificaionToggle = () => {
   const [isOpenMessageModal, setIsOpenMessageModal] = useAtom(
     isOpenMessageModalAtom
   );
+  const [, setCurrentTab] = useAtom(currentTabAtom);
+  const [, setTabState] = useAtom(tabStateAtom);
 
-  const sortData = (a: UserAlert | MessageAlert, b: UserAlert | MessageAlert) => {
+  const sortData = (
+    a: UserAlert | MessageAlert,
+    b: UserAlert | MessageAlert
+  ) => {
     const dataA = new Date(a.time).getTime();
     const dataB = new Date(b.time).getTime();
-    return dataB - dataA
-  }
+    return dataB - dataA;
+  };
 
-  const sortUserAlert = [...userAlert].sort(sortData)
-  const sortMessageAlert = [...messageAlert].sort(sortData)
-  
-  const combineAlerts = [...userAlert,...messageAlert].sort(sortData)
+  const sortUserAlert = [...userAlert].sort(sortData);
+  const sortMessageAlert = [...messageAlert].sort(sortData);
+
+  const combineAlerts = [...userAlert, ...messageAlert].sort(sortData);
 
   const receivedRoomTimeAlert = sortUserAlert.map((item) => {
     const currTime = new Date();
@@ -56,7 +65,7 @@ export const NotificaionToggle = () => {
       timeShown = modiTime;
     }
     return timeShown;
-  })
+  });
 
   const receivedMsgTimeAlert = sortMessageAlert.map((item) => {
     const currTime = new Date();
@@ -81,7 +90,7 @@ export const NotificaionToggle = () => {
   useEffect(() => {
     setShowAlert(
       sortUserAlert.filter((item) => item.uncheck === true).length +
-      sortMessageAlert.filter((item) => item.uncheck === true).length
+        sortMessageAlert.filter((item) => item.uncheck === true).length
     );
   }, [sortUserAlert, sortMessageAlert]);
 
@@ -101,8 +110,14 @@ export const NotificaionToggle = () => {
     );
   };
 
+  const openMessageHandler = () => {
+    setTabState('tab');
+    setCurrentTab('받은쪽지함');
+    setIsOpenMessageModal(true);
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && event.keyCode !== 229) {
       setIsOpen(!isOpen);
     }
   };
@@ -140,12 +155,16 @@ export const NotificaionToggle = () => {
 
       <div className="relative">
         {isOpen && (
-          <div
+          <motion.div
+            initial={{ opacity: 0, scale: 0, y: -100, x: 100 }}
+            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+            exit={{ opacity: 0, scale: 0, y: -100, x: 100 }}
+            transition={{ duration: 0.15 }}
             className={`${
               sortUserAlert.length === 0 && sortMessageAlert.length === 0
                 ? 'w-[300px] h-[200px]'
                 : 'h-fit'
-            } absolute bg-[#F4F4F4] rounded-lg w-96 max-h-[320px] f-col justify-center top-8 -right-6`}
+            } absolute border border-gray-300 bg-[#F4F4F4] rounded-lg w-96 max-h-[320px] f-col justify-center top-4 -right-3`}
           >
             {sortUserAlert.length === 0 && sortMessageAlert.length === 0 ? (
               <div className="f-jic-col gap-2 text-lg font-medium">
@@ -180,14 +199,13 @@ export const NotificaionToggle = () => {
                       key={item.username}
                       className="w-full h-full border border-[#C2C2C2] bg-white cursor-pointer rounded-2xl mb-2 flex items-center"
                       onClick={() => {
-                        setIsOpen(!isOpen)
-                        setIsOpenMessageModal(true)
-                        setMessageInfo({ ...messageInfo, tab: '받은쪽지함' });
+                        setIsOpen(!isOpen);
+                        openMessageHandler();
                       }}
                     >
                       <div className="w-full min-h-[100px] f-col justify-center pl-5">
                         <p className="text-base text-[#252525] font-medium flex">
-                          <div className='pt-1 pr-1'>
+                          <div className="pt-1 pr-1">
                             <BiMessageAltDots />
                           </div>
                           {item.username}님이 쪽지를 보내셨습니다!
@@ -203,7 +221,7 @@ export const NotificaionToggle = () => {
                 </div>
               </div>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

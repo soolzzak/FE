@@ -25,7 +25,8 @@
 
 🛠 Project Architecture
 ---------------------------------------
-![image](https://github.com/Jello92/BE/assets/128972031/e5bb7ae0-e697-4c80-a1f0-c63158deaced)
+![아키텍쳐](https://github.com/soolzzak/FE/assets/128972031/870b0678-fea0-4000-aa7d-5fb90a89eb7b)
+
 
 
 📅 API 명세서
@@ -43,8 +44,7 @@
 ![image](https://github.com/Jello92/BE/assets/128972031/8595f93e-c6a5-45e9-9a3f-4c5b392b2edb)
 
 
-
-
 🛠 트러블 슈팅
 ---------------------------------------
-[트러블 슈팅]
+[트러블 슈팅](https://www.notion.so/040989c5b0c74b1287eb2a4b1cc2860f?pvs=4)
+

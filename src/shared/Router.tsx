@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import ReactGA from 'react-ga';
 import { Layout } from '../layout/Layout';
 import { ChangePassword } from '../pages/ChangePassword';
 import { Home } from '../pages/Home';
@@ -12,6 +13,7 @@ import { NotFound } from '../pages/NotFound';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
 import { handleTokenChangeAtom } from '../store/mainpageStore';
+// import Filter from '../pages/Filter';
 
 export const Router = () => {
   const token = Cookies.get('accessKey');
@@ -24,6 +26,9 @@ export const Router = () => {
     }
   }, []);
 
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
   return (
     // <Layout>
     <Layout
@@ -41,6 +46,7 @@ export const Router = () => {
           <Route path="/pwchange" element={<ChangePassword />} />
           <Route path="/api/login" element={<KakaoCallback />} />
           <Route path="/signup" element={<Signup />} />
+          {/* <Route path="/filter" element={<Filter />} /> */}
         </Routes>
       </AnimatePresence>
     </Layout>
