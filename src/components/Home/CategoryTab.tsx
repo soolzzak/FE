@@ -27,14 +27,14 @@ export const CategoryTab = () => {
 
   return (
     <nav className="w-full border-t f-jic bg-white">
-      <div className="f-jic grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1600px] min-w-[660px] gap-4 xl:px-32">
+      <div className="f-jic grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1600px] min-w-[520px] gap-4 xl:px-32">
         {tabList.map((tab, index) => (
           <motion.div
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.1 }}
             role="none"
             className={`
-            f-jic cursor-pointer py-4 text-[20px] min-w-[120px] font-semibold text-[#454545] 
+            f-jic cursor-pointer py-4 sm:text-[20px] text-[16px] min-w-[120px] font-semibold text-[#454545] 
             ${
               activeTab === tab
                 ? 'border-b-[3px] border-primary-300 text-primary-200'

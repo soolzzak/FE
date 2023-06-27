@@ -115,7 +115,7 @@ export const HeaderRightSection = () => {
         >
           <button
             type="button"
-            className="text-primary-300 hover:text-primary-400 text-lg mr-7 font-semibold"
+            className="text-primary-300 hover:text-primary-400 text-lg mr-7  font-semibold"
             onClick={() => {
               setIsLogin(() => false);
               setIsOpenAuth(() => true);

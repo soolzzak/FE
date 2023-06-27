@@ -18,7 +18,7 @@ export const Home = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3, ease: [0, 0.71, 0.2, 1.01] }}
-      className="grad f-ic-col bg-[#f5f7f6] min-h-screen w-full min-w-[660px]"
+      className="grad f-ic-col bg-[#f5f7f6] min-h-screen w-full min-w-[520px]"
     >
       <HeroSection />
       <div className="sticky top-[70px] z-10 w-full">
