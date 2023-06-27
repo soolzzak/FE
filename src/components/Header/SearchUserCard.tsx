@@ -23,11 +23,11 @@ export const SearchUserCard = ({ userData }: { userData: FindUserName }) => {
       <div className="py-2">
         <div
           role="none"
-          className="flex flex-row w-[288px] h-[88px] items-center bg-[#F5F5F7] rounded-xl gap-5 px-2"
+          className="flex flex-row w-[288px] h-[78px] items-center bg-[#F5F5F7] rounded-xl gap-5 px-3"
           onClick={() => setIsOpenDetailUser(true)}
         >
           <img
-            className="w-[64px] h-[64px] rounded-full object-cover"
+            className="w-[48px] h-[48px] bg-primary-100 rounded-full object-cover"
             alt=""
             src={userData?.userImage}
           />

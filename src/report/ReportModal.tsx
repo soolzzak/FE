@@ -58,7 +58,7 @@ export const ReportModal = ({
   };
 
   return (
-    <div className="flex flex-col mt-32 md:w-[597.5px]  w-[360px]  bg-[#FFFFFF] rounded-[30px] p-8">
+    <div className="flex flex-col mt-32 md:w-[597.5px]  w-[400px]  bg-[#FFFFFF] rounded-[30px] p-8">
       <div className="font-semibold text-[24px] mb-3">신고하기</div>
 
       <div className="font-medium text-lg text-[#4D4D4D] mb-5">

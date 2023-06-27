@@ -44,8 +44,8 @@ export const HeaderRightSection = () => {
 
   return (
     <motion.section
-      className={`f-ic justify-end mr-4 md:min-w-[200px]
-      ${user ? 'min-w-[490px]' : 'min-w-[180px]'}`}
+      className={`f-ic justify-end sm:mr-4 md:min-w-[200px]
+      ${user ? 'min-w-[350px]' : 'min-w-[180px]'}`}
     >
       <Modal
         isOpen={searchUsernameModalIsOpen}
