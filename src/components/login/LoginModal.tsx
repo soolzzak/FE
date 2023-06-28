@@ -33,7 +33,7 @@ export const LoginModal = () => {
   const loginMutation = useMutation(LoginApi, {
     onSuccess: (response) => {
       setIsOpenLogin(false);
-      // setUserToken(response?.headers.access_key);
+      setUserToken(response?.headers.access_key);
       navigate('/');
     },
     onError: (error: { response: { data: { message: string } } }) => {

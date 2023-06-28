@@ -111,8 +111,14 @@ export const HeaderRightSection = () => {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="min-w-[250px]"
+          className="flex flex-row-reverse min-w-[250px]"
         >
+          <CommonButton
+            buttonText="로그인"
+            enabled
+            clickHandler={() => setIsOpenLogin(true)}
+            dimensions="mr-7 text-lg min-w-[70px] rounded-lg"
+          />
           <button
             type="button"
             className="text-primary-300 hover:text-primary-400 text-lg mr-7  font-semibold"
@@ -123,12 +129,6 @@ export const HeaderRightSection = () => {
           >
             회원가입
           </button>
-          <CommonButton
-            buttonText="로그인"
-            enabled
-            clickHandler={() => setIsOpenLogin(true)}
-            dimensions="mr-7 text-lg min-w-[70px] rounded-lg"
-          />
         </motion.div>
       )}
     </motion.section>
