@@ -43,7 +43,7 @@ export const HeroSection = () => {
   };
   return (
     <div className="w-full">
-      <section className="relative w-full h-[580px] min-w-[660px]">
+      <section className="relative w-full h-[580px] min-w-[520px]">
         {images.map((imageUrl, index) => (
           <motion.div
             key={imageUrl}
@@ -61,7 +61,7 @@ export const HeroSection = () => {
         ))}
 
         <div className="absolute bg-black w-full h-full opacity-[0.4] z-10" />
-        <div className="f-jic-col text-[#494949] min-w-[660px]">
+        <div className="f-jic-col text-[#494949] min-w-[520px]">
           <motion.h1
             className="font-bold text-5xl  mt-52 text-white z-20"
             initial="hidden"
@@ -81,7 +81,7 @@ export const HeroSection = () => {
             함께 편하게 술 한잔!
           </motion.h1>
         </div>
-        <div className="f-jic-col mt-12  text-[#5F5F5F] min-w-[660px]">
+        <div className="f-jic-col mt-12  text-[#5F5F5F] min-w-[520px]">
           <motion.span
             className="text-[28px] text-white z-20"
             initial="hidden"

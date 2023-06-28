@@ -1104,7 +1104,7 @@ export const StreamRoom = () => {
     socket.send(message);
   };
   return (
-    <div className="w-full h-full min-w-[660px]">
+    <div className="w-full h-full min-w-[520px]">
       {showToast && <Toast />}
 
       <div className="f-col pt-24">

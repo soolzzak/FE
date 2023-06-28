@@ -44,8 +44,8 @@ export const HeaderRightSection = () => {
 
   return (
     <motion.section
-      className={`f-ic justify-end mr-4 md:min-w-[200px]
-      ${user ? 'min-w-[490px]' : 'min-w-[180px]'}`}
+      className={`f-ic justify-end sm:mr-4 md:min-w-[200px]
+      ${user ? 'min-w-[350px]' : 'min-w-[180px]'}`}
     >
       <Modal
         isOpen={searchUsernameModalIsOpen}
@@ -115,7 +115,7 @@ export const HeaderRightSection = () => {
         >
           <button
             type="button"
-            className="text-primary-300 hover:text-primary-400 text-lg mr-7 font-semibold"
+            className="text-primary-300 hover:text-primary-400 text-lg mr-7  font-semibold"
             onClick={() => {
               setIsLogin(() => false);
               setIsOpenAuth(() => true);

@@ -7,7 +7,10 @@ import { BadgeSection } from '../components/Mypage/BadgeSection';
 import { FollowSection } from '../components/Mypage/FollowSection';
 import { MyinfoSection } from '../components/Mypage/MyinfoSection';
 import { Modal } from '../components/common/Modal';
-import { isOpenDeleteAccountAtom, isOpenMessageModalAtom } from '../store/modalStore';
+import {
+  isOpenDeleteAccountAtom,
+  isOpenMessageModalAtom,
+} from '../store/modalStore';
 import { MessageModal } from '../components/Mypage/MessageModal';
 import { DeleteAccount } from '../components/login/DeleteAccountModal';
 
@@ -16,7 +19,6 @@ export const Mypage = () => {
     refetchOnWindowFocus: false,
   });
   const [myinfo, setMyinfo] = useState<MypageProfileRooms | undefined>();
-
 
   // if (isLoading) return <div>Loading...</div>;
   // if (isError) return <div>{(error as Error).message}</div>;
@@ -29,9 +31,9 @@ export const Mypage = () => {
   }, [data]);
 
   return (
-    <div className="flex-grow w-full gap-10 min-w-[580px] bg-[#f6fff9] min-h-screen">
+    <div className="flex-grow w-full gap-10 min-w-[520px] bg-[#f6fff9] min-h-screen">
       <div className="f-ic-col relative">
-        <div className="flex md:flex-row flex-col px-6 w-full mt-32 max-w-[1230px] mx-auto gap-10">
+        <div className="flex md:flex-row flex-col px-6 w-full mt-32 max-w-[1200px] mx-auto gap-10">
           {myinfo && (
             <div className="basis-2/5">
               <MyinfoSection myinfo={myinfo} />

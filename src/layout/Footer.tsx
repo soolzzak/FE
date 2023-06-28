@@ -4,7 +4,7 @@ import { Line } from '../assets/svgs/Line';
 import { Logo } from '../assets/svgs/Logo';
 
 export const Footer = () => (
-  <div className="f-jic w-full bg-white z-50 shadow-sm min-w-[660px]">
+  <div className="f-jic w-full bg-white z-50 shadow-sm min-w-[520px] p-5 sm:p-0">
     <div className="relative max-w-[1600px] w-full h-[90px] flex justify-center items-center">
       <div className="flex flex-row gap-x-4 items-center">
         <Logo logoSize="50" />

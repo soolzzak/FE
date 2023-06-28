@@ -23,7 +23,9 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [editMode, setEditMode] = useState(false);
 
-  const [isOpenDeleteAccount, setIsOpenDeleteAccount] = useAtom(isOpenDeleteAccountAtom)
+  const [isOpenDeleteAccount, setIsOpenDeleteAccount] = useAtom(
+    isOpenDeleteAccountAtom
+  );
 
   const MAX_CHARACTERS = 10;
   const MAX_INTRO = 150;
@@ -123,7 +125,7 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
   };
 
   return (
-    <div className="bg-[#ffffff] basis-2/5 rounded-3xl flex flex-col w-full gap-y-6 pb-10 shadow">
+    <div className="bg-[#ffffff] basis-2/5 rounded-3xl flex flex-col w-full gap-y-6 pb-5 shadow">
       <div className="relative">
         <div className="absolute top-4 right-4 ">
           {editMode ? (
@@ -139,14 +141,14 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           )}
         </div>
       </div>
-      <div className="flex md:flex-col flex-row gap-y-6">
+      <div className="flex md:flex-col gap-y-6">
         <div className="flex justify-center items-center">
           <div
             className={`${
               editMode ? 'group hover:opacity-70' : ''
             }  transition-opacity duration-300 ease-in-out 
-             lg:w-60 lg:h-60 sm:w-40 sm:h-40 w-[84px] h-[84px] ml-5 mr-5 rounded-full 
-            bg-[#B6ECC4] mt-5 flex justify-center items-center relative shadow`}
+             lg:w-56 lg:h-56 sm:w-40 sm:h-40 w-[84px] h-[84px] ml-5 mr-5 rounded-full 
+            bg-[#B6ECC4] md:mt-5 mt-0 flex justify-center items-center relative shadow`}
           >
             {editMode ? (
               <label
@@ -183,8 +185,8 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
           </div>
         </div>
 
-        <div className="flex-col">
-          <div className="flex justify-center md:justify-center md:mb-5 items-center md:flex md:items-start">
+        <div className="flex flex-col justify-center">
+          <div className="flex justify-start md:justify-center md:mb-5 items-center md:flex md:items-start">
             {editMode ? (
               <div className="flex flex-col justify-center items-center">
                 <input
@@ -202,17 +204,18 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
               </div>
             ) : (
               <div>
-                <p className="text-xl font-bold text-center">
+                <p className="text-xl font-bold text-center text-[]">
                   {modifyUserName || myinfo?.username}
                 </p>
               </div>
             )}
           </div>
-          <div className="f-jic">
-            <div className="border-t mt-2 border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
+          <div className="f-jic hidden md:block">
+            <div className="border-t mt-2 ml-10 border-[#E7E7E7] w-[80%] md:mb-5 text-center" />
           </div>
-          <div className="md:ml-10 ml-5 mr-10">
-            <p className="font-semibold text-lg  text-[#7C7C7C]">한줄소개</p>
+
+          <div className="md:ml-10 ml-5 mr-10 hidden md:block">
+            <p className="font-semibold text-lg text-[#7C7C7C]">한줄소개</p>
             {editMode ? (
               <div className="flex flex-col">
                 <input
@@ -237,36 +240,80 @@ export const MyinfoSection = ({ myinfo }: { myinfo: MypageProfileRooms }) => {
             )}
           </div>
 
-          <div className="flex flex-col md:ml-10 mt-6">
-            <p className="font-semibold text-lg text-[#7C7C7C] hidden sm:block">
+          <div className="flex flex-col md:ml-10 md:mt-6 mt-0">
+            <p className="font-semibold text-lg text-[#7C7C7C] hidden md:block">
               이메일
             </p>
-            <p className="font-normal mt-2">{myinfo?.email}</p>
+            <p className="font-normal text-base mt-2">{myinfo?.email}</p>
           </div>
         </div>
+      </div>
+      <div className="f-jic sm:hidden">
+        <div className="border-t mt-2 border-[#E7E7E7] w-[90%] md:mb-5 text-center" />
       </div>
       <div className="relative md:ml-10 ml-5">
-        <p className="font-semibold text-lg text-[#7C7C7C]">연결된 소셜계정</p>
-        <div className="flex flex-row mt-2 items-center">
-          <div className="border p-2 rounded-3xl flex items-center">
-            {myinfo.kakaoId !== null ? (
-              <>
-                <Kakao />
-                <p className="text-base font-normal ml-1">
-                  카카오톡 계정으로 연결되었습니다.
+        <div className="md:hidden">
+          <p className="font-semibold text-lg md:mt-5 mt-0 text-[#7C7C7C]">
+            한줄소개
+          </p>
+          {editMode ? (
+            <div className="flex flex-col">
+              <input
+                className="md:w-[290px] md:h-[32px] w-[250px] h-[32px] px-1 rounded-lg border border-[#FF6700]"
+                type="text"
+                onChange={modifyUserInfoHandler}
+                value={modifyUserInfo}
+                placeholder={myinfo.introduction}
+              />
+              {modifyUserInfo?.length >= MAX_INTRO && (
+                <p className="text-red-500 text-center">
+                  150글자 이내로 작성해주세요.
                 </p>
-              </>
-            ) : (
-              <p className="text-base font-normal">
-                연결된 소셜 계정이 없습니다.
-              </p>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            <p className="font-normal mt-2">
+              {modifyUserInfo ||
+                myinfo?.introduction ||
+                '한 줄 소개를 작성해주세요'}
+            </p>
+          )}
         </div>
-        <button className='flex underline text-[#969696] text-sm absolute -bottom-5 right-8' type='button' onClick={() => setIsOpenDeleteAccount(true)}>회원탈퇴</button>
+        <div className="mt-3 md:mt-0">
+          <p className="font-semibold text-lg text-[#7C7C7C]">
+            연결된 소셜계정
+          </p>
+          <div className="flex flex-row mt-2 items-center">
+            <div className="border p-2 rounded-3xl flex items-center">
+              {myinfo.kakaoId !== null ? (
+                <>
+                  <Kakao />
+                  <p className="text-base font-normal ml-1">
+                    카카오톡 계정으로 연결되었습니다.
+                  </p>
+                </>
+              ) : (
+                <p className="text-base font-normal">
+                  연결된 소셜 계정이 없습니다.
+                </p>
+              )}
+            </div>
+          </div>
+          <button
+            className="flex underline text-[#969696] text-sm absolute -bottom-5 right-8"
+            type="button"
+            onClick={() => setIsOpenDeleteAccount(true)}
+          >
+            회원탈퇴
+          </button>
+        </div>
       </div>
-      <Modal isOpen={isOpenDeleteAccount} onClose={() => setIsOpenDeleteAccount(false)} hasOverlay>
-        <DeleteAccount kakaoId={myinfo.kakaoId || null}/>
+      <Modal
+        isOpen={isOpenDeleteAccount}
+        onClose={() => setIsOpenDeleteAccount(false)}
+        hasOverlay
+      >
+        <DeleteAccount kakaoId={myinfo.kakaoId || null} />
       </Modal>
     </div>
   );

@@ -16,7 +16,7 @@ export const HeaderLeftSection = () => {
   };
 
   return (
-    <section className="f-ic max-w-[600px] w-full">
+    <section className="f-ic max-w-[600px]">
       <div role="none" onClick={redirectToRoot} className="cursor-pointer">
         <Logo />
       </div>
