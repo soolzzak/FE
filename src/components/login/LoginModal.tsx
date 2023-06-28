@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { LoginApi, LoginInfo } from '../../api/auth';
+import { LoginApi, LoginInfo, userInfo } from '../../api/auth';
 import { Logo } from '../../assets/svgs/Logo';
 import { Vector } from '../../assets/svgs/Vector';
-import { usernameAtom } from '../../store/mainpageStore';
+import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
 import { isOpenLoginModalAtom } from '../../store/modalStore';
 import { CancelButton } from '../common/CancelButton';
 
@@ -23,18 +23,29 @@ export const LoginModal = () => {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
 
-  const [, setUserToken] = useAtom(usernameAtom);
+  const [, setIsLoggedIn] = useAtom(usernameAtom);
+  const [, setUserAtom] = useAtom(userTokenAtom);
 
   const emailHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
   const passwordHandler = (event: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(event.target.value);
-
+  const userInfoMutation = useMutation(userInfo, {
+    onSuccess: (data) => {
+      setIsLoggedIn(true);
+      setUserAtom(data.data);
+      console.log(data.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   const loginMutation = useMutation(LoginApi, {
     onSuccess: () => {
       setIsOpenLogin(false);
       toast.success('로그인 성공');
-      setUserToken(true);
+      setIsLoggedIn(true);
+      userInfoMutation.mutate();
       navigate('/');
     },
     onError: (error: { response: { data: { message: string } } }) => {
