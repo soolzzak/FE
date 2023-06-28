@@ -58,7 +58,7 @@ export const ControlStreamRoom = ({
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
   const [hostId] = useAtom(hostIdAtom);
   const [userInfo] = useAtom(userTokenAtom);
-
+  console.log(hostId, userInfo?.id);
   return (
     <>
       <div

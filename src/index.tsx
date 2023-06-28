@@ -1,15 +1,12 @@
+import ReactGA from 'react-ga';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { Provider } from 'react-redux';
-// import store from './redux/config/configStore';
 import App from './App';
 
+const TRACKING_ID = 'G-5N8TCV0XGN';
+ReactGA.initialize(TRACKING_ID);
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-root.render(
-  // <Provider store={store}>
-    <App />
-  // </Provider>
-);
+root.render(<App />);
