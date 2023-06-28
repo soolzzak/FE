@@ -33,7 +33,8 @@ export const LoginModal = () => {
   const loginMutation = useMutation(LoginApi, {
     onSuccess: (response) => {
       setIsOpenLogin(false);
-      setUserToken(response?.headers.access_key);
+      toast.success('로그인 성공');
+      setUserToken(response?.data.status === 200);
       navigate('/');
     },
     onError: (error: { response: { data: { message: string } } }) => {

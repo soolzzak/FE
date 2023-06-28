@@ -19,16 +19,16 @@ export type UserAlert = {
   roomId: number;
   uncheck: boolean;
   time: Date;
-}
+};
 
 export type MessageAlert = {
   username: string;
   time: Date;
   uncheck: boolean;
-}
+};
 
-export const usernameAtom = atom('');
-export const handleTokenChangeAtom = atom(null, (get, set, update: string) => {
+export const usernameAtom = atom(false);
+export const handleTokenChangeAtom = atom(null, (get, set, update: boolean) => {
   set(usernameAtom, () => update);
 });
 export const tabAtom = atom('ALL');

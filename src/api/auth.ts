@@ -88,26 +88,35 @@ export const ChangePassword = async (changePwdInfo: ChangePwdInfo) => {
   }
 };
 
+export const userInfo = async () => {
+  try {
+    const response = await axiosInstance.get('/userinfo');
+    return response.data;
+  } catch (error) {
+    throw error as Error;
+  }
+};
 export const LoginApi = async (loginInfo: LoginInfo) => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
       '/login',
       loginInfo
     );
-    const accessKey = response.headers.access_key;
-    const refreshKey = response.headers.refresh_key;
-    const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
-    const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
-    const accessExp = decodedAccessToken.exp;
-    const refreshExp = decodedRefreshToken.exp;
-    const accessExpireDate = new Date(accessExp * 1000);
-    const refreshExpireDate = new Date(refreshExp * 1000);
-    Cookies.set('accessKey', accessKey, {
-      expires: accessExpireDate,
-    });
-    Cookies.set('refreshKey', refreshKey, {
-      expires: refreshExpireDate,
-    });
+    // console.log(response.data.status);
+    // const accessKey = response.headers.access_key;
+    // const refreshKey = response.headers.refresh_key;
+    // const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
+    // const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
+    // const accessExp = decodedAccessToken.exp;
+    // const refreshExp = decodedRefreshToken.exp;
+    // const accessExpireDate = new Date(accessExp * 1000);
+    // const refreshExpireDate = new Date(refreshExp * 1000);
+    // Cookies.set('accessKey', accessKey, {
+    //   expires: accessExpireDate,
+    // });
+    // Cookies.set('refreshKey', refreshKey, {
+    //   expires: refreshExpireDate,
+    // });
     return response;
   } catch (error) {
     throw error as Error;

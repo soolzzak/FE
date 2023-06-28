@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom } from 'jotai';
-import jwtDecode from 'jwt-decode';
 import { useEffect } from 'react';
+import { useMutation } from 'react-query';
+import { userInfo } from '../../api/auth';
 import { useModal } from '../../hooks/useModal';
 import { handleTitleChangeAtom, isLoginAtom } from '../../store/addRoomStore';
 import { userTokenAtom, usernameAtom } from '../../store/mainpageStore';
@@ -16,8 +17,8 @@ import { LoginModal } from '../login/LoginModal';
 import { AddRoom } from './AddRoom';
 import { AuthModal } from './AuthModal';
 import { ProfileMenu } from './ProfileMenu';
-import { UserAlert } from './UserAlert';
 import { SearchUserField } from './SearchUserField';
+import { UserAlert } from './UserAlert';
 
 export const HeaderRightSection = () => {
   const [isOpenAuth, setIsOpenAuth] = useAtom(isOpenAuthModalAtom);
@@ -32,13 +33,21 @@ export const HeaderRightSection = () => {
   const [searchUsernameModalIsOpen, setSearchUsernameModalIsOpen] = useAtom(
     isOpenSearchUsernameModalAtom
   );
-
+  const userInfoMutation = useMutation(userInfo, {
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   const [user] = useAtom(usernameAtom);
   const [userAtom, setUserAtom] = useAtom(userTokenAtom);
   // console.log(userAtom);
   useEffect(() => {
     if (user) {
-      setUserAtom(jwtDecode(user));
+      userInfoMutation.mutate();
+      // setUserAtom(jwtDecode());
     }
   }, [user]);
 
