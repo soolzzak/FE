@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai';
+import Cookies from 'js-cookie';
 import React, { useState } from 'react';
 import { Search } from '../../assets/svgs/Search';
 import {
@@ -16,7 +17,7 @@ export const SearchField = () => {
   const [, setDisplayedTab] = useAtom(handleDisplayedTabChangeAtom);
   const [, setSearchWord] = useAtom(handleSearchwordAtom);
   const [prev, setSearchWordTrigger] = useAtom(searchwordTriggerAtom);
-
+  console.log(Cookies.get('ACCESS_KEY'));
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && e.keyCode !== 229) {
       setTab('SEARCH');
