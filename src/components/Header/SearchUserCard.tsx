@@ -10,7 +10,7 @@ export const SearchUserCard = ({ userData }: { userData: FindUserName }) => {
   const [isOpenDetailUser, onCloseDetailUser, setIsOpenDetailUser] = useModal();
 
   // const [, setUserInfo] = useAtom(userTokenAtom);
-  console.log('가져오는지', userData);
+  // console.log('가져오는지', userData);
 
   return (
     <>

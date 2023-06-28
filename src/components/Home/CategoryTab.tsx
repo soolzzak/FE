@@ -1,21 +1,24 @@
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
+import ReactGA from 'react-ga4';
 import {
   handleDisplayedTabChangeAtom,
   tabAtom,
 } from '../../store/mainpageStore';
 import { selections, tabList } from '../../utils/switchSelections';
-import useAnalyticsEventTracker from '../../hooks/useAnalyticsEventTracker';
 
 export const CategoryTab = () => {
   const [activeTab, setActiveTab] = useState('전체');
   const [currentTab, setCurrentTab] = useAtom(tabAtom);
-  const gaEventTracker = useAnalyticsEventTracker('MAINPAGE TAB');
+
   const [, setDisplayedTabAtom] = useAtom(handleDisplayedTabChangeAtom);
 
   const handleTabChange = (tab: string, index: number) => {
-    gaEventTracker(`CATEGORY SELECTION ${tab}`);
+    ReactGA.event({
+      category: 'Category Tab',
+      action: `CATEGORY SELECTION ${tab}`,
+    });
     setCurrentTab(selections[index]);
     setDisplayedTabAtom(tab);
     setActiveTab(tab);

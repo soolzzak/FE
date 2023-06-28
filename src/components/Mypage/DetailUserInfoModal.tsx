@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
+import ReactGA from 'react-ga4';
 import {
   DetailUserProfile,
   FollowHandler,
@@ -12,7 +13,6 @@ import { Like } from '../../assets/svgs/Like';
 import { UnLike } from '../../assets/svgs/UnLike';
 import { DetailDropdown } from './DetailDropdown';
 import { CancelButton } from '../common/CancelButton';
-import useAnalyticsEventTracker from '../../hooks/useAnalyticsEventTracker';
 
 export const DetailUserInfoModal = ({
   onClose,
@@ -28,7 +28,6 @@ export const DetailUserInfoModal = ({
       refetchOnWindowFocus: false,
     }
   );
-  const gaEventTracker = useAnalyticsEventTracker('MYPAGE');
   const queryClient = useQueryClient();
 
   const [userinfo, setUserinfo] = useState<DetailUserProfile | undefined>();
@@ -42,7 +41,10 @@ export const DetailUserInfoModal = ({
   }, [data]);
 
   const handleFollowClick = async () => {
-    gaEventTracker('Follow');
+    ReactGA.event({
+      category: 'Mypage',
+      action: `Follow Click`,
+    });
     const response = await FollowHandler(userinfo?.userId);
     if (response.status === 200) {
       await queryClient.invalidateQueries('mypageInfo');
@@ -51,7 +53,10 @@ export const DetailUserInfoModal = ({
   };
 
   const handleThumbupClick = async () => {
-    gaEventTracker('Thumbs Up');
+    ReactGA.event({
+      category: 'Mypage',
+      action: `Thumbs Up Click`,
+    });
     if (!userinfo?.alcoholDown) {
       try {
         const response = await ThumbUpHandler(userinfo?.userId);
@@ -65,7 +70,10 @@ export const DetailUserInfoModal = ({
   };
 
   const handleThumbdownClick = async () => {
-    gaEventTracker('Thumbs Down');
+    ReactGA.event({
+      category: 'Mypage',
+      action: `Thumbs Down Click`,
+    });
     if (!userinfo?.alcoholUp) {
       const response = await ThumbDownHandler(userinfo?.userId);
       if (response.status === 200) {

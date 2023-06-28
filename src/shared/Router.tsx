@@ -1,7 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 import { useMutation } from 'react-query';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { userInfo } from '../api/auth';
@@ -29,7 +29,7 @@ export const Router = () => {
     onSuccess: (data) => {
       setIsLoggedIn(true);
       setUserAtom(data.data);
-      console.log(data.data);
+      // console.log(data.data);
     },
     onError: (error) => {
       console.log(error);
@@ -37,9 +37,16 @@ export const Router = () => {
   });
 
   useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search);
     userInfoMutation.mutate();
   }, []);
+
+  useEffect(() => {
+    ReactGA.send({
+      hitType: 'pageview',
+      page: location.pathname,
+      title: location.pathname,
+    });
+  }, [location]);
 
   return (
     // <Layout>

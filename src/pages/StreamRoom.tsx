@@ -7,6 +7,7 @@ import { useMutation } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContent, toast } from 'react-toastify';
 import YouTube from 'react-youtube';
+import ReactGA from 'react-ga4';
 import { DetailUserProfile, getDetailUserProfile } from '../api/mypage';
 import { getRoom } from '../api/streamRoom';
 import { Game } from '../assets/svgs/Game';
@@ -38,7 +39,6 @@ import {
   monitorOnAtom,
 } from '../store/streamControlStore';
 import { convertUrltoVideoId } from '../utils/getYoutubeVideoId';
-
 import { GameApple } from '../assets/svgs/GameApple';
 import { GameNote } from '../assets/svgs/GameNote';
 import { GamePencil } from '../assets/svgs/GamePencil';
@@ -54,7 +54,6 @@ import { IceBreaking } from '../assets/svgs/Icebreaking';
 import { TakeSnapshot } from '../components/StreamRoom/TakeSnapshot';
 import { IceGame } from '../assets/svgs/IceGame';
 import { IceGameQ } from '../assets/svgs/IceGameQ';
-import useAnalyticsEventTracker from '../hooks/useAnalyticsEventTracker';
 
 export interface JwtPayload {
   auth: {
@@ -85,7 +84,6 @@ const PeerConnectionConfig = {
 // let mediaStream: MediaStream;
 
 export const StreamRoom = () => {
-  const gaEventTracker = useAnalyticsEventTracker('STREAMROOM');
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const remoteWebcamVideoRef = useRef<HTMLVideoElement>(null);
@@ -371,7 +369,7 @@ export const StreamRoom = () => {
         type: 'stopGame',
         data: roomNum,
       });
-      console.log('send stop game message');
+      // console.log('send stop game message');
       socket.send(message);
     }
   };
@@ -445,7 +443,10 @@ export const StreamRoom = () => {
       return;
     }
     setNumberShare((prev) => prev + 1);
-    gaEventTracker('Menu - Youtube');
+    ReactGA.event({
+      category: 'Stream Room',
+      action: `Youtube Click`,
+    });
     setYoutubeModalIsOpen(false);
     const message = {
       from: userId,
@@ -466,7 +467,7 @@ export const StreamRoom = () => {
   useEffect(() => {
     if (!Object.keys(userInfo as MyUserInfo)) {
       setUserId(userInfo?.id as number);
-      console.log('done', userInfo);
+      // console.log('done', userInfo);
     }
   }, [userInfo]);
   useEffect(() => {
@@ -612,7 +613,7 @@ export const StreamRoom = () => {
             break;
 
           case 'startGame':
-            console.log('received startgame message', message);
+            // console.log('received startgame message', message);
             setGameInfo(false);
             setGameHasStarted(true);
             setIdiom(message.word);
@@ -620,7 +621,7 @@ export const StreamRoom = () => {
             setStartgameCount(message.startCount);
             break;
           case 'gameInfo':
-            console.log('received gameInfo message', message);
+            // console.log('received gameInfo message', message);
             setGameInfo((prev) => !prev);
             break;
           case 'pauseGame':
@@ -629,7 +630,7 @@ export const StreamRoom = () => {
             break;
 
           case 'stopGame':
-            console.log('received stopgame message', message);
+            // console.log('received stopgame message', message);
             setGameHasStarted(false);
             setGameInfo(false);
             setIdiom(message.word);
@@ -746,7 +747,10 @@ export const StreamRoom = () => {
   }, [myMediaStream]);
 
   const sendToastMessage = () => {
-    gaEventTracker('Toast');
+    ReactGA.event({
+      category: 'Stream Room',
+      action: `Toast Click`,
+    });
     // console.log('click toast');
     if (socket) {
       const message = JSON.stringify({
@@ -779,7 +783,10 @@ export const StreamRoom = () => {
 
   const sendGameInfoMessage = () => {
     // console.log('click toast');
-    gaEventTracker('Menu - Game');
+    ReactGA.event({
+      category: 'Stream Room',
+      action: `Game Click`,
+    });
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -787,7 +794,7 @@ export const StreamRoom = () => {
         data: roomNum,
       });
       setGameInfo((prev) => !prev);
-      console.log('gameinfo sent', message);
+      // console.log('gameinfo sent', message);
       // showToastHandler();
       socket.send(message);
     }
@@ -807,7 +814,10 @@ export const StreamRoom = () => {
   };
 
   const sendIceGameMessage = () => {
-    gaEventTracker('Menu - Icebreaker');
+    ReactGA.event({
+      category: 'Stream Room',
+      action: `Icebreaker Click`,
+    });
     if (socket) {
       const message = JSON.stringify({
         from: userId,
@@ -1079,7 +1089,10 @@ export const StreamRoom = () => {
     activityButtonSubStyle = '';
   }
   const sendTakePictureOffer = () => {
-    gaEventTracker('Menu - Take Photo');
+    ReactGA.event({
+      category: 'Stream Room',
+      action: `Take Photo Click`,
+    });
     const message = JSON.stringify({
       from: userId,
       type: 'sendPicture',

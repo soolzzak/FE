@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai';
+import ReactGA from 'react-ga4';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,8 +12,8 @@ import {
   roomPasswordAtom,
   titleAtom,
 } from '../../store/addRoomStore';
-import { CommonButton } from '../common/CommonButton';
 import { errorMessageConvert } from '../../utils/switchSelections';
+import { CommonButton } from '../common/CommonButton';
 
 export type CreateRoomData = {
   title: string;
@@ -45,6 +46,10 @@ export const AddRoomButton = ({ closeModal }: { closeModal: () => void }) => {
   });
 
   const onSubmit = () => {
+    ReactGA.event({
+      category: 'Stream Room',
+      action: `Game Click`,
+    });
     if (!title) return toast.error('제목을 입력해주세요!');
     const data = {
       title,

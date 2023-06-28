@@ -34,7 +34,7 @@ export const LoginModal = () => {
     onSuccess: (data) => {
       setIsLoggedIn(true);
       setUserAtom(data.data);
-      console.log(data.data);
+      // console.log(data.data);
     },
     onError: (error) => {
       console.log(error);

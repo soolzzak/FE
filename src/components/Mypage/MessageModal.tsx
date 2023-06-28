@@ -2,26 +2,36 @@ import { useAtom } from 'jotai';
 import { useEffect, useState, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
-import { DetailUserProfile, receivedMessage, sendMessage, sentMessage } from '../../api/mypage';
+import ReactGA from 'react-ga4';
+import {
+  DetailUserProfile,
+  receivedMessage,
+  sendMessage,
+  sentMessage,
+} from '../../api/mypage';
 import { isOpenMessageModalAtom } from '../../store/modalStore';
 import { CancelButton } from '../common/CancelButton';
-import { currentTabAtom, messageUserInfoAtom, tabStateAtom } from '../../store/messageStore';
+import {
+  currentTabAtom,
+  messageUserInfoAtom,
+  tabStateAtom,
+} from '../../store/messageStore';
 import { messageAlertAtom } from '../../store/mainpageStore';
 
 export const MessageModal = () => {
   const queryClient = useQueryClient();
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [tabList, setTablList] = useState({
     tab: ['받은쪽지함', '보낸쪽지함'],
     detailTab: ['쪽지쓰기', '받은쪽지', '보낸쪽지'],
   });
-  const [currentTab, setCurrentTab] = useAtom(currentTabAtom)
-  const [tabState, setTabState] = useAtom(tabStateAtom)
+  const [currentTab, setCurrentTab] = useAtom(currentTabAtom);
+  const [tabState, setTabState] = useAtom(tabStateAtom);
   const [username, setUsername] = useState<string | undefined>();
   const [content, setContent] = useState<string | undefined>();
   const [detailId, setDetailId] = useState<number>();
   const [, setIsOpenMessageModal] = useAtom(isOpenMessageModalAtom);
-  const [messageUserInfo] = useAtom(messageUserInfoAtom)
+  const [messageUserInfo] = useAtom(messageUserInfoAtom);
 
   const cancelButton = () => {
     if (tabState === 'tab') {
@@ -51,7 +61,7 @@ export const MessageModal = () => {
   const sendMessageMutation = useMutation(sendMessage, {
     onSuccess: () => {
       queryClient.invalidateQueries('sentMessage');
-      toast.success(`${username}님께 쪽지를 발송했습니다`)
+      toast.success(`${username}님께 쪽지를 발송했습니다`);
       setUsername('');
       setContent('');
       setCurrentTab('보낸쪽지함');
@@ -75,9 +85,13 @@ export const MessageModal = () => {
         textAreaRef.current.focus();
       }
     }
-  },[messageUserInfo])
+  }, [messageUserInfo]);
 
   const sendMessageHandler = async () => {
+    ReactGA.event({
+      category: 'Messages',
+      action: `Send Message Click`,
+    });
     if (!username || !content) {
       toast.error('닉네임과 내용을 모두 작성해주세요');
       return;
@@ -90,10 +104,10 @@ export const MessageModal = () => {
   };
 
   const replyMessageHandler = (sendName: string) => {
-    setTabState('detailTab')
-    setCurrentTab('쪽지쓰기')
-    setUsername(sendName)
-  }
+    setTabState('detailTab');
+    setCurrentTab('쪽지쓰기');
+    setUsername(sendName);
+  };
 
   return (
     <div className="relative w-[450px] h-[470px] rounded-2xl bg-white f-col px-7 py-5">
@@ -130,7 +144,7 @@ export const MessageModal = () => {
               onClick={() => {
                 setCurrentTab('쪽지쓰기');
                 setTabState('detailTab');
-                setUsername(undefined)
+                setUsername(undefined);
               }}
             >
               쪽지쓰기
@@ -285,11 +299,17 @@ export const MessageModal = () => {
 
       {currentTab === '받은쪽지' && (
         <div className="relative w-full h-full f-jic-col">
-          <button type='button'
-          className='absolute -top-12 right-0 w-fit h-fit font-semibold text-secondary-200 border border-secondary-200 bg-secondary-50 px-3 py-1 rounded-2xl cursor-pointer'
-          onClick={() => replyMessageHandler(receivedData[detailId as number].senderUsername)}
+          <button
+            type="button"
+            className="absolute -top-12 right-0 w-fit h-fit font-semibold text-secondary-200 border border-secondary-200 bg-secondary-50 px-3 py-1 rounded-2xl cursor-pointer"
+            onClick={() =>
+              replyMessageHandler(
+                receivedData[detailId as number].senderUsername
+              )
+            }
           >
-            답장하기</button>
+            답장하기
+          </button>
           <div className="w-full min-h-fit flex items-center justify-center pb-4">
             <div className="w-2/3 h-full f-jic gap-4">
               <div className="w-1/3 h-full f-jic font-semibold">보낸사람</div>
