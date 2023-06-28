@@ -4,6 +4,9 @@ import Cookies from 'js-cookie';
 const API_URL: string | undefined = process.env.REACT_APP_SERVER_URL;
 
 const instance: AxiosInstance = axios.create({
+  headers: {
+    'Access-Control-Allow-Origin': 'https://api.honsoolzzak.com',
+  },
   baseURL: API_URL,
   withCredentials: true,
 });

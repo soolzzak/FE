@@ -33,11 +33,14 @@ export const LoginModal = () => {
   const loginMutation = useMutation(LoginApi, {
     onSuccess: (response) => {
       setIsOpenLogin(false);
-      setUserToken(response?.headers.access_key);
+      // setUserToken(response?.headers.access_key);
       navigate('/');
     },
     onError: (error: { response: { data: { message: string } } }) => {
-      if (error.response.data.message === 'The email address does not exist.' || error.response.data.message === 'The user has already left the service.') {
+      if (
+        error.response.data.message === 'The email address does not exist.' ||
+        error.response.data.message === 'The user has already left the service.'
+      ) {
         toast.error('일치하는 회원정보가 없습니다');
       } else if (
         error.response.data.message === 'The passwords do not match.'
