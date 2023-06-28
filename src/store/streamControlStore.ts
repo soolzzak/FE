@@ -1,4 +1,4 @@
-import { atom } from "jotai";
+import { atom } from 'jotai';
 
 export const micOnAtom = atom<boolean>(true);
 // export const micOnChangeAtom = atom(null, (get, set, micOnAtomValue) => {
@@ -13,4 +13,4 @@ export const screenShareOnAtom = atom<boolean>(true);
 //     set(monitorOnAtom, prev => !prev)
 // })
 
-export const hostIdAtom = atom<string>('');
+export const hostIdAtom = atom<number | null>(null);

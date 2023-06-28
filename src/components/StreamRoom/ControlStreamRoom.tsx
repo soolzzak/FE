@@ -132,7 +132,7 @@ export const ControlStreamRoom = ({
         </div>
       )}
 
-      {hostId === userInfo?.id.toString() ? (
+      {hostId && userInfo && hostId === userInfo.id ? (
         <div
           onMouseOver={() => setSettingHover(true)}
           onMouseOut={() => setSettingHover(false)}
