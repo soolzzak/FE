@@ -31,10 +31,10 @@ export const LoginModal = () => {
     setPassword(event.target.value);
 
   const loginMutation = useMutation(LoginApi, {
-    onSuccess: (response) => {
+    onSuccess: () => {
       setIsOpenLogin(false);
       toast.success('로그인 성공');
-      setUserToken(response?.data.status === 200);
+      setUserToken(true);
       navigate('/');
     },
     onError: (error: { response: { data: { message: string } } }) => {

@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import Cookies from 'js-cookie';
 import React, { useState } from 'react';
 import { Search } from '../../assets/svgs/Search';
 import {
@@ -7,11 +6,9 @@ import {
   handleSearchwordAtom,
   searchwordTriggerAtom,
   tabAtom,
-  usernameAtom,
 } from '../../store/mainpageStore';
 
 export const SearchField = () => {
-  const [userToken] = useAtom(usernameAtom);
   const [searchValue, setSearchValue] = useState('');
   const [, setTab] = useAtom(tabAtom);
   const [, setDisplayedTab] = useAtom(handleDisplayedTabChangeAtom);

@@ -9,9 +9,13 @@ import { userNicknameAtom, userTokenAtom } from '../../store/mainpageStore';
 import { Modal } from '../common/Modal';
 import { MessageModal } from '../Mypage/MessageModal';
 import { isOpenMessageModalAtom } from '../../store/modalStore';
-import { currentTabAtom, messageUserInfoAtom, tabStateAtom } from '../../store/messageStore';
+import {
+  currentTabAtom,
+  messageUserInfoAtom,
+  tabStateAtom,
+} from '../../store/messageStore';
 
-export const ProfileMenu = ({ user }: { user: string }) => {
+export const ProfileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { data } = useQuery('profile', getMypageProfile, {
@@ -22,7 +26,7 @@ export const ProfileMenu = ({ user }: { user: string }) => {
   const [isOpenMessageModal, setIsOpenMessageModal] = useAtom(
     isOpenMessageModalAtom
   );
-  const [,setMessageUserInfo] = useAtom(messageUserInfoAtom)
+  const [, setMessageUserInfo] = useAtom(messageUserInfoAtom);
   const [, setCurrentTab] = useAtom(currentTabAtom);
   const [, setTabState] = useAtom(tabStateAtom);
   const navigate = useNavigate();
@@ -39,9 +43,9 @@ export const ProfileMenu = ({ user }: { user: string }) => {
   const messageHandler = () => {
     setTabState('tab');
     setCurrentTab('받은쪽지함');
-    setMessageUserInfo(undefined)
+    setMessageUserInfo(undefined);
     setIsOpenMessageModal(true);
-  }
+  };
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (

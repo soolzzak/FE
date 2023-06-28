@@ -1,8 +1,10 @@
 import { AnimatePresence } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga';
+import { useMutation } from 'react-query';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { userInfo } from '../api/auth';
 import { Layout } from '../layout/Layout';
 import { ChangePassword } from '../pages/ChangePassword';
 import { Home } from '../pages/Home';
@@ -11,14 +13,34 @@ import { Mypage } from '../pages/Mypage';
 import { NotFound } from '../pages/NotFound';
 import { Signup } from '../pages/Signup';
 import { StreamRoom } from '../pages/StreamRoom';
+import {
+  handleTokenChangeAtom,
+  handleUserTokenAtom,
+} from '../store/mainpageStore';
 // import Filter from '../pages/Filter';
 
 export const Router = () => {
   const location = useLocation();
 
+  const [, setIsLoggedIn] = useAtom(handleTokenChangeAtom);
+  const [, setUserAtom] = useAtom(handleUserTokenAtom);
+
+  const userInfoMutation = useMutation(userInfo, {
+    onSuccess: (data) => {
+      setIsLoggedIn(true);
+      setUserAtom(data.data);
+      console.log(data.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
+    userInfoMutation.mutate();
   }, []);
+
   return (
     // <Layout>
     <Layout

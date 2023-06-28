@@ -1,8 +1,8 @@
+import ReactGA from 'react-ga';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer, ToastPosition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ReactGA from 'react-ga';
 import { Router } from './shared/Router';
 
 const TRACKING_ID = 'G-5N8TCV0XGN';

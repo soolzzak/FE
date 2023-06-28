@@ -42,7 +42,7 @@ export const ChatroomCard = ({ chatRoom }: { chatRoom: MainpageRooms }) => {
     }
     if (
       chatRoom.genderSetting !== 'ANY' &&
-      userToken?.auth.gender !== chatRoom.genderSetting
+      userToken?.gender !== chatRoom.genderSetting
     ) {
       toast.error(`${genderSetting} 들어오세요`);
       return;

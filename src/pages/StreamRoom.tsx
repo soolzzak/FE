@@ -23,7 +23,7 @@ import { WaitingGuestRef } from '../components/StreamRoom/WaitingGuestRef';
 import { YoutubeContent } from '../components/StreamRoom/YoutubeContent';
 import { Modal } from '../components/common/Modal';
 import { roomPasswordAtom, streamRoomInfoAtom } from '../store/addRoomStore';
-import { AuthToken, userTokenAtom } from '../store/mainpageStore';
+import { AuthToken, MyUserInfo, userTokenAtom } from '../store/mainpageStore';
 import {
   isOpenIceBreakerModalAtom,
   isOpenKickoutModalAtom,
@@ -115,7 +115,7 @@ export const StreamRoom = () => {
 
   let mediaStream: MediaStream | null = null;
   const [userInfo] = useAtom(userTokenAtom);
-  const [userId, setUserId] = useState(userInfo?.auth.id);
+  const [userId, setUserId] = useState(userInfo?.id);
   const [isHost, setIsHost] = useState(false);
   const [myMediaStream, setMyMediaStream] = useState<MediaStream | null>(null);
   const [myWebcamMediaStream, setMyWebcamMediaStream] =
@@ -464,8 +464,8 @@ export const StreamRoom = () => {
     }
   };
   useEffect(() => {
-    if (!Object.keys(userInfo as AuthToken)) {
-      setUserId(userInfo?.auth.id as number);
+    if (!Object.keys(userInfo as MyUserInfo)) {
+      setUserId(userInfo?.id as number);
       console.log('done', userInfo);
     }
   }, [userInfo]);

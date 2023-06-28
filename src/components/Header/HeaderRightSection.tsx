@@ -33,23 +33,9 @@ export const HeaderRightSection = () => {
   const [searchUsernameModalIsOpen, setSearchUsernameModalIsOpen] = useAtom(
     isOpenSearchUsernameModalAtom
   );
-  const userInfoMutation = useMutation(userInfo, {
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
+
   const [user] = useAtom(usernameAtom);
-  const [userAtom, setUserAtom] = useAtom(userTokenAtom);
-  // console.log(userAtom);
-  useEffect(() => {
-    if (user) {
-      userInfoMutation.mutate();
-      // setUserAtom(jwtDecode());
-    }
-  }, [user]);
+  const [userAtom] = useAtom(userTokenAtom);
 
   return (
     <motion.section
@@ -112,7 +98,7 @@ export const HeaderRightSection = () => {
           />
           {/* <Notifications /> */}
           <UserAlert />
-          <ProfileMenu user={userAtom.sub} />
+          <ProfileMenu />
         </motion.div>
       ) : (
         <motion.div

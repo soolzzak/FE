@@ -50,11 +50,15 @@ export const handleRoomListChangeAtom = atom(
     set(roomListAtom, () => update);
   }
 );
+export interface MyUserInfo {
+  id: number;
+  gender: string;
+}
 
-export const userTokenAtom = atom({} as AuthToken | undefined);
+export const userTokenAtom = atom({} as MyUserInfo | undefined);
 export const handleUserTokenAtom = atom(
   null,
-  (get, set, update: AuthToken | undefined) => {
+  (get, set, update: MyUserInfo | undefined) => {
     set(userTokenAtom, () => update);
   }
 );

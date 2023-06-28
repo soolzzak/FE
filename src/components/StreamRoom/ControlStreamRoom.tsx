@@ -2,7 +2,7 @@
 import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LuMic, LuMicOff } from 'react-icons/lu';
 import { Exit } from '../../assets/svgs/Exit';
 import { MonitorOff } from '../../assets/svgs/MonitorOff';
@@ -17,6 +17,7 @@ import {
   screenShareOnAtom,
 } from '../../store/streamControlStore';
 import { ConfigDropDown } from './ConfigDropDown';
+import { userTokenAtom } from '../../store/mainpageStore';
 
 interface JwtPayload {
   auth: {
@@ -53,15 +54,10 @@ export const ControlStreamRoom = ({
   const [screenHover, setScreenHover] = useState(false);
   const [settingHover, setSettingHover] = useState(false);
   const [closeHover, setCloseHover] = useState(false);
-  let userId: string | undefined = '';
-  const getCookie = Cookies.get('accessKey');
-  if (getCookie) {
-    userId = jwtDecode<JwtPayload>(getCookie || '').auth.id;
-  }
-
   const [, setIsOpenLeaveRoom] = useAtom(isOpenLeaveRoomAtom);
   const [isOpenKickout, onCloseKickout, setIsOpenKickout] = useModal();
   const [hostId] = useAtom(hostIdAtom);
+  const [userInfo] = useAtom(userTokenAtom);
 
   return (
     <>
@@ -119,7 +115,7 @@ export const ControlStreamRoom = ({
           onMouseOver={() => setScreenHover(true)}
           onMouseOut={() => setScreenHover(false)}
           className={`iconStyle ${
-            isMyScreenShare ? 'bg-[#808080]' : 'bg-[#C0C0C0]' 
+            isMyScreenShare ? 'bg-[#808080]' : 'bg-[#C0C0C0]'
           } relative shadow`}
         >
           <ScreenShare />
@@ -136,7 +132,7 @@ export const ControlStreamRoom = ({
         </div>
       )}
 
-      {hostId === userId ? (
+      {hostId === userInfo?.id.toString() ? (
         <div
           onMouseOver={() => setSettingHover(true)}
           onMouseOut={() => setSettingHover(false)}
