@@ -123,6 +123,14 @@ export const LoginApi = async (loginInfo: LoginInfo) => {
   }
 };
 
+export const kakaoLoginApi = async (code: string) => {
+  try {
+    const response = await axiosInstance.get(`/login?code=${code}`);
+    return response;
+  } catch (error) {
+    throw error as Error;
+  }
+};
 export const LogoutApi = async () => {
   try {
     const config = {

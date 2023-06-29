@@ -1,40 +1,41 @@
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
+import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { kakaoLoginApi, userInfo } from '../api/auth';
 import axiosInstance from '../api/axios';
-import { usernameAtom } from '../store/mainpageStore';
+import { userTokenAtom, usernameAtom } from '../store/mainpageStore';
 
 export const KakaoCallback = () => {
   const [, setUserToken] = useAtom(usernameAtom);
+  const [, setUserAtom] = useAtom(userTokenAtom);
   const navigate = useNavigate();
-  useEffect(() => {
-    const code = new URL(document.location.toString()).searchParams.get('code');
 
-    (async () => {
-      try {
-        const response = await axiosInstance.get(`/login?code=${code}`);
-        // const accessKey = response.headers.access_key;
-        // const refreshKey = response.headers.refresh_key;
-        // const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
-        // const decodedRefreshToken: { exp: number } = jwtDecode(refreshKey);
-        // const accessExp = decodedAccessToken.exp;
-        // const refreshExp = decodedRefreshToken.exp;
-        // const accessExpireDate = new Date(accessExp * 1000);
-        // const refreshExpireDate = new Date(refreshExp * 1000);
-        // Cookies.set('accessKey', accessKey, {
-        //   expires: accessExpireDate,
-        // });
-        // Cookies.set('refreshKey', refreshKey, {
-        //   expires: refreshExpireDate,
-        // });
-        setUserToken(true);
-        navigate('/');
-        return response;
-      } catch (error) {
-        throw error as Error;
-      }
-    })();
+  const userInfoMutation = useMutation(userInfo, {
+    onSuccess: (data) => {
+      setUserToken(true);
+      setUserAtom(data.data);
+      navigate('/');
+      // console.log(data.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+  const kakaoLoginMutation = useMutation(kakaoLoginApi, {
+    onSuccess: (data) => {
+      userInfoMutation.mutate();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  useEffect(() => {
+    kakaoLoginMutation.mutate(
+      new URL(document.location.toString()).searchParams.get('code') as string
+    );
   }, []);
 
-  return <div>카카오 로그인중입니다</div>;
+  return <div className="h-screen f-jic">카카오 로그인중입니다</div>;
 };
