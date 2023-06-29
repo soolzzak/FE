@@ -560,6 +560,15 @@ export const StreamRoom = () => {
             break;
           case 'offer':
             // console.log('received offer message', message);
+            if (youtubeIsOn){
+              const msg = {
+                from: userId,
+                type: 'youtube',
+                data: roomNum,
+                youtubeUrl: videoUrl,
+              };
+              socket.send(JSON.stringify(msg));
+            }
             await handleOfferMessage(message);
             break;
           case 'answer':
@@ -1535,7 +1544,7 @@ export const StreamRoom = () => {
                           shareState > 0 ? 'hidden' : 'xl:inline hidden'
                         }`}
                       >
-                        유튜브 시청
+                        유튜브 동시시청
                       </span>
                     </div>
                   </motion.div>
