@@ -1,10 +1,7 @@
-import axios, { AxiosResponse } from 'axios';
 import { useAtom } from 'jotai';
-import Cookies from 'js-cookie';
-import jwtDecode from 'jwt-decode';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ApiResponse } from '../api/auth';
+import axiosInstance from '../api/axios';
 import { usernameAtom } from '../store/mainpageStore';
 
 export const KakaoCallback = () => {
@@ -15,9 +12,7 @@ export const KakaoCallback = () => {
 
     (async () => {
       try {
-        const response = await axios.get(
-          `https://api.honsoolzzak.com/api/login?code=${code}`
-        );
+        const response = await axiosInstance.get(`/login?code=${code}`);
         // const accessKey = response.headers.access_key;
         // const refreshKey = response.headers.refresh_key;
         // const decodedAccessToken: { exp: number } = jwtDecode(accessKey);
