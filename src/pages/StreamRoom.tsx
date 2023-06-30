@@ -1001,9 +1001,6 @@ export const StreamRoom = () => {
   // console.log('share', shareView);
 
   const modalOpenHandler = () => {
-    if (!guestIn) {
-      return waitForGuestWarning();
-    }
     setYoutubeModalIsOpen(true);
   };
 
