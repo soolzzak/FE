@@ -560,7 +560,7 @@ export const StreamRoom = () => {
             break;
           case 'offer':
             // console.log('received offer message', message);
-            if (youtubeIsOn){
+            if (youtubeIsOn) {
               const msg = {
                 from: userId,
                 type: 'youtube',
@@ -1001,6 +1001,9 @@ export const StreamRoom = () => {
   // console.log('share', shareView);
 
   const modalOpenHandler = () => {
+    if (!guestIn) {
+      return waitForGuestWarning();
+    }
     setYoutubeModalIsOpen(true);
   };
 
